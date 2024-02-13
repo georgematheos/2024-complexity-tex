@@ -1,0 +1,125 @@
+\documentclass{article}
+\usepackage{amsmath}
+% \usepackage{fullpage}
+\usepackage{enumerate}
+\usepackage{xcolor}
+\renewcommand{\P}{\mathbf{P}}
+\newcommand{\NP}{\mathbf{NP}}
+\newcommand{\EXP}{\mathbf{EXP}}
+\newcommand{\NEXP}{\mathbf{NEXP}}
+\newcommand{\PH}{\mathbf{PH}}
+\newcommand{\PSPACE}{\mathbf{PSPACE}}
+\newcommand{\TIME}{\mathbf{TIME}}
+\newcommand{\NTIME}{\mathbf{NTIME}}
+
+\begin{document}
+	\begin{center}
+		\Large
+		6.541/18.405 Problem Set 0
+		
+		\vspace{3pt}
+		\normalsize
+		due on February 15, 11:59pm
+	\end{center}
+	
+	% {\bf Rules:} You may discuss homework problems with other students and you may work in groups, but we require that you {\em try to solve the problems by yourself before discussing them with others}. Think about all the problems on your own and do your best to solve them, before starting a collaboration. If you work in a group, include the names of the other people in the group in your written solution. {\bf Write up your {\em own} solution to every problem}; don't copy answers from another student or any other source. You should be able to explain and write your solutions all by yourself. Cite {\bf all} references that you use in a solution (books, papers, people, etc) at the end of each solution. 
+	
+	% We encourage you to use \LaTeX, to compose your solutions. The source of this file is also available on Piazza, to get you started!
+	
+	% {\bf How to submit:} Use Gradescope entry code 2P3PEN
+		
+	\section*{Problem 1 (2 points)} 
+	\subsection*{Question}
+    For a Turing machine $M$, let $\langle M \rangle$ denote the description of $M$ in binary.
+    Prove that the following language is undecidable: 
+	\begin{multline*}
+		L = \{ \langle M\rangle \mid \text{for all $n$ and input strings $x$ of length $n$, } \\
+		\text{$M$ is a Turing machine that halts on $x$ in $18n^3+405$ steps} \}
+	\end{multline*}
+
+	\subsection*{Answer}
+
+	I will reduce this to the halting problem.
+
+	Given $\bar{M}$, we must determine whether $\bar{M}$ halts on the empty tape.
+
+	Let $M$ be the Turing machine which does the following.  On input $x$, it first simulates $\bar{M}$ for $|x|$ steps.  If $\bar{M}$ has halted, $M$ then runs for $|x|^4$ more steps, and then halts.  Otherwise, if $\bar{M}$ has not halted, $M$ halts.
+
+	For contradiction, suppose $L$ is decidable.  Let $D$ be a Turing machine that decides it.
+	
+	Say that $D$ accepts $M$.  Then $M$ halts within $18|x|^3 + 405$ steps on every input $x$.  Noting that $18 \times 100^3 + 405 < 100^4$, this means $M$ does not run for $|x|^4$ or more steps on any $x$ of length greater than 100.	Thus, it must be that for all $n > 100$, $\bar{M}$ does not halt within $n$ steps.  Thus $\bar{M}$ must not halt.
+
+	Conversely, say $D$ does not accept $M$.  Then there is some $x$ such that $M$ runs for more than $18|x|^3 + 405$ steps.  This can only happen if $\bar{M}$ halts within $|x|$ steps.  Thus $\bar{M}$ halts.
+
+	Thus, if $L$ is decidable, so is the halting problem.
+
+    \section*{Problem 2 (2 points)}
+
+	\subsection*{Question}
+
+    Prove that if $\text{\sc 3Sat} \in P$, then there is a polynomial-time algorithm for solving $\text{\sc Search-3Sat}$ (as defined in lecture 1). That is, under the hypothesis, there is a polynomial-time algorithm that given any 3CNF formula $\phi$, the algorithm outputs a satisfying assignment to $\phi$ (when one exists) in polynomial time.
+ 
+	\subsection*{Answer}
+
+	% Note that in this problem I use $1$ to represent truth and $-1$ to represent falsity, so I can use multiplication notation for negation.
+
+	Say $\text{\sc 3Sat} \in P$, and let $M$ be a Turing machine that solves $\text{\sc 3Sat}$ in polynomial time.  The following polynomial time algorithm can then be used to solve $\text{sc Search-3Sat}$.
+
+	Let $\phi$ be a given 3CNF formula, with variables $x_1, \dots, x_n$.
+	% and clauses $c_1, \dots, c_m$, where $c_m = s_{a, m} x_{a_ m} \wedge s_{b, m} x_{b_m} \wedge s_{c, m} x_{c_m}$ where the $s \in \{-1, +1\}$ indicate which variables are negated.
+
+	First, call $M$ on $\phi$.  If it rejects, return that no solution exists to $\phi$.
+
+	Next, if $n = 1$, evaluate $\phi$ on $x_1 = 1$.  If it is true, return $x_1 = 1$; else, return $x_1 = 0$.
+
+	Now say $n > 1$.  Construct the CNF formula $\phi_1$by setting $x_1$ to $1$ in $\phi$.  Call $M$ on $\phi_1$.  If it accepts, assign $x_1 = 1$, and set $\phi \gets \phi_1$.  Else, set $x_1 = 0$ and construct the formula $\phi_0$ by substituting $x_1 = 0$ in $\phi$.  Then set $\phi \gets \phi_0$.  Now recurse on the formula $\phi_0$ or $\phi_1$ to obtain an assignment to the variables in $\phi_0$ or $\phi_1$, which are $x_2, \dots x_m$.  This full assignment to $x_1$, and $x_2, \dots, x_m$, is a solution to $\phi$.  Return it.
+
+	Each recursive step calls $M$ once, and solves for one variable.  Thus there are a polynomial number of steps in the input size (linear, in fact).  Thus this algorithm takes polynomial time to run.
+
+	% \noindent \textbf{Constructing $\phi_1$.}  Substitution works as follows.  Say we wish to substitute $x_1 = 1$.  Consider any clause $x_1 \wedge x_i \wedge x_j$ where $i, j \neq 1$.  Replace this clause with $\bar{x_i} \wedge x_i \wedge x_j$.  Consider any clause $x_1 \wedge x_i \wedge x_j$.  Replace it with $x_i \wedge x_i \wedge x_j$.  For $x_1 \wedge \bar{x_1} \wedge x_1
+
+    \section*{Problem 3 (3 points)}
+	\subsection*{Question}
+    Recall $\EXP = \bigcup_{c\ge 1} \TIME(2^{n^c})$ and $\NEXP = \bigcup_{c\ge 1} \NTIME(2^{n^c})$. \\
+    Prove that if $\P = \NP$, then $\EXP = \NEXP$.
+
+	\subsection*{Answer}
+	Say $\P = \NP$.  Let $L$ be any language in $\NEXP$ on the alphabet $\{0, 1\}$.  Let $L'$ be the language on $\{0, 1, a\}$ (where $a$ is just some other symbol) given by
+	$$L' = \{x \cdot a^{2^{|x|}} \mid x \in L\}$$
+
+	That is, $L'$ contains each string $x$ in $L$ followed by a long string of the symbol $a$ repeated $2^{|x|}$ times.
+	
+	Let $N$ be a nondeterministic Turing machine on the binary alphabet which decides $L$ in $O(2^{n^c})$ time for some $c$.
+	We now construct a nondeterministic Turing machine $M$ on the alphabet $\{0, 1, a\}$ to decide $L'$.
+	On any input, $M$ runs $N$ on the binary characters in the input and treats input squares with the symbol $a$ as blank.
+	Then on input $y = x \cdot a^{2^{|x|}}$, $M$ runs in $O(2^{|x|^c})$.  Thus $M$ runs 
+	in $O(|y|^c)$.
+	Thus $M$ is a nondeterministic polynomial decider for $L'$.
+	By the assumption $\P = \NP$, this means there exists a deterministic polynomial-time Turing machine $R$ which decides $L'$.
+
+	Finally, let $Q$ be a Turing machine on the binary alphabet which, on input $x$, simulates $R$.
+	If $R$ tries to move past the last filled bit in $x$, $Q$ simulates that $R$ reads in the character $a$ if the tape head is at position $\leq |x| + 2^{|x|}$, and blank otherwise.
+	Then $R$ runs in time polynomial in $|x| 2^{|x|}$, so exponential in $|x|$.  Thus $R$ is a deterministic exponential time decider for $L$, so $L \in \EXP$.
+
+
+    \section*{Problem 4 (3 points)}
+    Define $\mathbf{E}$ to be $\bigcup_{c\ge 1} \TIME(2^{cn})$. Prove that $\mathbf{E} \neq \PSPACE$.\\
+    \emph{(Hint: find some property of $\PSPACE$ that doesn't hold of $\mathbf{E}$.)}
+    
+	\section*{Problem 5 (4 points, 2 for each sub-problem)}
+	
+	In this problem we will see an ``amplification'' argument, in which we prove that a weak-looking lower bound actually implies a stronger lower bound. (We love these things.)
+	
+	\begin{enumerate}[(A)]
+		\item Prove that if $\TIME(n^{1+\epsilon})=\TIME(n)$ for some $\epsilon>0$, then $\TIME(n^c) = \TIME(n)$ for all constant $c >1$.\\ 
+		(You may assume without proof that the function $f(n) := \lceil n^{1+\epsilon} \rceil$ is time constructible, for every $\epsilon > 0$.)
+		
+		If you want a hint, see the footnote.\footnote{\tiny First try to show that the assumption implies $\TIME(n^{(1+\epsilon)^2})=\TIME(n^{1+\epsilon}) = \TIME(n)$, then try to iterate the argument.}
+		
+		\item  Use (A) and the statement of the time hierarchy theorem from class to prove that $\TIME(n)$ is a proper subset of $\TIME(n^{1+\epsilon})$ for \emph{every} $\epsilon > 0$.
+	\end{enumerate}
+	
+	{\bf Totally optional food for thought:} We know that for Turing machines, 
+	$\TIME(n)$ is a proper subset of $\TIME(n \cdot \log^2 n)$. (This follows from Corollary 9.11 in Prof Sipser's book, for example.) Can you improve this proper containment (reduce the $\log^2 n$ factor) by using an amplification argument?
+		
+\end{document}

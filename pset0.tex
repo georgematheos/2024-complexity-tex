@@ -108,6 +108,8 @@
     
 	\section*{Problem 5 (4 points, 2 for each sub-problem)}
 	
+	\subsection*{Question}
+
 	In this problem we will see an ``amplification'' argument, in which we prove that a weak-looking lower bound actually implies a stronger lower bound. (We love these things.)
 	
 	\begin{enumerate}[(A)]
@@ -119,7 +121,30 @@
 		\item  Use (A) and the statement of the time hierarchy theorem from class to prove that $\TIME(n)$ is a proper subset of $\TIME(n^{1+\epsilon})$ for \emph{every} $\epsilon > 0$.
 	\end{enumerate}
 	
-	{\bf Totally optional food for thought:} We know that for Turing machines, 
-	$\TIME(n)$ is a proper subset of $\TIME(n \cdot \log^2 n)$. (This follows from Corollary 9.11 in Prof Sipser's book, for example.) Can you improve this proper containment (reduce the $\log^2 n$ factor) by using an amplification argument?
+	\subsection*{Answer to A}
+	Say $\TIME(n^{1+\epsilon}) = \TIME(n)$ for some $\epsilon > 0$.  
+	% Observe that if $\epsilon > 1$, this also holds for any $\epsilon \leq 1$.  So WLOG let's take $\epsilon < 1$.
+
+	Let $L \in \TIME(n^{(1 + \epsilon)^2}) = \TIME(n^{1 + 2\epsilon + \epsilon^2})$.
+
+	Let
+	$$
+	L' = \{x \cdot a^{|x|^{1 + \epsilon}} \mid x \in L\}
+	$$
+	For each $x \in L$, $y := x \cdot a^{|x|^{1 + \epsilon}}$ can be recognized in time $O(|x|^{(1 + \epsilon)^2})$ and hence $O(|y|^{1 + \epsilon})$.  Thus $L' \in \TIME(n^{1 + \epsilon})$.
+	We can build a Turing machine to recognize $L$ by simulating a TM for $L'$ and giving it $a$s when it reads slots past the first $|x|$ characters and before the TM for $L'$ would reach blank squares.  Thus actualy $L \in \TIME(n^{1 + \epsilon}) = \TIME(n)$.
+
+	Thus $\TIME(n^{1 + \epsilon}^2) = \TIME(n^{1 + \epsilon}) = \TIME(n)$.  Since $(1 + \epsilon)^2 > 1 + 2 \epsilon$, this means $\TIME(n^{1 + 2 \epsilon}) = \TIME(n)$.  Iterating this argument, now taking $\epsilon$ to be twice our original $\epsilon$, shows that $\TIME(n^{1 + 4 \epsilon}) = \TIME(n)$.  Repeating this lets us show $\TIME(n^{1 + 2^k \epsilon}) = \TIME(n)$ for all $k > 0$.
+
+	For any $c$, there exists a $k$ such that $1 + 2^k \epsilon > c$.  Thus $\TIME(n^c) = \TIME(n)$ for all $c > 1$.
+
+	\subsection*{Answer to B}
+
+	The time hierarchy theorem states that for any time constructable function $T(n)$, there exists a $c > 1$ such that $\TIME(T(n)^c) \not\subseteq \TIME(T(n))$.
+	Taking $T(n) = n$, this implies that $\TIME(n^c) \neq \TIME(n)$ for some $c$.
+	By part A, this maens that in fact $\TIME(n^{1 + \epsilon}) \neq \TIME(N)$ for all $\epsilon > 0$.  And certainly $\TIME(n) \subseteq \TIME(n^{1 + \epsilon})$, so we must have this be a strict subset inclusion.
+
+	% {\bf Totally optional food for thought:} We know that for Turing machines, 
+	% $\TIME(n)$ is a proper subset of $\TIME(n \cdot \log^2 n)$. (This follows from Corollary 9.11 in Prof Sipser's book, for example.) Can you improve this proper containment (reduce the $\log^2 n$ factor) by using an amplification argument?
 		
 \end{document}

@@ -1,5 +1,6 @@
 \documentclass{article}
 \usepackage{amsmath}
+\usepackage{amssymb}
 % \usepackage{fullpage}
 \usepackage{enumerate}
 \usepackage{xcolor}
@@ -11,6 +12,9 @@
 \newcommand{\PSPACE}{\mathbf{PSPACE}}
 \newcommand{\TIME}{\mathbf{TIME}}
 \newcommand{\NTIME}{\mathbf{NTIME}}
+\newcommand{\E}{\mathbf{E}}
+
+\newtheorem{proposition}{Prop}
 
 \begin{document}
 	\begin{center}
@@ -41,7 +45,7 @@
 
 	I will reduce this to the halting problem.
 
-	Given $\bar{M}$, we must determine whether $\bar{M}$ halts on the empty tape.
+	To solve the halting problem, given $\bar{M}$, we must determine whether $\bar{M}$ halts on the empty tape.
 
 	Let $M$ be the Turing machine which does the following.  On input $x$, it first simulates $\bar{M}$ for $|x|$ steps.  If $\bar{M}$ has halted, $M$ then runs for $|x|^4$ more steps, and then halts.  Otherwise, if $\bar{M}$ has not halted, $M$ halts.
 
@@ -63,7 +67,7 @@
 
 	% Note that in this problem I use $1$ to represent truth and $-1$ to represent falsity, so I can use multiplication notation for negation.
 
-	Say $\text{\sc 3Sat} \in P$, and let $M$ be a Turing machine that solves $\text{\sc 3Sat}$ in polynomial time.  The following polynomial time algorithm can then be used to solve $\text{sc Search-3Sat}$.
+	Say $\text{\sc 3Sat} \in P$, and let $M$ be a Turing machine that solves $\text{\sc 3Sat}$ in polynomial time.  The following polynomial time algorithm can then be used to solve $\text{\sc Search-3Sat}$.
 
 	Let $\phi$ be a given 3CNF formula, with variables $x_1, \dots, x_n$.
 	% and clauses $c_1, \dots, c_m$, where $c_m = s_{a, m} x_{a_ m} \wedge s_{b, m} x_{b_m} \wedge s_{c, m} x_{c_m}$ where the $s \in \{-1, +1\}$ indicate which variables are negated.
@@ -72,9 +76,9 @@
 
 	Next, if $n = 1$, evaluate $\phi$ on $x_1 = 1$.  If it is true, return $x_1 = 1$; else, return $x_1 = 0$.
 
-	Now say $n > 1$.  Construct the CNF formula $\phi_1$by setting $x_1$ to $1$ in $\phi$.  Call $M$ on $\phi_1$.  If it accepts, assign $x_1 = 1$, and set $\phi \gets \phi_1$.  Else, set $x_1 = 0$ and construct the formula $\phi_0$ by substituting $x_1 = 0$ in $\phi$.  Then set $\phi \gets \phi_0$.  Now recurse on the formula $\phi_0$ or $\phi_1$ to obtain an assignment to the variables in $\phi_0$ or $\phi_1$, which are $x_2, \dots x_m$.  This full assignment to $x_1$, and $x_2, \dots, x_m$, is a solution to $\phi$.  Return it.
+	Now say $n > 1$.  Construct the CNF formula $\phi_1$by setting $x_1$ to $1$ in $\phi$.  Call $M$ on $\phi_1$.  If it accepts, assign $x_1 = 1$, and set $\phi' \gets \phi_1$.  Else, set $x_1 = 0$ and construct the formula $\phi_0$ by substituting $x_1 = 0$ in $\phi$.  Then set $\phi' \gets \phi_0$.  Now recurse on the formula $\phi'$ to obtain an assignment to the variables in $\phi'$, which are $x_2, \dots x_m$.  This full assignment to $x_1$, and $x_2, \dots, x_m$, is a solution to $\phi$.  Return it.
 
-	Each recursive step calls $M$ once, and solves for one variable.  Thus there are a polynomial number of steps in the input size (linear, in fact).  Thus this algorithm takes polynomial time to run.
+	Each recursive step calls $M$ once, and solves for one variable.  Thus there are a polynomial number of steps in the input size (linear, in fact).  Since $\P$ is closed under composition, this algorithm takes polynomial time to run.
 
 	% \noindent \textbf{Constructing $\phi_1$.}  Substitution works as follows.  Say we wish to substitute $x_1 = 1$.  Consider any clause $x_1 \wedge x_i \wedge x_j$ where $i, j \neq 1$.  Replace this clause with $\bar{x_i} \wedge x_i \wedge x_j$.  Consider any clause $x_1 \wedge x_i \wedge x_j$.  Replace it with $x_i \wedge x_i \wedge x_j$.  For $x_1 \wedge \bar{x_1} \wedge x_1
 
@@ -99,13 +103,68 @@
 
 	Finally, let $Q$ be a Turing machine on the binary alphabet which, on input $x$, simulates $R$.
 	If $R$ tries to move past the last filled bit in $x$, $Q$ simulates that $R$ reads in the character $a$ if the tape head is at position $\leq |x| + 2^{|x|}$, and blank otherwise.
-	Then $R$ runs in time polynomial in $|x| 2^{|x|}$, so exponential in $|x|$.  Thus $R$ is a deterministic exponential time decider for $L$, so $L \in \EXP$.
+	Then $Q$ runs in $O(\text{the runtime of } R)$, which is polynomial in $|x| + 2^{|x|}$ (the input size to $R$), so exponential in $|x|$.  Thus $Q$ is a deterministic exponential time decider for $L$, so $L \in \EXP$.  Since $L$ was arbitrary, this means $\NEXP = \EXP$.
 
 
     \section*{Problem 4 (3 points)}
+
+	\subsection*{Question}
     Define $\mathbf{E}$ to be $\bigcup_{c\ge 1} \TIME(2^{cn})$. Prove that $\mathbf{E} \neq \PSPACE$.\\
     \emph{(Hint: find some property of $\PSPACE$ that doesn't hold of $\mathbf{E}$.)}
-    
+	\subsection*{Answer}
+
+	$\PSPACE$ is closed under composition, whereas $\E$ is not.
+
+	To prove that $\E$ is not closed under composition, we perform diagonalization. Consider the language
+	\begin{multline*}
+		L = \{
+		% \langle M \rangle \cdot 1^n \mid M \text{ is a Turing machine which does not accept within } \\ 2^n \text{ steps on all inputs of length } n
+		\langle M \rangle \cdot 1^k \mid M \text{ is a Turing machine which does not accept } \\ \text{ on input } \langle M \rangle \cdot 1^k \text{ within } k 2^{c (|M| + k)} \text{ steps for any } c \leq k
+	\}
+	\end{multline*}
+	Say $L \in \E$.  Then there exists a Turing machine $T$ which decides it in $O(2^{nc})$ time.  Say $T$ accepts $\langle T \rangle \cdot 1^k$ for some $k \geq c$ such that $T$ runs in less than $k 2^{nc}$ time on all inputs of length $n > k$.  But then because $T$ runs within $k2^{cn}$ steps, the string $\langle T \rangle \cdot 1^k \notin L$!  Thus it must be that $T$ rejects input $\langle T \rangle \cdot 1^k$ for all such $k$.  But certainly on each of these inputs, $T$ does not accept within $2^{mn}$ steps for any $m \leq k$ (as $T$ does not accept at all).  But this means that $\langle T \rangle \cdot 1^k \in L$.  This is a contradiction.  Thus, it must be that $L \notin \E$.
+
+	The last step to show $\E$ is not closed under composition is to show $L \in \E^\E$. Let
+	%  Observe that for each fixed $c$, an $\E$ oracle can tell whether $M$ accepts on $\langle M \rangle \cdot 1^k$ within $k 2^{c(|M| + k)}$ steps, by simply simulating $M$ on this input for $k 2^{c(|M| + k)}$ steps.  Let
+	\begin{multline*}
+	\bar{L} := \{ \langle M \rangle \cdot 1^k \cdot 0 \cdot 1^n \mid M \text{ is a Turing machine which accepts on input}
+	\\ (\langle M \rangle \cdot 1^k) \text{ within } 2^n \text{ steps}
+	\}
+	\end{multline*}
+
+	Certainly $\bar{L} \in \E$ since we can simply simulate $M$ for $2^n$ steps.  And given an $\bar{L}$ oracle, we can decide $L$ by querying $\bar{L}$ on input $\langle M \rangle \cdot 1^k \cdot 0 \cdot 1^{c (|M| + k)}$ for each $c \leq k$.
+	% $= 2^{\log(k) + c(|M| + k)} \leq 2^{2c(|M| + k)} \in O(2^{2c(|M| + k)})$ steps.  (An $\E$ oracle can solve this since it requires simulating fewer than $O(2^{2cn})$ steps in the input size $n$ to the oracle.)  And we only need to call this oracle a linear number of times in the input length to check what happens for each $c \leq k$.  
+	Thus $L \in \E^\E$. (In fact, this argument showed that $L \in \P^\E$.  This is the issue with not allowing runtimes with a polyomial in the exponent, like runtime $2^{n^k}$, and only allowing $2^{cn}$: we can write down strings of polynomial size in the input length, but can't perform an exponential operation on them while staying within class $\E$.)
+	% [I think the fact that $L \in \P^\E$ indicates something is wrong with this argument, but I don't have time to fix it!  Maybe we need to send in $k$ in binary...]
+
+	Finally, we must show that $\PSPACE$ is closed under composition.  This follows for roughly the same reason $\P$ is closed under composition: if $A$ is a p-space Turing machine for language $X$, and $B$ is a p-space Turing machine for $Y$ which requires an $X$-oracle, we can decide $Y$ in p-space by running $B$, and calling $A$ whenever $B$ calls the $X$-oracle.  (This only requires polynomial space because we can erase the memory used by $A$ each time the oracle is called.  Anything from the computation of $A$ which $B$ needs to retain is something that $B$ would have had to write in its own memory anyway.  Thus, the algorithm only needs at most the amount of memory used by $B$ plus that used by one call to $A$, which is the sum of two polynomials and hence polynomial.)
+
+	% \log(k)}) \in O(2^{(c + 1)(|M| + k)})$
+
+	% This is in $\E^{\E}$, as a $\E$ oracle can check whether $M$ halts on any given input, and we can call this oracle $2^n$ times to check each input.
+
+	% Say $L \in \E$.  Let $T$ be an $O(2^{nc})$ TM which decides $L$.
+
+
+	% Let $L$ be any language in $\PSPACE$.  Let 
+	% $$
+	% 	L' := \{x : x^{|x|} \in L\}
+	% $$
+	% That is, $L$ is the set of strings $x$ where the concatenation $x \cdot x \cdot \dots \cdot x$ of $x$ with itself $|x|$ times is in $L$.
+
+	% First I prove that $L' \in \PSPACE$.  Let $M$ be any Turing machine for $L$. We can construct a Turing machine $M'$ for $L'$ which on input $x$ writes $x^{|x|}$ on the tape and then calls $M$.  $M$ uses polynomial space in $|x^{|x|}| = |x|^2$ which is still polynomial in $|x|$.  (It looks weird that $|x^{|x|}| = |x|^2$, but this is just because we are using multiplication notation rather than addition notation for concatenation.)
+
+	% By the time hierarchy theorem, there exists a $c > 1$ and a language $L$ such that $L \in \TIME(2^{nc}) \setminus \TIME(2^n)$.
+	% (This requires that $T(n) = 2^n$ is time constructable, which is clear since you can have a Turing machine write a 1 and then $n$ zeros to express $2^n$ in binary.)
+	% Note that $L \in \mathbf{E}$.
+
+	% For contradiction, say $\mathbf{E} = \PSPACE$.  Then, as shown above, $L' \in \PSPACE$, so $L' \in \mathbf{E}$.
+	% We know that 
+	
+	% Since $L \in \mathbf{E}$, let $M$ be a Turing machine for $L'$ which terminates in $O(2^{cn})$ time for every input.
+
+
+
 	\section*{Problem 5 (4 points, 2 for each sub-problem)}
 	
 	\subsection*{Question}
@@ -131,18 +190,21 @@
 	$$
 	L' = \{x \cdot a^{|x|^{1 + \epsilon}} \mid x \in L\}
 	$$
-	For each $x \in L$, $y := x \cdot a^{|x|^{1 + \epsilon}}$ can be recognized in time $O(|x|^{(1 + \epsilon)^2})$ and hence $O(|y|^{1 + \epsilon})$.  Thus $L' \in \TIME(n^{1 + \epsilon})$.
-	We can build a Turing machine to recognize $L$ by simulating a TM for $L'$ and giving it $a$s when it reads slots past the first $|x|$ characters and before the TM for $L'$ would reach blank squares.  Thus actualy $L \in \TIME(n^{1 + \epsilon}) = \TIME(n)$.
+	Here, $L'$ is a language on the alphabet $\{0, 1, a\}$, where $a$ is some other symbol.  ($L$ is a language on alphabt $\{0, 1\}$.)
 
-	Thus $\TIME(n^{1 + \epsilon}^2) = \TIME(n^{1 + \epsilon}) = \TIME(n)$.  Since $(1 + \epsilon)^2 > 1 + 2 \epsilon$, this means $\TIME(n^{1 + 2 \epsilon}) = \TIME(n)$.  Iterating this argument, now taking $\epsilon$ to be twice our original $\epsilon$, shows that $\TIME(n^{1 + 4 \epsilon}) = \TIME(n)$.  Repeating this lets us show $\TIME(n^{1 + 2^k \epsilon}) = \TIME(n)$ for all $k > 0$.
+	For each $x \in L$, $y := x \cdot a^{|x|^{1 + \epsilon}}$ can be decided as being in $L'$ in time $O(|x|^{(1 + \epsilon)^2})$, by simply calling a Turing machine for $L$ on the bits in $y$ before the first $a$.  Equivalently, $L$ can be decided as being in $L'$ in $O(|y|^{1 + \epsilon})$.  Thus $L' \in \TIME(n^{1 + \epsilon})$.  Because $\TIME(n^{1 + \epsilon}) = \TIME(n)$, $L' \in \TIME(n)$.
+
+	Let $M'$ be a Turing machine for $L'$ that runs in $O(n)$.  We can construct a Turing machine $M$ for $L$ which runs in time $O(n^{1 + \epsilon})$ as follows.  Given input $x$, $M$ simulates $M'$ on $x$.  Whenever $M'$ moves the head on the input tape past the last character of $x$, $M$ simulates $M'$ observing symbol $a$ if the head position is less than $|x| + |x|^{1 + \epsilon}$, and simulates it observing a blank square otherwise.  This Turing machine runs in $O(\text{the runtime of } M')$, which is $O((|x| + |x|^{1 + \epsilon})) = O(|x|^{1 + \epsilon})$ (since $M'$ is linear time in its input).  Thus, $M$ is $O(n^{1 + \epsilon})$ so $L \in \TIME(n^{1 + \epsilon})$.  Since $\TIME(n^{1 + \epsilon}) = \TIME(n)$, $L \in \TIME(n)$.
+
+	Thus $\TIME(n^{(1 + \epsilon)^2}) = \TIME(n^{1 + \epsilon}) = \TIME(n)$.  Since $(1 + \epsilon)^2 > 1 + 2 \epsilon$, this means $\TIME(n^{1 + 2 \epsilon}) = \TIME(n)$.  Iterating this argument, now taking $\epsilon$ to be twice our original $\epsilon$, shows that $\TIME(n^{1 + 4 \epsilon}) = \TIME(n)$.  Repeating this lets us show $\TIME(n^{1 + 2^k \epsilon}) = \TIME(n)$ for all $k > 0$.
 
 	For any $c$, there exists a $k$ such that $1 + 2^k \epsilon > c$.  Thus $\TIME(n^c) = \TIME(n)$ for all $c > 1$.
 
 	\subsection*{Answer to B}
 
-	The time hierarchy theorem states that for any time constructable function $T(n)$, there exists a $c > 1$ such that $\TIME(T(n)^c) \not\subseteq \TIME(T(n))$.
+	The time hierarchy theorem states that there exists a $c > 0$ such that for any time constructable function $T(n)$, $\TIME(T(n)^c) \not\subseteq \TIME(T(n))$.
 	Taking $T(n) = n$, this implies that $\TIME(n^c) \neq \TIME(n)$ for some $c$.
-	By part A, this maens that in fact $\TIME(n^{1 + \epsilon}) \neq \TIME(N)$ for all $\epsilon > 0$.  And certainly $\TIME(n) \subseteq \TIME(n^{1 + \epsilon})$, so we must have this be a strict subset inclusion.
+	By part A, this maens that in fact $\TIME(n^{1 + \epsilon}) \neq \TIME(n)$ for all $\epsilon > 0$.  And certainly $\TIME(n) \subseteq \TIME(n^{1 + \epsilon})$, so we must have $\TIME(n) \subsetneq \TIME(n^{1 + \epsilon})$.
 
 	% {\bf Totally optional food for thought:} We know that for Turing machines, 
 	% $\TIME(n)$ is a proper subset of $\TIME(n \cdot \log^2 n)$. (This follows from Corollary 9.11 in Prof Sipser's book, for example.) Can you improve this proper containment (reduce the $\log^2 n$ factor) by using an amplification argument?

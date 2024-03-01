@@ -1,0 +1,264 @@
+\documentclass{article}
+\usepackage{amsmath}
+% \usepackage{fullpage}
+\usepackage{amsmath,amssymb,verbatim}
+% \usepackage{fullpage}
+\usepackage{enumerate}
+\usepackage{xcolor}
+\renewcommand{\P}{\mathbf{P}}
+\newcommand{\NP}{\mathbf{NP}}
+\newcommand{\coNP}{\mathbf{coNP}}
+\newcommand{\EXP}{\mathbf{EXP}}
+\newcommand{\NEXP}{\mathbf{NEXP}}
+\newcommand{\PH}{\mathbf{PH}}
+\newcommand{\PSPACE}{\mathbf{PSPACE}}
+\newcommand{\TIME}{\mathbf{TIME}}
+\newcommand{\NTIME}{\mathbf{NTIME}}
+\newcommand{\LOG}{\mathbf{LOGSPACE}}
+\newcommand{\BSigma}{\mathbf{\Sigma}}
+\newcommand{\BPi}{\mathbf{\Pi}}
+
+\def \ATIME{{\mathsf{ATIME}}}
+\def \NTIME{{\mathsf{NTIME}}}
+
+\def \ASPACE{{\mathsf{ASPACE}}}
+\def \SPACE{{\mathsf{SPACE}}}
+\def \TIME{{\mathsf{TIME}}}
+
+
+\begin{document}
+	
+	
+	\begin{center}
+		\Large
+		6.541/18.405 Problem Set 1
+		
+		\vspace{3pt}
+		\normalsize
+		due on March 5, 11:59pm
+	\end{center}
+	
+	{\bf Rules:} You may discuss homework problems with other students and you may work in groups, but we require that you {\em try to solve the problems by yourself before discussing them with others}. Think about all the problems on your own and do your best to solve them, before starting a collaboration. If you work in a group, include the names of the other people in the group in your written solution. {\bf Write up your {\em own} solution to every problem}; don't copy answers from another student or any other source. You should be able to explain and write your solutions all by yourself. Cite {\bf all} references that you use in a solution (books, papers, people, etc) at the end of each solution. 
+	
+	We encourage you to use \LaTeX, to compose your solutions. The source of this file is also available on Piazza, to get you started!
+	
+	{\bf How to submit:} Use Gradescope entry code \textbf{2P3PEN}.\\ \textbf{Please use a separate page for each problem.} 
+
+\section*{Problem 1: NP vs coNP (1 point)}
+
+\subsection*{Question}
+
+Prove that if $\NP \subseteq \coNP$, then $\NP = \coNP$.
+
+\subsection*{Answer}
+
+Let $L \in \coNP$.  Then there is a language $L' \in \NP$
+such that $L = \overline{L'}$ (the complement of $L'$).
+If $\NP \subseteq \coNP$, then $L' \in \coNP$.
+Thus $\overline{L'} \in \NP$.  Since $\overline{L'} = L$, this means
+$L \in \NP$. Thus $\NP \subseteq \coNP \implies \coNP \subseteq \NP$.
+
+\section*{Problem 2: P to the NP (1 point)}
+
+\subsection*{Question}
+
+Define a function $f$ that treats its binary input as the encoding of a 3CNF Boolean formula, where $f(\phi) = 1$ if $\phi$ is a 3-CNF formula with exactly one satisfying assignment, and $f(\phi) = 0$ otherwise. Prove that $f \in \P^{\NP}$.
+
+\subsection*{Answer}
+
+We can write $f$ as
+$$
+	f(\phi) = 1 \iff \exists x . \forall y . (\phi(x) = 1 \wedge (x \neq y \implies \phi(y) = 0))
+$$
+
+Where the quantifiers for $x$, $y$ range over all bit strings describing assignments to the variables in $\phi$.  These strings are polynomial in the description length of $\phi$, which has size linear in the number of variables referenced in the formula. 
+
+Let $g : \{0, 1\}^* \to \{0, 1\}$ where
+$$
+g(\phi) = 1 \iff \exists x . \phi(x) = 1
+$$
+Let $h : \{0, 1\}^* \to \{0, 1\}$ where
+$$
+h((\phi, x)) = 1 \iff \exists y . x \neq y \wedge \phi(y) = 1
+$$
+Observe that $g$ and $h$ are in NP.
+Let $k$ be the function which either returns the value of $g$ or $h$ depending on the first bit:
+$$
+k(0 \cdot z) = 1 \iff g(z) = 1 ; \quad k(1 \cdot z) = 1 \iff h(z) = 1
+$$
+Then of course $k$ is in $NP$.
+
+Let $T$ be the following Turing machine with oracle access to $k$.  It first queries $g$ through $k$ to determine if $\phi$ is satisfiable, and returns false if not.  If it is satisfiable, using its access to $g$, it finds a satisfying assignment $x$ to $\phi$ in polynomial time (using the reduction of Search-SAT to SAT from Pset 0).  Then it queries $h(\phi, x)$ through $k$ to see if there exists a satisfying assignment $y$ to $\phi$, distinct from $x$.  If so, it rejects.  Otherwise, it accepts.
+
+$T$ runs in polynomial time (given $k$-oracle access) and decides $f$.
+This proves $f \in \P^\NP$.
+
+
+% Thus $f \in \Sigma_2 P$.
+
+\section*{Problem 3: An Interesting Problem in PH (2 points)}
+
+\subsection*{Question}
+An important concept in machine learning theory is that of \emph{VC dimension}.
+Let ${\cal S} = \{S_1,\ldots,S_m\}$ be a collection of subsets over a universe $U = \{0,1\}^n$. We define the \emph{VC dimension of $\cal S$}, abbreviated as $VC({\cal S})$, to be the size of the largest set $X \subseteq U$ such that for every possible subset $X' \subseteq X$, there is some $i \in \{1,\ldots,m\}$ such that $S_i \cap X = X'$. (In other words, $X$ is a maximal subset of the universe such that for every possible subset $X'$ of $X$---every possible way to ``classify'' the elements of $X$ as 0 or 1---there is some $S_i \in {\cal S}$ whose intersection with $X$ is precisely $X'$.) 
+
+Let $C$ be a CNF formula over two collections of Boolean variables $i = (i_1,\ldots,i_t)$ and $x = (x_1,\ldots,x_n)$, where $t = \log_2(m)+O(1)$ and $i$ is treated as a number in $\{1,\ldots,m\}$. We say that $C$ \emph{represents a collection ${\cal S} = \{S_1,\ldots,S_m\}$} if for all $i\in\{1,\ldots,m\}$, $S_i = \{x \in \{0,1\}^n \mid C(i,x)\text{ is true}\}$. (In other words, the CNF $C$ encodes the sets of the collection ${\cal S}$ in a natural way.)
+
+Finally, we define the language
+\[\text{VCD} = \{ \langle C,k\rangle \mid k \text{ encoded in binary},~ C \text{ represents a collection $\cal S$ such that $VC({\cal S})\geq k$} \}.\]
+
+\begin{enumerate}
+\item[(a)] (1 point) Show that for any CNF $C$ over variables $i$ and $x$ as above, the VC dimension of the collection $\cal S$ represented by $C$ is at most $\log_2(m)$.
+
+\item[(b)] (1 point) Show that VCD is in $\Sigma_3 \P$.
+\end{enumerate}
+
+\noindent As a consequence, $\P = \NP$ would also imply that computing the VC dimension can be done in $\P$!
+
+\subsection*{Answer to (a)}
+For contradiction say the VC dimension of $\mathcal{S}$ were $k > \log_2(m)$.  Let $X \subseteq U$ be a set of size $k$.  Then there are $2^k$ distinct subsets of $X$, such that for each subset $X'_a$ for $a \in \{1, 2, \dots, 2^k\}$, there exists $S_{m_a} \in \mathcal{S}$ so $X'_a \cap S_{m_a} = X'_a$.  This means there exists a number $i_{m_a}$ such that $\forall x \in U, C(x, i_{m_a}) = 1 \iff x \in X'_a$.
+
+Because there are only $m$ values of $i$ treated as distinct by the formula $C$, and there are $2^k > 2^{\log_2(m)}$ values of $a$, we must have $i_{m_a} = i_{m_{a'}}$ for some distinct $a, a'$.  But then $X'_a = X'_{a'}$, contradicting the fact that the $X'$ are the $2^k$ distinct subsets of $X$ and are therefore all distinct.
+
+\subsection*{Answer to (b)}
+Observe that
+\begin{multline*}
+\langle C, k \rangle \in \text{VCD} \iff
+\exists X  .
+\forall X' .
+\forall x  .
+\exists i  . \\
+k \leq t(C) \quad \wedge \\
+|X| \geq k \quad \wedge \\
+(X' \subseteq X) \implies [C(i, x) = 1 \iff x \in X']
+\end{multline*}
+
+Here, we write $t(C)$ to denote the function which takes a description of formula $C$ as input, and outputs the number $t$ of input bits in the first collection $i$ of input bits to $C$.
+
+Note that the first clause in this formula, $k \leq t$, always holds if $k$ is the VC dimension of $C$, by part (a) and the fact that $t \geq \log(m)$.
+
+The values which are quantified over are as follows,
+\begin{itemize}
+	\item $X$ and $X'$ are subsets of $U$, each of size $\leq \log m$, represented as a list of integers in binary (giving the values in the subsets).  This requires $O(\log(m) n) = O(t n)$ bits (n bits for each element in the set).
+	\item $x$ and $u$ are bit strings of length $n$, describing elements of $U$
+	\item $i$ is a bit string of length $t$
+\end{itemize}
+
+Since the description of a CNF formula $C$ is at least linear in the number of variables appearing in it (which in this case includes $x_1$ through $x_n$ and $i_1, \dots, i_t$), the input $\langle C, k \rangle$ has length $\geq n + t$.  Thus each of the variables which is quantified over has length polynomial in the input.
+
+We only need to enumerate subsets $X$ of size $\leq \log m$ because we only need to consider cases where $k < \log m$, due to part (a).
+
+It is easy to see that computing the proposition after the quantifiers in the quantified formula can be done in polynomial time.
+
+Thus, $\text{VCD} \in \Sigma_3 P$.
+   
+\section*{Problem 4: Polynomial Hierarchy and Oracles (4 Points, 2 for each sub-problem)}
+
+\subsection*{Question}
+This problem is intended to help you learn about \emph{relativization}: how to re-prove a known theorem when oracles are stuck in everywhere.
+
+We say a language $L\in (\mathbf{\Sigma}_k \P)^A$ iff there is a polynomial time oracle Turing machine $M^A$ and polynomial $q(n)$ such that for all strings $x$,
+	\[
+		x\in L \Leftrightarrow (\exists~ x_1)(\forall~ x_2)\cdots (Q_k~ x_k) [M^A(x,x_1,\ldots,x_k)=1]
+	\] where $|x_j| \leq q(|x|)$ for all $1\leq j\leq i$, and $Q_i = \exists$ if $i$ is odd, else $Q_i = \forall$. Define \[\PH^A := \bigcup_{k>0} (\mathbf{\Sigma}_k \P)^A.\] 
+
+Let $k \geq 0$ be arbitrary, and let $A$ be any language such that $(\mathbf{\Sigma}_{k+1} \P)^A=(\mathbf{\Sigma}_k \P)^A$. \\
+
+\begin{enumerate}
+
+\item[(a)] Prove that $\PH^A\subseteq (\mathbf{\Sigma}_k \P)^A$. 
+\item[(b)] Use part (a) to prove that $\P = \NP$ implies $\PH = \P$ is true ``relative to all oracles $A$'', i.e. prove that $\P^A = \NP^A$ implies $\PH^A = \P^A$, for all $A$.
+\end{enumerate}
+
+\subsection*{Answer to (a)}
+
+I will prove by induction that $(\BSigma_n \P)^A \subseteq (\BSigma_k \P)^A$ for all $n \geq k$.  Since $\PH^A = \cup_n (\BSigma_n \P)^A$, this proves $\PH^A \subseteq (\BSigma_k \P)^A$.
+
+The cases $n = k$ is trivial and the case $n = k + 1$ is given.
+
+Now for the inductive step where $n \geq k + 2$, assume the theorem has been proven for $n - 1$ and $n - 2$.
+
+\textbf{Lemma.} Let $(\BPi_m \P)^A$ be the class of languages $L$ such that there exists a machine $M^A$ where $x \in L \iff (\forall x_1) (\exists x_2) \dots (Q'_m x_m)[M^A(x, x_1, \dots, x_m)]$, where $Q'_m$ is whichever of the symbols $\forall, \exists$ that $Q_m$ is not.
+Then $$
+(\BPi_m \P)^A = \{\bar{L} : L \in (\BSigma_m \P)^A\}
+$$ and
+$$
+(\BSigma_m \P)^A = \{\bar{L} : L \in (\BPi_m \P)^A\}
+$$
+\textit{Proof:} For $f$ as in the lemma statement, $f(x) = 1 \iff \neg (\exists x_1) (\forall x_2) \dots (Q_m x_m) [\neg M^A(x, x_1, \dots, x_m)]$.  And $\neg M^A$ can certainly be implemented with a Turing machine given oracle access to $A$.  The proof of the second equation is symmetric.
+
+\textbf{Corollary.} If $(\BSigma_n \P)^A = (\BSigma_k \P)^A$, then $(\BPi_n \P)^A = (\BPi_k \P)^A$.
+\textit{Proof:} Say $L \in (\BPi_n \P)^A$. Then $L = \bar{L'}$ for some $L' \in (\BSigma_n \P)^A = (\BSigma_k \P)^A$.  Thus $L$ is the complement of a language in $(\BSigma_k \P)^A$, so it is in $(\BPi_k \P)^A$.
+
+% Then if $(\BSigma_n \P)^A = (\BSigma_k \P)^A$, $(\BPi_n \P)^A = (\BPi_n \P)^A$
+
+% we need to  that if $(\BSigma_n \P)^A = (\BSigma_k \P)^A$, then $(\BPi_n \P)^A = (\BPi_n \P)^A$.  For say $L \in (\BPi_n \P)^A$. Then $L = \bar{L'}$ for some $L' \in (\BSigma_n \P)^A$.
+
+Now, consider a decision function $f \in (\BSigma_n \P)^A$, where this inclusion is witnessed by Turing macine $M^A$.  For any $x$, let $L'$ be the language
+$$
+(x, x') \in \L' \iff (\forall x_2) (\exists x_3) (\forall x_4 ) \dots (Q_n x_n) [M^A(x, x', x_2, x_3, \dots, x_n)]
+$$
+
+Note that $f(x) = 1 \iff (\exists x_1) [(x, x_1) \in L']$.
+
+Observe that $L' \in (\BPi_{n - 1} \P)^A$.  By the inductive hypothesis, and the corollary above, $L' \in (\BPi_k \P)^A$. Thus there exists an oracle Turing machine $T^A$ so that
+$$
+(x, x') \in L' \iff (\forall x_1) (\exists x_2) \dots (Q_k x_k) [T^A(x, x', x_1, \dots, x_k)]
+$$
+Then $f(x) = 1 \iff (\exists x')(\forall x_1) (\exists x_2) \dots (Q_k x_k) [T^A(x, x', x_1, \dots, x_k)]$.  This proves that $f \in (\BSigma_{k + 1} \P)^A = (\BSigma_k \P)^A$.
+
+\subsection*{Answer to (b)}
+
+Given part (a), it suffices to prove that $\P^A = \NP^A \implies (\BSigma_0 \P)^A = (\BSigma_1 \P)^A$.  For this it certainly suffices to show that $\P^A = (\BSigma_0 \P)^A$ and $\NP^A = (\BSigma_1 \P)^A$.  And these follow immediately from our definitions.  (Ie. for each of these equalities, our definition of the object on the LHS is identical to our definition of our object on the RHS.)
+
+
+\section*{Problem 5: Alternation! (8 Points, 2 for each sub-problem)}
+
+There is a generalization of both nondeterminism and conondeterminism called \emph{alternation}, which is a natural machine model for massive parallelism. In this problem we will explore why alternation is cool. {\bf (Note: Arora and Barak also discuss alternation. Feel free to use the textbook to help you answer the questions below, but please write your  answers in your own words!)}
+
+Here's the setup. An {\em alternating Turing machine} $M$ works just like a non-deterministic machine, except the states of $M$ have ``labels'' and the accepting condition is different. Each state of an alternating Turing machine $M$, other than $q_{\text{acc}}$ and $q_{\text{rej}}$, has an associated \emph{state label} which can be $\forall$ or $\exists$. Configurations of $M$ which have an $\forall$ state are called {\em universal configurations}, and configurations involving an $\exists$ state are {\em existential configurations}. 
+
+The configuration graph $G_{M,x}$ for a machine $M$ on input $x$ is the same as for non-deterministic machines. (If you haven't seen these before, we will recall them on 2/24.) The acceptance condition is more complicated, and is defined recursively. For a configuration node $v$ in the graph $G_{M,x}$ we say {\em $v$ leads to acceptance} if \begin{enumerate}
+\item $v$ contains $q_{\text{acc}}$, or 
+\item $v$ is an existential configuration and there is an edge $(v,u)$ in $G_{M,x}$ such that the node $u$ leads to acceptance, or 
+\item $v$ is a universal configuration and for all edges $(v,u)$ in $G_{M,x}$, the node $u$ leads to acceptance. 
+\end{enumerate}
+Then, we define that $M$ \emph{accepts} $x$ if the initial
+configuration of $G_{M,x}$ leads to acceptance. 
+
+Note that a machine with only existential configurations gives exactly the acceptance condition for a non-deterministic machine, and a machine with only universal configurations works just like a co-nondeterministic machine.
+
+We define the running time of an alternating machine $M$ on input $x$ to be the length of the longest path in $G_{M,x}$. The space used by $M$ on $x$ is the size (in bits) of the largest configuration in $G_{M,x}$. Finally, we define\[\ATIME(t(n)) = \{L ~| \text{ there is an alternating machine that accepts
+$L$ in time $O(t(n))$}\},\] and
+\[\ASPACE(s(n)) = \{L ~| \text{ there is an alternating machine that
+accepts $L$ in space $O(s(n))$}\}.\]
+
+We define {\bf AP}~$:= \bigcup_c \ATIME(n^c)$, (alternating poly-time), {\bf AL}~$:= \ASPACE(\log n)$ (alternating logspace), and {\bf ASPACE}~$:= \bigcup_c \ASPACE(n^c)$ (alternating polynomial
+space). In the following, assume the functions $t$ and $s$ are time and space constructible, respectively.
+
+\begin{enumerate}
+\item[(a)] Prove that $\ATIME(t(n)) \subseteq \SPACE(t(n))$.
+\item[(b)] Prove that $\SPACE(s(n)) \subseteq \ATIME(s(n)^2)$ for
+$s(n)\geq n$.
+
+{\it Hint: Use the idea of Savitch's theorem that ${\sf NSPACE}(s(n)) \subseteq \SPACE(s(n)^2)$.}
+
+\item[(c)] Define $\TIME[2^{O(s(n))}] := {\bigcup_{c \geq 1} \TIME(c^{s(n)})}$.\\
+Prove that  for $s(n) \geq \log n$, $\ASPACE(s(n)) \subseteq \TIME[2^{O(s(n))}]$.
+
+{\it Hint: Note this generalizes the proof that ${\sf NSPACE}(s(n))
+	\subseteq \TIME(c^{s(n)})$.}
+
+\item[(d)] Prove that for $s(n) \geq \log n$, $\TIME[2^{O(s(n))}] \subseteq \ASPACE(s(n))$.
+
+{\it Hint: In alternating space $O(s(n))$, you could have computation paths of length up to $2^{O(s(n))}$, with many alternations.} 
+\end{enumerate}
+
+From parts (a), (b), (c), (d), it follows immediately that $\bf{AL}=\bf{P}$, $\bf{AP}=\bf{PSPACE}$, and $\bf{APSPACE}=\bf{EXP}$. Adding alternation turns a time class into the corresponding space class, and a space class into an exponentially larger time class! So for example, the $\bf{P}$ vs $\bf{PSPACE}$ question boils down to whether there are problems solvable in alternating polynomial time which cannot be solved in \emph{deterministic} polynomial time. 
+
+\section*{Problem 6: Algorithms versus Oracles (2 Points)}
+
+Here is an apparent {\em paradox}. Given a polynomial time algorithm for SAT, we know how to construct a polynomial time algorithm for any problem in the polynomial hierarchy, e.g., MIN-FORMULA and VCD (problem 3). (In particular, we proved that $\mathbf{P} = \mathbf{NP}$ implies $\mathbf{P} = \mathbf{PH}$.) On the other hand, given an \emph{oracle} for SAT, we \emph{do not} know how to use it to solve MIN FORMULA in polynomial time (that would put MIN-FORMULA in $\mathbf{P}^{\mathbf{NP}}$, which is an open problem). The oracle and the algorithm have the same input/output behavior; how can one be more useful than the other? Your answer should be less than ten lines of LaTeX.
+
+
+\end{document}

@@ -214,6 +214,8 @@ Given part (a), it suffices to prove that $\P^A = \NP^A \implies (\BSigma_0 \P)^
 
 \section*{Problem 5: Alternation! (8 Points, 2 for each sub-problem)}
 
+\subsection*{Question}
+
 There is a generalization of both nondeterminism and conondeterminism called \emph{alternation}, which is a natural machine model for massive parallelism. In this problem we will explore why alternation is cool. {\bf (Note: Arora and Barak also discuss alternation. Feel free to use the textbook to help you answer the questions below, but please write your  answers in your own words!)}
 
 Here's the setup. An {\em alternating Turing machine} $M$ works just like a non-deterministic machine, except the states of $M$ have ``labels'' and the accepting condition is different. Each state of an alternating Turing machine $M$, other than $q_{\text{acc}}$ and $q_{\text{rej}}$, has an associated \emph{state label} which can be $\forall$ or $\exists$. Configurations of $M$ which have an $\forall$ state are called {\em universal configurations}, and configurations involving an $\exists$ state are {\em existential configurations}. 
@@ -255,6 +257,59 @@ Prove that  for $s(n) \geq \log n$, $\ASPACE(s(n)) \subseteq \TIME[2^{O(s(n))}]$
 \end{enumerate}
 
 From parts (a), (b), (c), (d), it follows immediately that $\bf{AL}=\bf{P}$, $\bf{AP}=\bf{PSPACE}$, and $\bf{APSPACE}=\bf{EXP}$. Adding alternation turns a time class into the corresponding space class, and a space class into an exponentially larger time class! So for example, the $\bf{P}$ vs $\bf{PSPACE}$ question boils down to whether there are problems solvable in alternating polynomial time which cannot be solved in \emph{deterministic} polynomial time. 
+
+\subsection*{Answer to (a)}
+First, observe that for any alternating Turing machine $A$, there is an equivalent machine $A'$ with a unique accepting configuration $c_\text{acc}$.  (This can be constructed from $A$ by replacing the accept state with a state that deterministically clears the memory tape and then accepts.)  If the maximum paths in the configuration graph for $A$ have length $t(n)$, the path lengths in $A'$ are bounded by $O(t(n))$ (since there are at most $t(n)$ values on the memory tape to clear).
+
+Let $L \in \ATIME(t(n))$.  Then there exists an alternating Turing maching $A$ deciding $L$, with a unique accepting configuration $c_\text{acc}$, such that all paths in the computaiton graph for $A$ have size $\leq c t(n)$ for some $c$.
+
+I will now prove that there exists a deterministic Turing machine $M$ for $L$ which uses space $O(t(n))$.
+
+Let $B$ be the maximum branching factor of any state in $A$, and let $Q$ be the number of states in the graph.
+
+In this proof, we will sometimes say that a configuration node $c$ \textit{leads to acceptance within $k$ steps}.  For $k = 0$, this means that $c$ is $c_\text{acc}$.  For $k \geq 1$, if $c$ is an existential node this means that there exists a $c'$ with an edge $c \to c'$ where $c'$ leads to acceptance within $k - 1$ steps, and if $c$ is an existential node, this means that for all $c'$ with an edge $c \to c'$, $c'$ leads to acceptance within $k - 1$ steps.
+
+Given an input $x$ to $A$, of size $n$, since we know that all paths in the computation graph have length less than $c t(n)$, we know that $x \in L$ iff the initial configuration for input $x$ leads to acceptance within $c t(n)$ steps.
+
+Consider the following recursive algorithm to decide whether a configuration $c$ leads to acceptance within $k$ steps.  This algorithm will utilize a memory layout of the following form.  Let $K$ be the value of $k$ at the top of the recursion.  We will use $\log(K)$ bits to store the current recursive level's value of $k$.  We will use $\log |c_0|$ bits to write down the configuration $c_0$ we are checking at the top level of the recursion.  And we will maintain a stack of $\log(B)$ bits for each level of the recursion.  The $j$th element in this stack will store the index of the child of a configuration in the configuration graph.
+
+Given $c_0$ and a sequence $i_1, \dots, i_j$ of integers in $\{1, 2, \dots, B\}$, for each $c > 0$, let $c_t$ be the $i_t$th child of $c_{t - 1}$ in the configuration graph.  Observe that we can compute $c_t$ in constant memory.
+
+The recursion works as follows.  Say the stack has size $J$.  Compute $c_J$.  Let $k$ denote the value written in the slot of $\log(K)$ bits.  The goal at this level of the recursion is to determine if $c_J$ leads to acceptance within $k$ steps.  If $k = 0$, simply return 1 if $c_J = c_\text{acc}$ and return 0 otherwise.  If $k > 1$, and $c$ is existential, add a level to the recursion stack.  Write down $i = 1$ at a new level on the recursion stack.  For each value $i = 1, \dots, B$, consider the $i$th state $c'$ which $c$ leads to in the configuration graph (if $i$ such states exist).  Overwrite the current storage of the value $k$ with the value $k - 1$, and then recurse the algorithm to determine if $c'$ leads to acceptance within $k - 1$ steps. Then overwrite the value $k - 1$ with the value $k$ (by incrementing it by 1).  If $c'$ was found to lead to acceptance in $k - 1$ steps, return that $c$ leads to acceptance within $k$ steps.  Otherwise continue to the next $i$.  Conversely, if $c$ is a universal state, we can perform the same recursion, but now if we find that $c'$ does not lead to acceptance, we immediately return false, while we continue looping otherwise.
+
+This recursion uses $O(\log(K) + K \log(B) + s) = O(K + s)$ bits of storage, where $s$ is the number of bits it takes to store a configuration in the graph.
+
+To determine whether a string $x \in L$, it suffices to compute the initial configuration $c_\text{acc}$ and determine if $c_\text{acc}$ leads to acceptance in $c t(n)$ steps.  Per the above, this can be done by a deterministic Turing machine in $O(t(n) + s)$ time, where $s$ is the size of a description of a configuration.  Since there are only at most $2^{t(n)}$ configurations, $s \in O(t(n))$.  Thus, $L \in \text{SPACE}(t(n))$.
+
+% Given a string $x$, we know $c_\text{init}$, the initial configuration of $A$ run on $x$.  If $c_\text{acc}$ is existential, observe that $x \in L$ iff there exists a configuration $c$ such that $c_\text{acc} \mapsto c$ and $c$ leads to acceptance within $c t(n) - 1$ steps.  Likewise, if it is universal, $x \in L$ iff for all $c$ where $c_\text{acc} \mapsto c$, $c$ leads to acceptance within $k - 1$ steps.
+
+% Let $B$ be the maximum branching factor of any state in $A$.  I will construct an $M$ which decides $L$ in roughly $B t(n)$ space.  The idea is that if there is a path from $c_\text{init}$ to $c_\text{acc}$, for each node $c$ in this path, $M$ will write down 
+
+\subsection*{Answer to (b)}
+
+Let $L \in \SPACE(s(n))$.  Then certainly $L \in \TIME(2^{O(s(n))})$.
+WLOG there is a Turing machine such that $x \in L$ iff there is a path of length $\leq 2^{c s(n)}$ for some $c$ from the initial configuration on input $x$, $c_\text{init}$, to a unique accepting configuration $c_\text{acc}$ in the Turing machine.
+
+Let $L'$ be the language $(G, s, t, k)$ of graphs with upper-bounded branching factor, and with nodes $s, t$, where there is a path $s \to t$ of length $\leq 2^k$.  The above shows that $L$ can be decided by determining whether $(G_{M, x}, c_\text{init}, c_\text{acc}, c s(n)) \in L'$.  Observe that $G_{M, x}$ has no more than $2^{c s(n)}$ vertices.  Thus, if for any graph $G$ with $\leq 2^{O(k)}$ it is possible to determine whether $(G, s, t, k) \in L'$ using an alternating TM using space $O(k^2)$, then $L \in \ASPACE(s(n)^2)$.
+
+Observe
+\begin{multline*}
+(G, s, t, k) \in L' \iff
+\exists v \in V(G) .
+\forall z \in \{0, 1\} . \\
+[(z = 0) \wedge (G, s, v, k - 1) \in L'] \vee
+[(z = 1) \wedge (G, v, t, k - 1) \in L']
+\end{multline*}
+
+That is, $(G, s, t, k) \in L'$ if there exists an intermediate vertex $v$ in the set $V(G)$ of vertices in the graph, such that $s \to v$ in $2^{k - 1}$ steps and $v \to t$ in $2^{k - 1}$ steps.  We use universal quantification over the binary value $z$ to determine whether to check that path $s \to v$ or path $v \to t$ exists.
+When $k = 0$, the final clause in this formula (where we either check path $s \to v$ or path $v \to t$) can be computed simply by checking if $s \to v$ or $v \to t$ (whichever we are checking) is an edge in graph $G$.
+This recursive definition can be implemented by an alternating Turing machine which must store $\log |V(G)| + 1$ bits at each step of the recursion (where $|V(G)|$ is the number of vertices in the graph), to write down the value of vertex $v$ and the value $z$.  The recursion will have $k$ steps.  Thus, we can check $(G, s, t, k) \in L'$ with an alternating Turing using space $O(k \log |V(G)|)$.  If $|V(G)| \leq 2^{O(k)}$, as it is in the configuration graph for the $\SPACE(s(n))$ Turing machine (as we noted above), this is contained in $O(k^2)$.  This completes the proof.
+% Observe that the final clause (where we either check path $s \to v$ or path $v \to t$) 
+
+% This occurs iff there is a configuration $c$ such that there is a path $c_\text{init} \to c$ of length $\leq 2^{c s(n) - 1}$ and a path $c \to c_\text{acc}$ of length $\leq 2^{c s(n) - 1}$.
+
+\subsection*{Answer to (c)}
+
 
 \section*{Problem 6: Algorithms versus Oracles (2 Points)}
 

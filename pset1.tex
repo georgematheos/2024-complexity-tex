@@ -1,6 +1,6 @@
 \documentclass{article}
 \usepackage{amsmath}
-% \usepackage{fullpage}
+\usepackage{fullpage}
 \usepackage{amsmath,amssymb,verbatim}
 % \usepackage{fullpage}
 \usepackage{enumerate}
@@ -385,9 +385,158 @@ One is to represent each vertex as a bit string directly encoding the Turing mac
 
 \subsection*{Answer to (d)}
 
+Say we are given a Turing machine $T$ which runs in time $2^{cs(n)}$.
+
+I will construct a Turing machine $A$ which uses $O(s(n))$ space, and simulates $T$.
+
+The Turing machine $A$ will have two modes.  The first mode will be used to answer the question: ``In executing $T$ on $x$, was $b \in \{0, 1\}$ the bit value on the $i'$th slot of the read/write tape, at time $t'$ of the computation?''
+The second mode will answer the question: ``If at time $t$, the Turing machine $T$ run on $x$ had its head at position $i$ on the tape, and was in state $q$, does it ultimately accept?''
+
+The second mode is implemented by existentially guessing the bit value $b$ which $T$ reads from slot $i$ at time $t$, and then computing the new state $q_{t+1}$, the new head position $i_{t+1}$, and the new time $t+1$ which would occur if $T$ read bit $b$.  $A$ then uses universal quantification to accept if and only if (1) $b$ actually \textit{is} the value which $T$ would read from slot $i$ at time $t$ (this can be verified using mode 1), and (2) at time $t + 1$, $T$ on $x$ accepts if it is in state $q_{t+1}$ with its head at position $i_{t+1}$ (this can be verified using mode 2).
+Naturally, if the second mode is ever entered to ask if $T$ would accept on state $q = q_\text{accept}$, then $A$ immediately returns yes rather than recursing.  This is implemented in algorithm $\mathsf{AcceptsOn}$ below.
+
+% What remains is to describe how mode 1 is implemented, and then to explain why this can all be done in limited memory.
+
+Mode 1 is implemented recursively as well.
+It is implemented by effectively running a simulation of the Turing machine $T$, to verify this bit value.
+An implementation of Mode 1 is given in the algorithm box $\mathsf{BitAtTimeIs}(x, i_0, t_0, q_0, b_0, i_1, t_1, b_1)$.
+This algorithm runs a simulation of $T$ on $x$, tracking the current head position $i_0$, the current simulation timestep $t_0$, the current state $q_0$, and the current bit $b_0$ at position $i_1$ on the tape.
+It ultimately runs the simulation to time $t_1$, to determine if the bit at slot $i_1$ at time $t_1$ is the value $b_1$.
+Mode 1, to verify that bit $i$ at time $t$ is $b$, can be implemented by calling $\mathsf{BitAtTime1}(x, 1, 1, q_\text{init}, \mathsf{InitBitVal}(i), t, i, b)$, to initialize a simulation with the head at position 1, at time 1, from the initual state.  The function $\mathsf{InitBitVal}(i)$ is used to determine the initial bit on the tape at position $i$.
+
+\begin{algorithm}{$\mathsf{AcceptsOn}(x, t_0, q_0, i_0)$}
+\begin{algorithmic}
+\STATE \COMMENT{
+Decide if $T$ ultimately accepts on $x$, given that
+at time $t_0$ its state was $q_0$ and its head was at position $i_0$.
+}
+\IF{$q_0 = q_\text{accept}$}
+\RETURN 1
+\ELSIF{$q_0 = q_\text{reject}$}
+\RETURN 0
+\ELSE
+\STATE Existentially guess $b \in \{0, 1\}$.
+\STATE Universally select $m \in \{0, 1\}$
+\IF{m = 0}
+\RETURN $\mathsf{BitAtTimeIs}(x, 1, 1, q_\text{init}, \mathsf{InitBitVal}(i_0), t_0, i_0, b)$
+\ELSE
+\STATE Get next head position, state $(q_1, i_1, \_) \gets T(q_0, i_0, b)$
+\RETURN $\mathsf{AcceptsOn}(x, t_0 + 1, q_1, i_1)$
+\ENDIF
+\ENDIF
+\end{algorithmic}
+\end{algorithm}
+
+\begin{algorithm}{$\mathsf{BitAtTimeIs}(x, i_0, t_0, q_0, b_0, i_1, t_1, b_1)$}
+% Given that at time t_0 we were at (i_0, q_0),
+% and had b_0 at slot i_1, then
+% then at time t_1 we had b_1 at i_1
+\begin{algorithmic}
+\STATE \COMMENT{$\mathsf{BitAtTimeIs}$: Given that when $T$ was run on $x$, at time $t_0$ its head was at position $i_0$ and it was in state $q_0$,
+and that the value of the bit at position $i_1$ was $b_0$,
+determine whether $b_1$ is the value of the bit at position $i_1$
+at time $t_1$.
+}
+\STATE If $t_1 = 1$ and $i_1 = 1$ and $b = x[1]$, return 1.
+\STATE Existentially guess $b' \in \{0, 1\}$.
+\STATE Universally select $m \in \{0, 1\}$.
+\IF{m = 0} 
+\RETURN $\mathsf{BitAtTimeIs}(x, 1, 1, q_\text{init}, \mathsf{InitBitVal}(x, i_0), i_0, t_0, b_0)$ \COMMENT{Check if $b'$ was the right guess.} 
+\ELSE
+\STATE \COMMENT{Continue the simulation, assuming $b'$ was the right guess.}
+
+\STATE $(i', q', b'') \gets T(q_0, b')$ \COMMENT{Compute the next head position, write bit, and state of $T$, given current position $q_0$ and read bit $b'$.}
+\IF{$i_0 = i_1$}
+\STATE $b_0 \gets b''$
+\ENDIF
+\IF{$t_0 + 1 == t_1$}
+\RETURN $b_0 == b_1$
+\ENDIF
+\RETURN $\mathsf{BitAtTimeIs}(x, i', t_0 + 1, q', b_0, i_1, t_1, b_1)$
+\ENDIF
+\end{algorithmic}
+\end{algorithm}
+
+\begin{algorithm}{$\mathsf{InitBitVal}(x, i)$}
+\begin{algorithmic}
+\IF{$i \leq |x|$}
+\RETURN $x[i]$
+\ELSE
+\RETURN 0
+\ENDIF
+\end{algorithmic}
+\end{algorithm}
+
+The final step in the proof is simply to verify that this can all be done in $O(s(n))$ space.
+To verify this, simply observe that only things any of these algorithms need to track are: (1) $x$ (of length $n$), (2) time values $t_0$ and $t_1$ which must be of size $2^{O(s(n))}$ and can thus be stored in $O(s(n))$ bits, (3) indices $i_0$ and $i_1$ onto the read/write tape, which can only grow to size $2^{O(s(n))}$ in the execution of $T$ and thus can be encoded in $O(s(n))$ bits, and (4) states $q$ and bit values $b$ which can be encoded in constant space.
+
+% \begin{algorithm}{$\mathsf{Simulate}(x, i, t, q)$}
+% 	\begin{algorithmic}
+% 	\STATE If $t = 1$ and $i = 1$ and $b = x[1]$, return 1.
+% 	\STATE Existentially guess $b'$.
+% 	\end{algorithmic}
+% 	\end{algorithm}
+
+% \subsubsection*{Lemma. An $O(s(n))$ space alternating Turing machine can determine if the value of the $i$th bit on the read/write tape of $T$ was $b$ at time $t$.}
+
+% We will have a part of our Turing machine $A$ which is responsible for determining this.  In our Turing machine $A$, we will reserve memory to store an index $i'$, a timestep $t'$, and a binary value $b$.  Whenever $A$ enters a state $q_\text{verifybit}$, $A$ will do a computation which ultimatel accepts if the value of 
+
+
+% $A$ will track the following in its $O(s(n))$ memory:
+% \begin{itemize}
+% 	\item The input $x$
+% 	\item The timestep $t$ in the simulation of $T$
+% 	\item The current state $q$ in the simulation of $T$
+% 	\item The index $i$ the head of $T$ is pointing to on the read/write tape
+% 	\item A timestep value $t'$
+% 	\item An index value $i'$ for a position on the read/write tape
+% 	\item A bit value $b$
+% \end{itemize}
+
+% $A$ will have several modes it can enter (by switching to different states):
+% \begin{itemize}
+% 	\item Mode (i): Accept iff the bit at position $i'$ at time $t'$ in the simulation of $T$ was $b$.
+% 	\item Mode (ii): Given that $b$ was the bit at position $i$ during time $t$, simulate $T$
+% \end{itemize}
+
+
+% First I will show we can set up a $O(s(n))$-space ATM $A'$ which we can query to correctly answer the question ``did the $i$th bit on the tape of Turing machine $T$ at time t contain the value 1''.
+
+% Then, I will show how we can use this to construct an ATM $A$ which simulates a Turing machine $T$ by tracking (1) the position $i$ of the head on the tape of $T$ and (2) the timestep $t$ in the computation, and (3) the state of Turing machine $T$.
+% Whenever $T$ reads the value of bit $i$ on the tape at timestep $t$ in the computation, $A$ will (1) existentially guess a bit $b$,
+% and then (2) use universal quantification to accept iff (a) $A'$ verifies that the bit that $T$ read at time $t$ was $b$, AND (b) the next state visited by 
+
+\newpage
 \section*{Problem 6: Algorithms versus Oracles (2 Points)}
 
+\subsection*{Question}
 Here is an apparent {\em paradox}. Given a polynomial time algorithm for SAT, we know how to construct a polynomial time algorithm for any problem in the polynomial hierarchy, e.g., MIN-FORMULA and VCD (problem 3). (In particular, we proved that $\mathbf{P} = \mathbf{NP}$ implies $\mathbf{P} = \mathbf{PH}$.) On the other hand, given an \emph{oracle} for SAT, we \emph{do not} know how to use it to solve MIN FORMULA in polynomial time (that would put MIN-FORMULA in $\mathbf{P}^{\mathbf{NP}}$, which is an open problem). The oracle and the algorithm have the same input/output behavior; how can one be more useful than the other? Your answer should be less than ten lines of LaTeX.
 
+\subsection*{Answer}
+
+If SAT is solvable in polynomial time, one implication is that for any given formula $\phi$ which takes $n$ bits to encode, there is a boolean formula $\gamma$ on $n$ input bits such that for any sequence of $n$ bits $\psi$ which themselves encode a formula, $\gamma(\psi)$ and $\exists x . \psi(x) \neq \phi(x)$ have the same truth value.
+Further, $|\gamma|$ is polynomial in $|\phi|$.
+Thus, $[\forall \psi . \exists x . \psi(x) \neq \phi(x)] = [\neg \exists \psi . \gamma(\psi)]$.  The former is the definition of MIN-FORMULA; the latter is a SAT problem of polynomial size in $|\phi|$.
+
+If all we have is a SAT oracle, we can solve the inner $\exists$ in one step, but we may need to do this exponentially many times, or we can solve the outer $\forall$ by solving an exponentially large SAT problem, which we can't write in polynomial time.  The oracle gives us no guarantee we can effectively reduce the whole problem to a single polynomially-sized SAT query, while the algorithm does guarantee this.
+
+% The fact that we can solve the inner SAT problem in the $\forall . \exists$ sequence in polynomial time gives us a polynomial-size SAT problem at the outer level (the $\forall$).
+
+% If all we have is a SAT oracle, we get no such guarantee.
+
+% On the other hand, if we only have an oracle for SAT, but cannot SAT problems are solvable in polynomial time, we have no guarantee that the SAT problem we must solve at the outermost level is of polynomial size in the input.
+
+% for any two formulae $\phi$ and $\psi$, there is a polynomial length quantifier free formula $\gamma$ which has the same truth value as $\exists x . \phi(x) \neq \psi(x)$.
+
+% If SAT is solvable in polynomial time, this also implies that the formula $\not \exists . \psi . 
+
+% Solving MIN-FORMULA seems to require determining ``for all other formulae, there exists an assignment making it different from the initial formula''.
+
+% While a SAT oracle can be used to resolve the existential clause, it is
+% not clear that there is any algorithm that can solve MIN-FORMULA using only a polynomial number of queries to a SAT oracle, as there are an exponential number of formulae to check.
+
+% However, if a polynomial time SAT algorithm existed, we could 
+
+% this would guarantee that P = NP, that would guarantee that there is a polynomial
 
 \end{document}

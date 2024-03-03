@@ -5,6 +5,8 @@
 % \usepackage{fullpage}
 \usepackage{enumerate}
 \usepackage{xcolor}
+\usepackage{algorithm}
+\usepackage{algorithmic}
 \renewcommand{\P}{\mathbf{P}}
 \newcommand{\NP}{\mathbf{NP}}
 \newcommand{\coNP}{\mathbf{coNP}}
@@ -303,13 +305,85 @@ Observe
 
 That is, $(G, s, t, k) \in L'$ if there exists an intermediate vertex $v$ in the set $V(G)$ of vertices in the graph, such that $s \to v$ in $2^{k - 1}$ steps and $v \to t$ in $2^{k - 1}$ steps.  We use universal quantification over the binary value $z$ to determine whether to check that path $s \to v$ or path $v \to t$ exists.
 When $k = 0$, the final clause in this formula (where we either check path $s \to v$ or path $v \to t$) can be computed simply by checking if $s \to v$ or $v \to t$ (whichever we are checking) is an edge in graph $G$.
-This recursive definition can be implemented by an alternating Turing machine which must store $\log |V(G)| + 1$ bits at each step of the recursion (where $|V(G)|$ is the number of vertices in the graph), to write down the value of vertex $v$ and the value $z$.  The recursion will have $k$ steps.  Thus, we can check $(G, s, t, k) \in L'$ with an alternating Turing using space $O(k \log |V(G)|)$.  If $|V(G)| \leq 2^{O(k)}$, as it is in the configuration graph for the $\SPACE(s(n))$ Turing machine (as we noted above), this is contained in $O(k^2)$.  This completes the proof.
+This recursive definition can be implemented by an alternating Turing machine which must store $\log |V(G)| + 1$ bits at each step of the recursion (where $|V(G)|$ is the number of vertices in the graph), to write down the value of vertex $v$ and the value $z$.  The recursion will have $k$ steps.  Thus, we can check $(G, s, t, k) \in L'$ with an alternating Turing using space $O(k \log |V(G)|)$.  If $|V(G)| \leq 2^{O(k)}$, as it is in the configuration graph for the $\SPACE(s(n))$ Turing machine (as we noted above), this is contained in $O(k^2)$.  This completes the proof. 
 % Observe that the final clause (where we either check path $s \to v$ or path $v \to t$) 
 
 % This occurs iff there is a configuration $c$ such that there is a path $c_\text{init} \to c$ of length $\leq 2^{c s(n) - 1}$ and a path $c \to c_\text{acc}$ of length $\leq 2^{c s(n) - 1}$.
 
 \subsection*{Answer to (c)}
+To show that $\ASPACE(s(n)) \subseteq \TIME(c^{s(n)})$, I will show that for any language $L \in \ASPACE(s(n))$ and for any $x$, it is possible to determine whether $x \in L$ by running an $O(n \log(n))$ graph search algorithm on the configuration graph of an alternating Turing machine for $L$, which has size $2^{O(s(n))}$.
 
+In particular, the graph search problem we need to solve is one I will call $\mathsf{AGraphSearch}$.  The input to an $\mathsf{AGraphSearch}$ problem is a graph $G$ where each vertex $v \in V(G)$ is labeled with a universal or existential quantifier.  We will write $u(v) = 1$ if the quantifier for $v$ is universal and $u(v) = 0$ if it is existential.  The solution to this problem is given as follows.
+\begin{multline*}
+(G, s, t) \in \mathsf{AGraphSearch} \iff G \text{ is a directed acyclic graph with edges}\\ \text{labeled with quantifiers, with a bounded branching factor},\\
+\text{and } s, t \in V(G), \text{ and } ( s = t \vee \\
+[u(s) = 1 \wedge \forall s' \text{s.t.} (s \to s') \in E(G) . (G, s', t) \in \mathsf{AGraphSearch}] \vee \\
+[u(s) = 0 \wedge \exists s' \text{s.t.} (s \to s') \in E(G) , (G, S', t) \in \mathsf{AGraphSearch}]
+)
+\end{multline*}
+
+For any language $L \in \ASPACE(s(n))$, any alternating Turing machine $A$ which decides this language, and any string $x$ of length $n$, let $G_{A, x}$ be the configuration graph of $A$ on $x$, and WLOG let $c_\text{init}$ and $c_\text{acc}$ be the unique initial and accepting configurations. Per the discussion on Piazza, WLOG we can take $G_{A, x}$ to be acyclic.
+The number of vertices in $G_{A, x}$ is in $2^{O(s(n))}$, and since the branching factor of $G_{A, x}$ is bounded above by a constant $B$, the number of edges is also $2^{O(s(n))}$.
+It is immediate from our definitions that $x \in L$ if $(G_{A, x}, c_\text{init}, c_\text{acc}) \in \mathsf{AGraphSearch}$.
+If $\mathsf{AGraphSearch}$ can be decided in time $O(n \log(n))$,
+then $x \in L$ can be decided in $O(s(n) 2^{O(s(n))}) = 2^{O(s(n))}$.
+
+% [[TODO: have a note about how we can efficiently encode the lookup table for edges in this graph -- or some other note about the relevent aspects of how quickly we can query edges.  Should be $O(s(n))$.]]
+
+The final step to the proof is to provide an $O(n \log(n))$ algorithm for
+$\mathsf{AGraphSearch}$. 
+The algorithm is depth first search, using a lookup table $T$ (implemented, e.g., as a tree map) to track the accept/reject values for each node the depth first search has already visited.
+The algorithm $\mathsf{AGraphSearch}$ initializes $T$ to the 1-element dictionary $\{t \mapsto 1\}$ to indicate that $t$ is an acceptance state.  It then calls $\mathsf{AGraphSearchHelper}$, which performs the depth first search using dictionary $T$.
+The helper algorithm, called on vertex $s$, returns immediately if $s \in \text{keys}(T)$.
+Otherwise, it recurses on each child of $s$ in the graph.  If $s$ is universal, it rejects on the first child that rejects (and accepts if no children reject), and if it is existential, it accepts on the first accepting child (and rejects if no children accept).
+
+\begin{algorithm}{$\mathsf{AGraphSearch}(G, s, t)$}
+\begin{algorithmic}
+	\STATE $T \gets \{t \mapsto 1\}$
+	\RETURN $\mathsf{AGraphSearchHelper}(G, s, T)$
+\end{algorithmic}
+\end{algorithm}
+
+\begin{algorithm}{$\mathsf{AGraphSearchHelper}(G, s, T)$}
+\begin{algorithmic}
+\STATE \textbf{if} $s \in \text{keys}(T)$, return $T[s]$
+\FOR{vertex $s'$ with $(s \to s') \in E(G)$}
+\STATE $a \gets \mathsf{AGraphSearchHelper}(G, s', T)$
+\STATE Add key $s'$ to table $T$ and set $T[s'] \gets a$.
+\STATE \textbf{if} $a = 0$ and $u(s) = 1$, REJECT.
+\STATE \textbf{if} $a = 1$ and $u(s) = 0$, ACCEPT.
+\ENDFOR
+\STATE \textbf{if} $u(s) = 1$, ACCEPT
+\STATE \textbf{if} $u(s) = 0$, REJECT
+\end{algorithmic}
+\end{algorithm}
+
+It is immediate from our definitions that this algorithm solves $\mathsf{AGraphSearch}$.  All that remains is to verify that it can be run in $O(n \log(n))$ time
+First, note that the for loop in $\mathsf{AGraphSearchHelper}$ is entered at most once on a call call for any vertex $s$ each vertex, since after the first time $\mathsf{AGraphSearchHelper}$ is called on a vertex $s$, the result is added to the table $T$, and future calls just perform a lookup in this table and terminate immediately.
+Second, note that the for loop only ever iterates over up to $B$ values, which is a constant independent of the graph size.
+This means that the number of calls to $\mathsf{AGraphSearchHelper}$ is bounded by $B |V(G)|$.
+Third, note that the amount of work performed in any call to $\mathsf{AGraphSearchHelper}$, other than recursing, takes time $O(B \log(n))$, since it just requires (1) checking if $s \in \text{keys}(T)$, (2) querying the children of $s$ in the graph,
+(3) adding up to $B$ keys to $T$, and
+(4) checking $B$ times if it should accept or reject.
+Steps (1) and (3) can be done in $\log(n)$ and $B \log(n)$ time respectively, if we represent $T$ as a binary tree map, and step (4) takes $O(B)$ time.
+Step (2) can also be done in $O(\log(n))$ time if the graph's edges are represented in a data structure like a tree map supporting $O(\log(n))$ accessing of the array of children.
+Thus the cost of the algorithm is $O(|V(G)|B^2 \log(|V(G)))$.  Since $B$ is a constant,
+this is $O(n \log(n))$ in the graph size.
+
+This essentially completes the proof.
+The last thing to note is just that it is possible to efficiently encode the configuration graph $G_{A, x}$ in such a way that vertices can be represented in $O(s(n))$ bits, and where querying the children vertices of any vertex can be done in $O(s(n))$ time.
+There are a number of ways this can be implemented.
+One is to represent each vertex as a bit string directly encoding the Turing machine configuration, and to provide the edge set by providing a Turing machine which, given a configuration, writes down a list of up to $B$ children configurations.
+(A Turing machine exists which can do this in $O(B |A| s(n)) = O(s(n))$ time, where $|A|$ is the size of the description of Turing machine $A$, which is a constant.)
+
+% requires (1) $B$ constant time operations to check if it should accept or reject, looking up up to $B$ values in $T$, and each look-up can be done in $O(\log(n))$ if we represent $T$ as a binary tree map.
+
+
+% Second, note that looking up a result in table $T$ can be done in $O(\log(n))$ using a tree map.
+% Third, note that the for loop only ever iterates over up to $B$ values, which is a constant independent of the graph size.
+% Thus, the overall cost of this algorithm is $O(|V(G)| B \log(n))$, because we enter the for loop at most $|V(G)|$ times, and each time there is no more than a $O(B \log(n))$ overhead, to potentially look up $B$ values in $T$, or to 
+
+\subsection*{Answer to (d)}
 
 \section*{Problem 6: Algorithms versus Oracles (2 Points)}
 

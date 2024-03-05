@@ -27,6 +27,8 @@
 \def \SPACE{{\mathsf{SPACE}}}
 \def \TIME{{\mathsf{TIME}}}
 
+\newtheorem{lemma}{Lemma}
+\newtheorem{cor}{Corollary}
 
 \begin{document}
 	
@@ -46,6 +48,7 @@
 	
 	{\bf How to submit:} Use Gradescope entry code \textbf{2P3PEN}.\\ \textbf{Please use a separate page for each problem.} 
 
+\newpage
 \section*{Problem 1: NP vs coNP (1 point)}
 
 \subsection*{Question}
@@ -60,6 +63,7 @@ If $\NP \subseteq \coNP$, then $L' \in \coNP$.
 Thus $\overline{L'} \in \NP$.  Since $\overline{L'} = L$, this means
 $L \in \NP$. Thus $\NP \subseteq \coNP \implies \coNP \subseteq \NP$.
 
+\newpage
 \section*{Problem 2: P to the NP (1 point)}
 
 \subsection*{Question}
@@ -98,6 +102,7 @@ This proves $f \in \P^\NP$.
 
 % Thus $f \in \Sigma_2 P$.
 
+\newpage
 \section*{Problem 3: An Interesting Problem in PH (2 points)}
 
 \subsection*{Question}
@@ -118,9 +123,11 @@ Finally, we define the language
 \noindent As a consequence, $\P = \NP$ would also imply that computing the VC dimension can be done in $\P$!
 
 \subsection*{Answer to (a)}
-For contradiction say the VC dimension of $\mathcal{S}$ were $k > \log_2(m)$.  Let $X \subseteq U$ be a set of size $k$.  Then there are $2^k$ distinct subsets of $X$, such that for each subset $X'_a$ for $a \in \{1, 2, \dots, 2^k\}$, there exists $S_{m_a} \in \mathcal{S}$ so $X'_a \cap S_{m_a} = X'_a$.  This means there exists a number $i_{m_a}$ such that $\forall x \in U, C(x, i_{m_a}) = 1 \iff x \in X'_a$.
+For contradiction say the VC dimension of $\mathcal{S}$ were $k > \log_2(m)$.  Let $X \subseteq U$ be a set of size $k$
+such that $\{S_i \cap X : S_i \in \mathcal{S}\} = 2^X$.
+Then there are $2^k$ distinct subsets of $X$, such that for each subset $X'_a$ for $a \in \{1, 2, \dots, 2^k\}$, there exists $S_{m_a} \in \mathcal{S}$ so $X'_a \cap S_{m_a} = X'_a$.  This means there exists a number $i_{m_a}$ such that $\forall x \in X, C(x, i_{m_a}) = 1 \iff x \in X'_a$.
 
-Because there are only $m$ values of $i$ treated as distinct by the formula $C$, and there are $2^k > 2^{\log_2(m)}$ values of $a$, we must have $i_{m_a} = i_{m_{a'}}$ for some distinct $a, a'$.  But then $X'_a = X'_{a'}$, contradicting the fact that the $X'$ are the $2^k$ distinct subsets of $X$ and are therefore all distinct.
+Because there are only $m$ values of $i$ treated as distinct by the formula $C$, and there are $2^k > 2^{\log_2(m)}$ values of $a$, we must have $i_{m_a} = i_{m_{a'}}$ for some distinct $a, a'$.  But then $X'_a = X'_{a'}$, contradicting the fact that the $X'$ were defined to be the $2^k$ \textit{distinct} subsets of $X$.
 
 \subsection*{Answer to (b)}
 Observe that
@@ -130,8 +137,8 @@ Observe that
 \forall X' .
 \forall x  .
 \exists i  . \\
-k \leq t(C) \quad \wedge \\
-|X| \geq k \quad \wedge \\
+k \leq t(C) \quad \wedge 
+|X| \geq k \quad \wedge 
 (X' \subseteq X) \implies [C(i, x) = 1 \iff x \in X']
 \end{multline*}
 
@@ -148,12 +155,13 @@ The values which are quantified over are as follows,
 
 Since the description of a CNF formula $C$ is at least linear in the number of variables appearing in it (which in this case includes $x_1$ through $x_n$ and $i_1, \dots, i_t$), the input $\langle C, k \rangle$ has length $\geq n + t$.  Thus each of the variables which is quantified over has length polynomial in the input.
 
-We only need to enumerate subsets $X$ of size $\leq \log m$ because we only need to consider cases where $k < \log m$, due to part (a).
+We only need to enumerate subsets $X$ of size $\leq \log m$ because we only need to consider cases where $k \leq \log m$, due to part (a).
 
 It is easy to see that computing the proposition after the quantifiers in the quantified formula can be done in polynomial time.
 
 Thus, $\text{VCD} \in \Sigma_3 P$.
    
+\newpage
 \section*{Problem 4: Polynomial Hierarchy and Oracles (4 Points, 2 for each sub-problem)}
 
 \subsection*{Question}
@@ -174,46 +182,56 @@ Let $k \geq 0$ be arbitrary, and let $A$ be any language such that $(\mathbf{\Si
 
 \subsection*{Answer to (a)}
 
-I will prove by induction that $(\BSigma_n \P)^A \subseteq (\BSigma_k \P)^A$ for all $n \geq k$.  Since $\PH^A = \cup_n (\BSigma_n \P)^A$, this proves $\PH^A \subseteq (\BSigma_k \P)^A$.
+First, I give a lemma and a corollary.
 
-The cases $n = k$ is trivial and the case $n = k + 1$ is given.
+\begin{lemma}{$(\BPi_m \P)^A$ and $(\BSigma_nm \P)^A$ are complements.}
 
-Now for the inductive step where $n \geq k + 2$, assume the theorem has been proven for $n - 1$ and $n - 2$.
-
-\textbf{Lemma.} Let $(\BPi_m \P)^A$ be the class of languages $L$ such that there exists a machine $M^A$ where $x \in L \iff (\forall x_1) (\exists x_2) \dots (Q'_m x_m)[M^A(x, x_1, \dots, x_m)]$, where $Q'_m$ is whichever of the symbols $\forall, \exists$ that $Q_m$ is not.
+	Let $(\BPi_m \P)^A$ be the class of languages $L$ such that there exists a machine $M^A$ where $x \in L \iff (\forall x_1) (\exists x_2) \dots (Q'_m x_m)[M^A(x, x_1, \dots, x_m)]$, where $Q'_m$ is whichever of the symbols $\forall, \exists$ that $Q_m$ is not.
 Then $$
 (\BPi_m \P)^A = \{\bar{L} : L \in (\BSigma_m \P)^A\}
 $$ and
 $$
 (\BSigma_m \P)^A = \{\bar{L} : L \in (\BPi_m \P)^A\}
 $$
+
+\end{lemma}
+
 \textit{Proof:} For $f$ as in the lemma statement, $f(x) = 1 \iff \neg (\exists x_1) (\forall x_2) \dots (Q_m x_m) [\neg M^A(x, x_1, \dots, x_m)]$.  And $\neg M^A$ can certainly be implemented with a Turing machine given oracle access to $A$.  The proof of the second equation is symmetric.
 
-\textbf{Corollary.} If $(\BSigma_n \P)^A = (\BSigma_k \P)^A$, then $(\BPi_n \P)^A = (\BPi_k \P)^A$.
+\begin{cor}
+	If $(\BSigma_n \P)^A = (\BSigma_k \P)^A$, then $(\BPi_n \P)^A = (\BPi_k \P)^A$.
+\end{cor}
+
 \textit{Proof:} Say $L \in (\BPi_n \P)^A$. Then $L = \bar{L'}$ for some $L' \in (\BSigma_n \P)^A = (\BSigma_k \P)^A$.  Thus $L$ is the complement of a language in $(\BSigma_k \P)^A$, so it is in $(\BPi_k \P)^A$.
 
-% Then if $(\BSigma_n \P)^A = (\BSigma_k \P)^A$, $(\BPi_n \P)^A = (\BPi_n \P)^A$
+\bigskip
 
-% we need to  that if $(\BSigma_n \P)^A = (\BSigma_k \P)^A$, then $(\BPi_n \P)^A = (\BPi_n \P)^A$.  For say $L \in (\BPi_n \P)^A$. Then $L = \bar{L'}$ for some $L' \in (\BSigma_n \P)^A$.
+\noindent \textbf{Proof for question (a):}
 
-Now, consider a decision function $f \in (\BSigma_n \P)^A$, where this inclusion is witnessed by Turing macine $M^A$.  For any $x$, let $L'$ be the language
+Now I will prove by induction that $(\BSigma_n \P)^A \subseteq (\BSigma_k \P)^A$ for all $n \geq k$.  Since $\PH^A = \cup_n (\BSigma_n \P)^A$, this proves $\PH^A \subseteq (\BSigma_k \P)^A$.
+
+The cases $n = k$ is trivial and the case $n = k + 1$ is given.
+
+For the inductive step where $n \geq k + 2$, assume the theorem has been proven for $n - 1$ and $n - 2$.
+
+Consider a language $L \in (\BSigma_n \P)^A$, where this inclusion is witnessed by Turing machine $M^A$.  For any $x$, let $L'$ be the language
 $$
-(x, x') \in \L' \iff (\forall x_2) (\exists x_3) (\forall x_4 ) \dots (Q_n x_n) [M^A(x, x', x_2, x_3, \dots, x_n)]
+(x, x') \in L' \iff (\forall x_2) (\exists x_3) (\forall x_4 ) \dots (Q_n x_n) [M^A(x, x', x_2, x_3, \dots, x_n)]
 $$
 
-Note that $f(x) = 1 \iff (\exists x_1) [(x, x_1) \in L']$.
+Note that $x \in L \iff (\exists x_1) [(x, x_1) \in L']$.
 
 Observe that $L' \in (\BPi_{n - 1} \P)^A$.  By the inductive hypothesis, and the corollary above, $L' \in (\BPi_k \P)^A$. Thus there exists an oracle Turing machine $T^A$ so that
 $$
-(x, x') \in L' \iff (\forall x_1) (\exists x_2) \dots (Q_k x_k) [T^A(x, x', x_1, \dots, x_k)]
+(x, x') \in L' \iff (\forall x_1) (\exists x_2) \dots (Q'_k x_k) [T^A(x, x', x_1, \dots, x_k)]
 $$
-Then $f(x) = 1 \iff (\exists x')(\forall x_1) (\exists x_2) \dots (Q_k x_k) [T^A(x, x', x_1, \dots, x_k)]$.  This proves that $f \in (\BSigma_{k + 1} \P)^A = (\BSigma_k \P)^A$.
+Then $x \in L \iff (\exists x')(\forall x_1) (\exists x_2) \dots (Q'_k x_k) [T^A(x, x', x_1, \dots, x_k)]$.  This proves that $L \in (\BSigma_{k + 1} \P)^A = (\BSigma_k \P)^A$.
 
 \subsection*{Answer to (b)}
 
 Given part (a), it suffices to prove that $\P^A = \NP^A \implies (\BSigma_0 \P)^A = (\BSigma_1 \P)^A$.  For this it certainly suffices to show that $\P^A = (\BSigma_0 \P)^A$ and $\NP^A = (\BSigma_1 \P)^A$.  And these follow immediately from our definitions.  (Ie. for each of these equalities, our definition of the object on the LHS is identical to our definition of our object on the RHS.)
 
-
+\newpage
 \section*{Problem 5: Alternation! (8 Points, 2 for each sub-problem)}
 
 \subsection*{Question}
@@ -263,21 +281,21 @@ From parts (a), (b), (c), (d), it follows immediately that $\bf{AL}=\bf{P}$, $\b
 \subsection*{Answer to (a)}
 First, observe that for any alternating Turing machine $A$, there is an equivalent machine $A'$ with a unique accepting configuration $c_\text{acc}$.  (This can be constructed from $A$ by replacing the accept state with a state that deterministically clears the memory tape and then accepts.)  If the maximum paths in the configuration graph for $A$ have length $t(n)$, the path lengths in $A'$ are bounded by $O(t(n))$ (since there are at most $t(n)$ values on the memory tape to clear).
 
-Let $L \in \ATIME(t(n))$.  Then there exists an alternating Turing maching $A$ deciding $L$, with a unique accepting configuration $c_\text{acc}$, such that all paths in the computaiton graph for $A$ have size $\leq c t(n)$ for some $c$.
+Let $L \in \ATIME(t(n))$.  Then there exists an alternating Turing maching $A$ deciding $L$, with a unique accepting configuration $c_\text{acc}$, such that all paths in the computation graph for $A$ have size $\leq c t(n)$ for some $c$.
 
 I will now prove that there exists a deterministic Turing machine $M$ for $L$ which uses space $O(t(n))$.
 
-Let $B$ be the maximum branching factor of any state in $A$, and let $Q$ be the number of states in the graph.
+Let $B$ be the maximum branching factor of any state in $A$.
 
-In this proof, we will sometimes say that a configuration node $c$ \textit{leads to acceptance within $k$ steps}.  For $k = 0$, this means that $c$ is $c_\text{acc}$.  For $k \geq 1$, if $c$ is an existential node this means that there exists a $c'$ with an edge $c \to c'$ where $c'$ leads to acceptance within $k - 1$ steps, and if $c$ is an existential node, this means that for all $c'$ with an edge $c \to c'$, $c'$ leads to acceptance within $k - 1$ steps.
+In this proof, I will sometimes say that a configuration node $c$ \textit{leads to acceptance within $k$ steps}.  For $k = 0$, this means that $c$ is $c_\text{acc}$.  For $k \geq 1$, if $c$ is an existential node this means that there exists a $c'$ with an edge $c \to c'$ where $c'$ leads to acceptance within $k - 1$ steps, and if $c$ is an universal node, this means that for all $c'$ with an edge $c \to c'$, $c'$ leads to acceptance within $k - 1$ steps.
 
 Given an input $x$ to $A$, of size $n$, since we know that all paths in the computation graph have length less than $c t(n)$, we know that $x \in L$ iff the initial configuration for input $x$ leads to acceptance within $c t(n)$ steps.
 
-Consider the following recursive algorithm to decide whether a configuration $c$ leads to acceptance within $k$ steps.  This algorithm will utilize a memory layout of the following form.  Let $K$ be the value of $k$ at the top of the recursion.  We will use $\log(K)$ bits to store the current recursive level's value of $k$.  We will use $\log |c_0|$ bits to write down the configuration $c_0$ we are checking at the top level of the recursion.  And we will maintain a stack of $\log(B)$ bits for each level of the recursion.  The $j$th element in this stack will store the index of the child of a configuration in the configuration graph.
+Consider the following recursive algorithm to decide whether a configuration $c$ leads to acceptance within $k$ steps.  This algorithm will utilize a memory layout of the following form.  Let $K$ be the value of $k$ at the top of the recursion.  We will use $\log(K)$ bits to store the current recursive level's value of $k$.  We will use $\log |c_0|$ bits to write down the configuration $c_0$ we are checking at the top level of the recursion.  And we will maintain a stack of values, each containing $\log(B)$ bits.  Each level of the recursion will add a value to this stack.  Each element in this stack will store the index of the child of a configuration in the configuration graph.
 
-Given $c_0$ and a sequence $i_1, \dots, i_j$ of integers in $\{1, 2, \dots, B\}$, for each $c > 0$, let $c_t$ be the $i_t$th child of $c_{t - 1}$ in the configuration graph.  Observe that we can compute $c_t$ in constant memory.
+Given $c_0$ and a sequence $i_1, \dots, i_j$ of integers in $\{1, 2, \dots, B\}$, for each $c > 0$, let $c_t$ be the $i_t$th child of $c_{t - 1}$ in the configuration graph.  Observe that we can compute $c_t$ in constant $O(t(n))$ memory.  (We first compute $c_1$, then $c_2$, and so on.  Each transition $c_t \to c_{t+1}$ can be computed by simply finding the $i_{t+1}$th state successor of the Turing machine state in $c_t$.  The only memory this needs is $O(t(n))$ bits to store the configuration $c_t$ [we can overwrite $c_{t+1}$ into the same slots as we had used to store $c_t$ each time we transition].)
 
-The recursion works as follows.  Say the stack has size $J$.  Compute $c_J$.  Let $k$ denote the value written in the slot of $\log(K)$ bits.  The goal at this level of the recursion is to determine if $c_J$ leads to acceptance within $k$ steps.  If $k = 0$, simply return 1 if $c_J = c_\text{acc}$ and return 0 otherwise.  If $k > 1$, and $c$ is existential, add a level to the recursion stack.  Write down $i = 1$ at a new level on the recursion stack.  For each value $i = 1, \dots, B$, consider the $i$th state $c'$ which $c$ leads to in the configuration graph (if $i$ such states exist).  Overwrite the current storage of the value $k$ with the value $k - 1$, and then recurse the algorithm to determine if $c'$ leads to acceptance within $k - 1$ steps. Then overwrite the value $k - 1$ with the value $k$ (by incrementing it by 1).  If $c'$ was found to lead to acceptance in $k - 1$ steps, return that $c$ leads to acceptance within $k$ steps.  Otherwise continue to the next $i$.  Conversely, if $c$ is a universal state, we can perform the same recursion, but now if we find that $c'$ does not lead to acceptance, we immediately return false, while we continue looping otherwise.
+The recursion works as follows.  Say the stack has size $J$.  Compute $c_J$ as described in the preceding paragraph.  Let $k$ denote the value written in the slot of $\log(K)$ bits.  The goal at this level of the recursion is to determine if $c_J$ leads to acceptance within $k$ steps.  If $k = 0$, simply return 1 if $c_J = c_\text{acc}$ and return 0 otherwise.  If $k > 1$, and $c$ is existential, add a level to the recursion stack.  Write down $i = 1$ at a new level on the recursion stack.  For each value $i = 1, \dots, B$, consider the $i$th state $c'$ which $c$ leads to in the configuration graph (if $i$ such states exist).  Overwrite the current storage of the value $k$ with the value $k - 1$, and then recurse the algorithm to determine if $c'$ leads to acceptance within $k - 1$ steps. Then overwrite the value $k - 1$ with the value $k$ (by incrementing it by 1).  If $c'$ was found to lead to acceptance in $k - 1$ steps, return that $c$ leads to acceptance within $k$ steps.  Otherwise continue to the next $i$.  Conversely, if $c$ is a universal state, we can perform the same recursion, but now if we find that $c'$ does not lead to acceptance, we immediately return false, while we continue looping otherwise.
 
 This recursion uses $O(\log(K) + K \log(B) + s) = O(K + s)$ bits of storage, where $s$ is the number of bits it takes to store a configuration in the graph.
 
@@ -290,9 +308,9 @@ To determine whether a string $x \in L$, it suffices to compute the initial conf
 \subsection*{Answer to (b)}
 
 Let $L \in \SPACE(s(n))$.  Then certainly $L \in \TIME(2^{O(s(n))})$.
-WLOG there is a Turing machine such that $x \in L$ iff there is a path of length $\leq 2^{c s(n)}$ for some $c$ from the initial configuration on input $x$, $c_\text{init}$, to a unique accepting configuration $c_\text{acc}$ in the Turing machine.
+WLOG there is a Turing machine $M$ such that $x \in L$ iff there is a path of length $\leq 2^{c s(n)}$ for some $c$ from the initial configuration on input $x$, $c_\text{init}$, to a unique accepting configuration $c_\text{acc}$ in the Turing machine.
 
-Let $L'$ be the language $(G, s, t, k)$ of graphs with upper-bounded branching factor, and with nodes $s, t$, where there is a path $s \to t$ of length $\leq 2^k$.  The above shows that $L$ can be decided by determining whether $(G_{M, x}, c_\text{init}, c_\text{acc}, c s(n)) \in L'$.  Observe that $G_{M, x}$ has no more than $2^{c s(n)}$ vertices.  Thus, if for any graph $G$ with $\leq 2^{O(k)}$ it is possible to determine whether $(G, s, t, k) \in L'$ using an alternating TM using space $O(k^2)$, then $L \in \ASPACE(s(n)^2)$.
+Let $L'$ be the language containing tuples $(G, s, t, k)$ of graphs with upper-bounded branching factor, and with nodes $s, t$, where there is a path $s \to t$ of length $\leq 2^k$.  The above shows that $L$ can be decided by determining whether $(G_{M, x}, c_\text{init}, c_\text{acc}, c s(n)) \in L'$.  Observe that $G_{M, x}$ has no more than $2^{c s(n)}$ vertices.  Thus, if for any graph $G$ with $\leq 2^{O(k)}$ it is possible to determine whether $(G, s, t, k) \in L'$ using an alternating TM using space $O(k^2)$, then $L \in \ASPACE(s(n)^2)$.
 
 Observe
 \begin{multline*}
@@ -438,6 +456,8 @@ determine whether $b_1$ is the value of the bit at position $i_1$
 at time $t_1$.
 }
 \STATE If $t_1 = 1$ and $i_1 = 1$ and $b = x[1]$, return 1.
+\STATE If $t_0 = t_1$ and $i_0 = i_1$, return $b_0 == b_1$.
+\STATE If $t_0 = t_1$ and $i_0 \neq i_1$, print ``this will never happen in the execution of AcceptsOn.''
 \STATE Existentially guess $b' \in \{0, 1\}$.
 \STATE Universally select $m \in \{0, 1\}$.
 \IF{m = 0} 
@@ -448,9 +468,6 @@ at time $t_1$.
 \STATE $(i', q', b'') \gets T(q_0, b')$ \COMMENT{Compute the next head position, write bit, and state of $T$, given current position $q_0$ and read bit $b'$.}
 \IF{$i_0 = i_1$}
 \STATE $b_0 \gets b''$
-\ENDIF
-\IF{$t_0 + 1 == t_1$}
-\RETURN $b_0 == b_1$
 \ENDIF
 \RETURN $\mathsf{BitAtTimeIs}(x, i', t_0 + 1, q', b_0, i_1, t_1, b_1)$
 \ENDIF
@@ -514,11 +531,17 @@ Here is an apparent {\em paradox}. Given a polynomial time algorithm for SAT, we
 
 \subsection*{Answer}
 
-If SAT is solvable in polynomial time, one implication is that for any given formula $\phi$ which takes $n$ bits to encode, there is a boolean formula $\gamma$ on $n$ input bits such that for any sequence of $n$ bits $\psi$ which themselves encode a formula, $\gamma(\psi)$ and $\exists x . \psi(x) \neq \phi(x)$ have the same truth value.
-Further, $|\gamma|$ is polynomial in $|\phi|$.
-Thus, $[\forall \psi . \exists x . \psi(x) \neq \phi(x)] = [\neg \exists \psi . \gamma(\psi)]$.  The former is the definition of MIN-FORMULA; the latter is a SAT problem of polynomial size in $|\phi|$.
+The MIN-FORMULA problem on $\phi$ is naturally expressed as $\forall \psi . \exists x . \psi(x) \neq \phi(x)$.  If all we have is a SAT oracle, we can solve the inner $\exists$ in one step, but we may need to do this exponentially many times.  Conversely, we could reduce the inner $\exists$ clause to formula without a quantifier, and use SAT solving to solve the outer $\forall$, but the inner clause may have exponential length if the quantifier is removed.
 
-If all we have is a SAT oracle, we can solve the inner $\exists$ in one step, but we may need to do this exponentially many times, or we can solve the outer $\forall$ by solving an exponentially large SAT problem, which we can't write in polynomial time.  The oracle gives us no guarantee we can effectively reduce the whole problem to a single polynomially-sized SAT query, while the algorithm does guarantee this.
+On the other hand, if we have a polynomial time SAT algorithm, that guarantees that we can in fact reduce the inner $\exists$ clause to a polynomial-length quantifier-free formula, and then solve the outer $\forall$ by solving a polynomial-size SAT problem.
+
+In generally, a SAT algorithm lets us reduce each quantifier to a polynomial-sized quantifier-free formula, while the oracle only lets us circumvent one layer of quantification.
+
+% If SAT is solvable in polynomial time, one implication is that for any given formula $\phi$ which takes $n$ bits to encode, there is a boolean formula $\gamma$ on $n$ input bits such that for any sequence of $n$ bits $\psi$ which themselves encode a formula, $\gamma(\psi)$ and $\exists x . \psi(x) \neq \phi(x)$ have the same truth value.
+% Further, $|\gamma|$ is polynomial in $|\phi|$.
+% Thus, $[\forall \psi . \exists x . \psi(x) \neq \phi(x)] = [\neg \exists \psi . \gamma(\psi)]$.  The former is the definition of MIN-FORMULA; the latter is a SAT problem of polynomial size in $|\phi|$.
+
+% If all we have is a SAT oracle, we can solve the inner $\exists$ in one step, but we may need to do this exponentially many times, or we can solve the outer $\forall$ by solving an exponentially large SAT problem, which we can't write in polynomial time.  The oracle gives us no guarantee we can effectively reduce the whole problem to a single polynomially-sized SAT query, while the algorithm does guarantee this.
 
 % The fact that we can solve the inner SAT problem in the $\forall . \exists$ sequence in polynomial time gives us a polynomial-size SAT problem at the outer level (the $\forall$).
 

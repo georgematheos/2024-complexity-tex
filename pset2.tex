@@ -198,6 +198,7 @@ If this is true, then $\BPL \subseteq \textsf{SPACE}[log(n)] \subseteq \P$, solv
 \newpage
 \section*{Problem 5: Advice Removal (2 points)}
 
+\subsection*{Question}
 Assume $s : \N \rightarrow \N$ is a time constructible function. Recall $\mathsf{P}/s(n)$ is the class of languages decidable by a polynomial time algorithm with $s(n)$ advice. 
 
 Prove that if $\textsf{SAT} \in \mathsf{P}/s(n)$ then $\textsf{SAT}$ can be solved in $2^{O(s(n))}\cdot \poly(n)$ time. That is, there is an algorithm running in $2^{O(s(n))}\cdot \poly(n)$ time which, given any formula $\phi$ of size $n$, outputs a satisfying assignment to $\phi$ when one exists.
@@ -206,9 +207,26 @@ Prove that if $\textsf{SAT} \in \mathsf{P}/s(n)$ then $\textsf{SAT}$ can be solv
 
 \emph{Hint: Try using the self-reducibility of $\mathsf{SAT}$.}
 
+\subsection*{Answer}
+
+Say $\textsf{SAT} \in \P/s(n)$, witnessed by an algorithm $A(\phi, y)$ which decides whether $\phi$ is satisfiable using advice $y$, and which runs in $\poly(n)$ time.
+
+Here is a $2^{O(s(n))} \poly(n)$ time algorithm for deciding if a given formula $\phi$ of description length $n$ is satisfiable.
+
+For each of the $2^{s(n)}$ bit strings $y$ of length $s(n)$, run $A(\phi_1, y)$, where $\phi_1$ is $\phi$ substituted with $X_1 = 1$.
+If for any $y$, $A$ says that $\phi_1$ is satisfiable, set $x_1 = 1$; else set $x_1 = 0$.
+
+Now for each $y$, check $A(\phi_2, y)$ where $\phi_2$ is $\phi$, with $X_1 = x_1$ and $X_2 = 1$ substituted.  Continue this process through $\phi_n$ to get an assignment $x_1, x_2, \dots, x_n$.
+
+Now, check if $\phi(x_1, x_2, \dots, x_n) = 1$, and accept if so, and reject if not.
+
+This process certainly decides $\phi \in \mathsf{SAT}$.
+And each of the $n$ steps require $2^{O(s(n))} \poly(n)$ time, so the whole algorithm uses $2^{O(s(n))} \poly(n)$ time.
+
 \newpage
 \section*{Problem 6: Pairwise Independence (6 Points, 2 for each sub-problem)}  
 
+\subsection*{Question}
 In this problem, we will show how to generate ``pseudo-random bits'' with a nice property. These are sometimes useful for derandomizing algorithms. We will use them to prove other theorems in the class.
 
 A set of discrete random variables $X_1, X_2, X_3, \ldots, X_n$ is {\em pairwise independent} if for every $i \neq j$,
@@ -242,7 +260,101 @@ Such a family of functions is called a {\em pairwise independent family of hash
 functions}. They are very useful! 
 \end{enumerate} 
 
+\subsection*{Answer to (a)}
 
+\textbf{Verifying unbiasedness.}
+Fix $v \in V_n$.
+Let $I := \{i \in \mathbb{Z}_n : v_i = 1\}$.
+Observe $$X_v(r) = \sum_{i \in I} r_i \mod 2$$.
+I proceed by induction on $|I|$.
 
+If $|I| = 1$, let $i$ be the unique member of $I$.
+Then $X_v(r) = r_i$, which is an unbiased random bit.
+
+Now say we know that for any set $J$ so that $|J| = m$, $\sum_{j \in J} r_j \mod 2$ is unbiased.
+Consider a set $I$ with $|I| = m + 1$.
+Set $i^* := \sup I$ and set $J = I \setminus \{i^*\}$.
+Then $Y(r) := \sum_{j \in J} r_j \mod 2$ is an unbiased bit.
+Observe $$X_v(r) = \sum_{i \in I} r_i \mod 2 = r_{i^*} + Y(r) \mod 2$$
+Here, $r_{i^*}$ and $Y(r)$ are independent unbiased bits.
+It is straightforward to verify from this that $X_v(r)$ is itself an unbiased random bit, by enumerating the probability table of the 4 joint assignments to $X_v(r)$ and $Y(r)$.
+
+\textbf{Verifying pairwise independence.}
+Let $v^1, v^2 \in V_n$, with $v^1 \neq v^2$.
+Let $I^1 = := \{i \in \mathbb{Z}_n : v^1_i = 1\}$ and let
+$I^2 = := \{i \in \mathbb{Z}_n : v^2_i = 1\}$.
+
+% Observe 
+% $$
+% X_{v^1}(r) = X_{v^2}(r) - \sum_{i \in I^2 \setminus I^1}{r_i} + \sum_{i \in I^1 \setminus I^2} r_i \mod 2
+% $$
+% The inductive argument used to show unbiasedness suffices to show that 
+
+Let $I^* := I^1 \Delta I^2$ ($= I^1 \cap I^2 \setminus (I^1 \cup I^2)$).
+I proceed by induction on $|I^*|$.
+
+If $|I^*| = 1$, WLOG say $v^1_i = 1$ but $v^2_i = 0$ (otherwise swap $v^1$ and $v^2$).
+Then $X_{v^1}(r) = X_{v^2}(r) + r_i \mod 2$, with $r_i$ independent from $X_{v^2}(r)$ (which is a sum of $r_j$ for $j \neq i$).
+Then $X_{v^1}(r)$ is uniform on $\{0, 1\}$, conditional either on $X_{v^2}(r) = 1$ or $X_{v^2}(r) = 0$,
+so $X_{v^1}(r)$ and $X_{v^2}(r)$ are independent.
+
+Now say we know that if $|I^*| = m$, $X_{v^1}(r)$ and $X_{v^2}(r)$ are independent.
+Say we have $|I^*| = m + 1$.
+WLOG say $i$ is some index so $v^1_i = 1$ but $v^2_i = 0$ (if this doesn't exist, swap $v^1$ and $v^2$).
+Let $\bar{v}$ be $v^1$ but with index $i$ set to 0.
+Then $$\bar{x}(r) := \langle r, \bar{v} \rangle \mod 2 = X_{v^1}(r) - r_i \mod 2$$
+By the inductive hypothesis, $\bar{x}(r)$ is independent from $X_{v^2}(r)$.
+And it is also certainly independent from $r_i$ since it is a sum of $r_j$ all with $j \neq i$.
+Thus $X_{v^1}(r) = \bar{x}(r) + r_i \mod 2$ is a function of two values independent of $X_{v^2}(r)$, and hence is independent of $X_{v^2}(r)$.
+% $P[X_{v^1}(r) = 1 | X_{v}]
+
+\subsection*{Answer to (b)}
+
+\textbf{Unbiasedness.}
+Fix $i$ and $a$.  Observe that since $b$ is uniform over $\mathbb{Z}_p$, $ai + b$ is also uniform over $\mathbb{Z}_p$.  Thus $\mathbb{P}[Y_i = y | a] = 1/p$ for all $y$.  Thus $\mathbb{P}[Y_i = 1] = \sum_{a = 0}^{p-1}\frac{1}{p}\mathbb{P}[Y_i = y | a] = \frac{1}{p}$.
+
+\textbf{Pairwise independence.}
+Fix $i$ and $j$.
+We want to show that $\mathbb{P}[Y_i = y_i | Y_j = y_j] = \frac{1}{p}$.
+Because $\mathbb{Z}_p$ is a field, for any value $a$ and any value $y_j$, there is exactly one value $b$ such that $y_j = a \cdot j + b$.
+Thus, the event $E_j := \{Y_j = y_j\}$ equals the event $\{(a, b) : a \in \mathbb{Z}_p \wedge b = y_j - a \cdot j\}$, an event with probability $p/p^2 = 1/p$.
+Since $\mathbb{Z}_p$ is a field, the system of linearly independent equations
+$$
+y_i = a \cdot i + b; \qquad y_j = a \cdot j + b
+$$
+has a unique solution $(a^*, b^*)$.
+Thus $\{Y_j = y_j \wedge Y_i = y_i\} = \{a^*, b^*\}$ which has probability $1/p^2$.
+Thus $\mathbb{P}[Y_i = y_i | Y_j = y_j] = \frac{\mathbb{P}[Y_i = y_i, Y_j = y_j]}{\mathbb{P}[Y_j = y_j]} = \frac{1/p^2}{1/p} = 1/p$.
+\subsection*{Answer to (c)}
+
+\textbf{Unbiasedness.} From part (a) we know that $(Mv)_i$ is a uniform bit for each $i$, where $(Mv)_i$ is the $i$th element of vector $Mv$.  Furthermore, since $(Mv)_i$ depends on a different row of $M$ for each $i$, the collection of values $\{(Mv)_i\}_i$ is an independent collection of random variables.  Thus $Mv$ is uniformly distributed on the space of binary n-dimensional matrices.
+
+\textbf{Pairwise independence.}
+Fix $v^1, v^2$.
+Observe that 
+
+\begin{multline*}
+\mathbb{P}[Mv^1 = v | Mv^2] = \\
+\mathbb{P}[(Mv^1)_0 = v_0 | Mv^2] \times \\
+\mathbb{P}[(Mv^1)_1 = v_1 | Mv^2, (Mv^1)_0] \times \dots \times \\
+\mathbb{P}[(Mv^1)_{n-1} = v_{n-1} | Mv^2, (Mv^1)_{0:n-2}]
+\end{multline*}
+
+For any $i$,
+$$
+\mathbb{P}[(Mv^1)_i = v_i | Mv^2, (Mv^1)_{0:i-1}] =
+\mathbb{P}[(Mv^1)_i = v_i | Mv^2_i]
+$$
+because all the other values being conditioned on depend on entirely independent rows of $M$ from those that affect the value $(Mv^1)_i$.
+And from part (a), we know $(Mv^1)_i$ and $(Mv^2)_i$ are independent for all $i$, so $\mathbb{P}[(Mv^1)_i = v_i | Mv^2_i] = 1/2$.
+Thus $\mathbb{P}[Mv^1 = v | Mv^2] = 1/2^n = \mathbb{P}[Mv^1 = v]$.
+
+\textbf{Uniformity on joint assignments.}
+$$
+\mathbb{P}[f(v) = a \wedge f(v') = b] =
+\mathbb{P}[f(v) = a]\times\mathbb{P}[f(v') = b | f(v) = a]
+= \frac{1}{2^n} \times \frac{1}{2^n}
+$$
+where the last equality follows due to the pairwise independence and uniformity proven above.
 
 \end{document}

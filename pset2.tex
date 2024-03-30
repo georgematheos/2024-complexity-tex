@@ -95,36 +95,123 @@ This shows that $\text{SAT} \in \RP$, and since $\RP \subseteq \NP$, we have $\N
 We showed in class that for every $k$, there is a function $f_k \in \Sigma_3 \P$ that does not have $k n^k$-size circuits. Use the ideas in the proof of this fact to prove that there is an $\eps > 0$ and a function $f \in \EXP^{(\NP^{\NP})}$ that does not have $\eps 2^n/n$ size circuits.
 
 \subsection*{Answer}
-Algorithm $\mathsf{HardFunction}$ below implements a function f so that ``f(x) = g(x), where g is the first function such that there is no circuit of size $\epsilon 2^n/n$ that computes g''.
+% Algorithm $\mathsf{HardFunction}$ below implements a function f so that ``f(x) = g(x), where g is the first function such that there is no circuit of size $\epsilon 2^n/n$ that computes g''.
+
+% \begin{algorithm}{$\mathsf{HardFunction}(x : \{0, 1\}^n)$}
+% \begin{algorithmic}[1]
+% \STATE Guess $f : \{0, 1\}^n \rightarrow \{0, 1\}$ (and write it down using $2^n$ bits).
+% \STATE For all circuits $C$ of size $\epsilon 2^n / n$,
+% \STATE Guess $z$ of $n$ bits, check $C(z) = f(z)$ and reject if so.
+% \STATE Then, for all $h : \{0, 1\}^n \to \{0, 1\}$, such that $h < g$ when $h$ and $g$ are represented as bit strings,
+% \STATE Guess a circuit $D$ of size $\epsilon 2^n / n$.
+% \STATE For all $z' \in \{0, 1\}^n$ verify that $D(z') = h(z')$.
+% \STATE Output $g(x)$.
+% \end{algorithmic}
+% \end{algorithm}
+
+% Observe that lines 3 and 6 can be implemented in Exponential(n) time.  Also observe that writing down circuits in lines 2 and 5 require $O((\epsilon 2^n / n) \log(\epsilon 2^n / n)) = O(2^n)$ bits.  Thus this algorithm can be run in exponential time with quantification taking an $\exists \forall \forall \exists$ structure (quantification on lines 1, 2, 4, and 5).  So it is in $\EXP^{\Sigma_3 \P}$.
+% Finally, noting that there exist functions on $n$ inputs with no circuits of size $2^n/(10n)$, we can take $\epsilon = 1/10$ to ensure that this algorithm accepts a nontrivial set of $x$ values.
+
+% Now, either $\NP \subseteq \P/\poly$ or $\NP \not\subseteq \P/\poly$.
+
+% If $\NP \subseteq \P/\poly$, then by the K-L theorem, $\PH = \Sigma_2 P$, so our function $f \in \EXP^{\Sigma_3 \P}$ actually satisfies $f \in \EXP^{\Sigma_2 P} = \EXP^{(\NP^{\NP})}$.
+
+% If $\NP \not\subseteq \P/\poly$, observe that $\text{SAT} \notin \P/\poly$.
+% This means that for every $k$, infinitely often in $m$, there is a string $\phi \in \{0, 1\}^m$ such that no circuit of size $km^k$ decides $\phi \in \text{SAT}$.  Thus for any $n$, there exists $m \geq 2^n/n$ which can't be solved by any circuit of size $km^k \geq k(2^n/n)^k$ and thus certainly can't be solved by a circuit of size $\epsilon 2^n/n$.
+
+% Guess a SAT problem of size $2^n/n$.  Verify that for all $k$ 
+
+
+% % (each of which can be written using $\epsilon 2^n / n \log(\epsilon 2^n / n) = O(2^n)$ bits)
+
+% \textbf{TODO}
+
+% \newpage
 
 \begin{algorithm}{$\mathsf{HardFunction}(x : \{0, 1\}^n)$}
 \begin{algorithmic}[1]
-\STATE Guess $f : \{0, 1\}^n \rightarrow \{0, 1\}$ (and write it down using $2^n$ bits).
-\STATE For all circuits $C$ of size $\epsilon 2^n / n$,
-\STATE Guess $z$ of $n$ bits, verify $C(z) = f(z)$ and reject if not.
-\STATE Then, for all $h : \{0, 1\}^n \to \{0, 1\}$, such that $h < g$ when $h$ and $g$ are represented as bit strings,
-\STATE Guess a circuit $D$ of size $\epsilon 2^n / n$.
-\STATE For all $z' \in \{0, 1\}^n$ verify that $D(z') = h(z')$.
-\STATE Output $g(x)$.
+	\STATE \COMMENT{
+		This is the lexographically first hard function from $\{0, 1\}^n$ to $\{0, 1\}$.
+	}
+	\STATE Initialize a list of bits $L$ with $2^n$ slots.  Fill them all with 0.
+	\STATE \COMMENT{$L$ will store a truth table for a hard function.}
+	\FOR{$j = 0, 1, \dots, 2^{n} - 1$}
+	\STATE \COMMENT{This loop writes a truth table for a hard function to list $L$.}
+	\STATE $b \gets \mathsf{CheckIfHardCompletionExists}(L, j, 1^{2^n})$
+	\STATE $L[j] \gets \neg b$
+	\ENDFOR
+	\RETURN $L[x]$
 \end{algorithmic}
 \end{algorithm}
 
-Observe that lines 3 and 6 can be implemented in Exponential(n) time.  Also observe that writing down circuits in lines 2 and 5 require $O((\epsilon 2^n / n) \log(\epsilon 2^n / n)) = O(2^n)$ bits.  Thus this algorithm can be run in exponential time with quantification taking an $\exists \forall \forall \exists$ structure (quantification on lines 1, 2, 4, and 5).  So it is in $\EXP^{\Sigma_3 \P}$.
-Finally, noting that there exist functions on $n$ inputs with no circuits of size $2^n/(10n)$, we can take $\epsilon = 1/10$ to ensure that this algorithm accepts a nontrivial set of $x$ values.
+\begin{algorithm}{$\mathsf{CheckIfHardCompletionExists}(L, j, 1^n)$}
+	\begin{algorithmic}[1]
+		\STATE \COMMENT{
+			Given a list $L$ with $x - 1$ bits, return 1 iff there exists a function
+			$g : \{0, 1\}^n \to \{0, 1\}$ such that $g(i) = L(i)$ for all $i < x$, and where $g(j) = 0$.
+		}
+		\STATE Existentially guess a sequence $B$ of $2^n - x$ bits.
+		\STATE Universally choose a circuit $C$ of size $\epsilon 2^n/n$.
+		\FOR{$z \in \{0, 1\}^n$}
+			\STATE \COMMENT{Compute $b \gets g(z)$.}
+			\IF{$z = x$}
+				\STATE $b \gets 0$
+			\ELSIF{$z < x$}
+				\STATE $b \gets L[z]$
+			\ELSE
+				\STATE $b \gets B[z - x]$
+			\ENDIF
 
-Now, either $\NP \subseteq \P/\poly$ or $\NP \not\subseteq \P/\poly$.
+			\STATE \COMMENT{Verify $\exists z . C(z) \neq g(z)$.}
+			\IF{$C(z) \neq b$}
+				\RETURN 1
+			\ENDIF
+		\ENDFOR
+		\RETURN 0
+	\end{algorithmic}
+\end{algorithm}
 
-If $\NP \subseteq \P/\poly$, then by the K-L theorem, $\PH = \Sigma_2 P$, so our function $f \in \EXP^{\Sigma_3 \P}$ actually satisfies $f \in \EXP^{\Sigma_2 P} = \EXP^{(\NP^{\NP})}$.
 
-If $\NP \not\subseteq \P/\poly$, observe that $\text{SAT} \notin \P/\poly$.
-This means that for every $k$, infinitely often in $m$, there is a string $\phi \in \{0, 1\}^m$ such that no circuit of size $km^k$ decides $\phi \in \text{SAT}$.  Thus for any $n$, there exists $m \geq 2^n/n$ which can't be solved by any circuit of size $km^k \geq k(2^n/n)^k$ and thus certainly can't be solved by a circuit of size $\epsilon 2^n/n$.  This shows that 
+Algorithm $\mathsf{HardFunction}$ below implements the lexographically first function $g$ from $\{0, 1\}^n$ to $\{0, 1\}$ such that no circuit of size $\epsilon 2^n/n$ computes $g$.
+Such a function exists if we take $\epsilon = 1/10$, for instance.
+
+$\mathsf{HardFunction}$ works by explicitly constructing a truth table for $g$, by writing down a truth table $L$ of $2^n$ bits.  It then returns $L[x]$.
+To construct the lexographically first string, when writing position $j$ into the truth table, $\mathsf{HardFunction}$ checks if it is possible to turn the current list $L$ into a full hard function if $L[j]$ is set to 0.  If this is possible, it does this; otherwise it resorts to setting $L[j] \gets 1$.
+
+The procedure requires running $2^n$ checks, each of which requires writing $1^{2^n}$ onto the tape to call $\mathsf{CheckIfHardCompletionExists}$.
+This takes $O(2^n)$ time, so the whole algorithm takse $O(2^n \times 2^n) = O(2^{2n}) = 2^{O(n)}$ time, given an oracle for $\mathsf{CheckIfHardCompletionExists}$.
+
+Finally, we argue that indeed given an $\NP^\NP = \Sigma_2^P$ oracle, we can implement procedure $\mathsf{CheckIfHardCompletionExists}$.
+The procedure existentially guesses a function $g$ consistent with the partial truth table $L$ and the choice $g(j) = 0$, and then verifies that for all circuits $C$, $C$ does not implement $g$.  (This last check requires looping over $2^n$ values $z \in \{0, 1\}^n$.)  This is in $\Sigma_2^P$ with respect to the input which has size $\geq 2^n$.
+
+% Initialize a list L.  L[j] will store the value of a function g at value j.
+% For x = 0, 1, 2, ..., 2^n-1:
+%   (*) Check if there is a function g so that g(x) = 1 and g(j) = L[j]
+%   for each j < x, and such that g isn't solved by $\epsilon 2^n/n$ circuits.
+%   If not, reject x.  (We are saying f(x) = 0.)
+% Return L[input].
+
+% Procedure (*):
+%   Input: x in {0, 1, .., 2^n-1}, list L
+%   Output: does there exist a function g consistent with L where g(x) = 1 and no circuits exist
+%   Procedure:
+%     Guess a completion g of list L where g(x) = 1.
+% 	For all circuits C of size $\epsilon 2^n/n$:
+% 	Verify that there exists an n-bit z such that C(z) != g(z).
+% 	  If such a z exists, return 1; else return 0.
 
 
-% (each of which can be written using $\epsilon 2^n / n \log(\epsilon 2^n / n) = O(2^n)$ bits)
 
-\textbf{TODO}
+
+
+
+
+
+
+
 
 \newpage
+
 \section*{Problem 3: P=NP Implies Better Circuit Lower Bounds (3 Points)}
 
 \subsection*{Question}
@@ -160,29 +247,59 @@ Prove the following:
 
 Say M is a log-space probabilistic TM.
 
-Then it uses $c log(n)$ space, and runs in $k^{k log(n)} = n^k$
-time.
+Then it uses $c \log(n)$ space, and runs in $2^{O(c \log(n))} = O(n^k)$ for some $k$.
 
 Given x of size n:
 
-For every string y of length $n^k$, run M on (x, y).
-Count the number of acceptances.
 
-Return true if most of the runs accepted.
 
-We need to track:
+% For every string y of length $n^k$, run M on (x, y).
+% Count the number of acceptances.
 
-1. The current string y (k log(n) bits)
+% Return true if most of the runs accepted.
 
-2. The number of acceptances (k log(n) bits)
+% We need to track:
 
-3. Space for the current run of M (c log(n) bits).
+% 1. The current string y (k log(n) bits)
 
-Altogether this is O(log(n)) bits.
+% 2. The number of acceptances (k log(n) bits)
 
-If this is true, then $\BPL \subseteq \textsf{SPACE}[log(n)] \subseteq \P$, solving both (a) and (b).
+% 3. Space for the current run of M (c log(n) bits).
 
-\textbf{Is this wrong somehow?}
+% Altogether this is O(log(n)) bits.
+
+% If this is true, then $\BPL \subseteq \textsf{SPACE}[log(n)] \subseteq \P$, solving both (a) and (b).
+
+% \textbf{Is this wrong somehow?}
+
+Note to self: I think that if my TM uses $\log(n)$ space, I can get one with $1 - 2^{-f(n)}$ error in $\log(n) \log [f(n)]$ space.
+
+/newpage
+
+Ideas:
+
+Given input x, consider the configuration graph G, of size <= kn^k.
+Some of the transitions are deterministic, some occur with probability 1/2.
+For each path, we can get its probability by just multiplying the probabilities for each transition.
+The probability $p_\text{acc}$ of acceptance is the sum of the probability on each path from $c_\text{init}$ to $c_\text{accept}$.
+Either $p_\text{acc} > 2/3$ or it's $ < 1/3$.
+
+
+\newpage
+
+Algorithm to find number of paths from S -> T in m steps:
+Count = 0
+For c in C:
+  For k = 1, ..., m-1:
+    a = num paths S -> c in k
+	b = num paths S -> c in m-k
+
+
+
+
+
+
+
 
 
 

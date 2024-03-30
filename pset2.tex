@@ -219,11 +219,20 @@ Prove that if $\P = \NP$ then there is an $\varepsilon > 0$ and $f \in \TIME[2^{
 
 \subsection*{Answer}
 
-In the previous part, we proved that there exists an $\epsilon$ and a function $f \in \EXP^{(\NP^{\NP})}$ that does not have $\epsilon 2^n/n$ size circuits.
+% In the previous part, we proved that there exists an $\epsilon$ and a function $f \in \EXP^{(\NP^{\NP})}$ that does not have $\epsilon 2^n/n$ size circuits.
 
-If $\P = \NP$, then $\EXP^{(\NP^{\NP})} = \EXP^{\NP^\P} = \EXP^{\NP} = \EXP^\P = \EXP$.  Thus there exists $f \in \EXP$ (specifically, say, $f \in \textsf{TIME}[2^{kn^k}]$) such that $f$ does not have $\epsilon 2^n/n$ size circuits.
+% If $\P = \NP$, then $\EXP^{(\NP^{\NP})} = \EXP^{\NP^\P} = \EXP^{\NP} = \EXP^\P = \EXP$.  Thus there exists $f \in \EXP$ (specifically, say, $f \in \textsf{TIME}[2^{kn^k}]$) such that $f$ does not have $\epsilon 2^n/n$ size circuits.
 
-\textbf{TODO}
+
+% \textbf{TODO}
+
+% \bigskip
+In the previous problem we showed that $\mathsf{HardFunction}$ can be implemented in $O(2^n(2^n + K(2^n)))$ time, where $K(m)$ is the runtime of $\mathsf{CheckIfHardCompletionExists}$.
+We also showed that $\mathsf{CheckIfHardCompletionExists} \in \NP^\NP$.
+Thus if $\P = \NP$, $\mathsf{CheckIfHardCompletionExists} \in \P$, so $K(m)$ is a polynomial, say $km^k$.
+Then $\mathsf{HardFunction}$ can be run in $O(2^n(2^n + k(2^n)^k))$.
+This simplifies to $O(2^{2n} + 2^{n + kn})$, which is $2^{O(n)}$.
+Since no circuit of size $\epsilon 2^n/n$ can decide $\mathsf{HardFunction}$, this yields the desired result.
 
 
 \newpage

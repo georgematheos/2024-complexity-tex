@@ -1,6 +1,6 @@
 \documentclass{article}
 \usepackage{amsmath}
-% \usepackage{fullpage}
+\usepackage{fullpage}
 \usepackage{amsmath,amssymb,verbatim}
 % \usepackage{fullpage}
 \usepackage{enumerate}
@@ -276,22 +276,179 @@ $$
 M_{i, j}^{2^m} = \sum_{c \in C} M_{i, c}^{2^{m-1}} M_{c, j}^{2^{m-1}}
 $$
 
-We will develop an algorithm which constructs a PRG $g : \{0, 1\}^{\log n} \to \{0, 1\}^n$ which lets us approximate each $M^m$.
-Let $M^{m, g}_{i, j}$ denote the probability that $T$ transitions from $i$ to $j$ in $m$ steps, given that its random bit tape is populated by $g(s)$ for a uniformly random seed $s \in \text{domain}(g)$.
+The algorithm $\mathsf{ApproximateTransitionProbability}(T, i, j, m, b)$ below approximately computes $M_{i, j}^{2^m}$, and represents the result
+as a $b$-bit binary fraction.
+(Approximation is forced by needing to store the result in $b$ bits.)
 
-We will do this gradually by building up a sequence $g_0, g_1, g_2, \dots, g_{\log n}$, where $g_i : \{0, 1\}^i \to \{0, 1\}^{2^i}$ such that
-$$
-|| M^{2^i, g_i} - M^{2^i}||_{\infty} < \delta_i
-$$
-(I will decide what the $\delta_i$ need to be later.)  $|| \cdot ||_\infty$ denotes the supremum norm.
+Say $\hat{M}_{i, j}^{kn^k}$ is the value returned by
+$$\mathsf{ApproximateTransitionProbability}(T, c_\text{init}, c_\text{acc}, \log(kn^k), a \log(n))$$
+where $a$ is a constant independent of the input $x$.
+(Note that for simplicity, I will henceforth assume $kn^k$ is a power of 2, to avoid complicating the math by rounding $kn^k$ up to the next power of 2 in all the following expressions.)
 
-We will let $g_i$ be the pairwise independent 
+Say we can show that the following two properties hold:
+\begin{enumerate}
+	\item $|M_{i, j}^{kn^k} - \hat{M}_{i, j}^{kn^k}| < \frac{1}{10}$
+	\item $\mathsf{ApproximateTransitionProbability}(T, c_\text{init}, c_\text{acc}, \log(kn^k), a \log(n))$ \\
+	uses $O((\log n)^2)$ space
+\end{enumerate}
+Then $L \in \SPACE[(\log n)^2]$, because we can decide $x \in L$ by computing $\hat{M}_{i, j}^{kn^k}$ and returning true iff $M_{i, j}^{kn^k} \geq \frac{2}{3} - \frac{1}{10}$.
+
+\begin{algorithm}{$\mathsf{ApproximateTransitionProbability}(T, i, j, m, b)$}
+	\begin{algorithmic}[1]
+	\STATE \COMMENT{
+		Approximate $\mathbb{P}[T \text{ transitions } \text{from } i \text{ to } j \text{ within } m \text{ steps}]$.
+		Output the answer using $b$ bits (ie. output $0.x_1x_2\dots x_b$).
+	}
+	\STATE $p \gets 0$ \COMMENT{Transition probability.}
+	\IF{m = 0}
+	  \FOR{$v \in \{0, 1\}$}
+		\IF{$T_v(i) = j$}
+		  \STATE $p \gets p + \frac{1}{2}$
+		\ENDIF
+	  \ENDFOR
+	\ELSE
+	  \FOR{$c \in C$}
+		\STATE $p_1^c \gets \mathsf{ApproximateTransitionProbability}(T, i, c, m-1, b)$
+		\STATE $p_2^c \gets \mathsf{ApproximateTransitionProbability}(T, c, j, m-1, b)$
+		\STATE $p \gets p + (p_1^c \times p_2^c)$
+	  \ENDFOR
+	  \STATE $\hat{p} \gets p$ rounded to $b$ bits
+	\ENDIF
+	\RETURN $\hat{p}$
+	\end{algorithmic}
+\end{algorithm}
+
+I will now prove that properties (1) and (2) hold.
+
+\medskip
+\noindent \textbf{Proof of property 1 (error analysis).}
+Observe that the final rounding step, which converts $p$ to $\hat{p}$ by rounding to $b$ bits, introduces no more than $\frac{1}{2^b}$ error, ie.
+$$
+|p - \hat{p}| \leq \frac{1}{2^b}
+$$
+
+Say that for all $m$, $i$, and $j$,
+$$
+|M_{i, j}^{2^m} - \hat{M}_{i, j}^{2^m}| < \delta_m
+$$
+
+Observe that we can take $\delta_0 = 0$ so long as $b \geq 1$.
+I will now upper bound $\delta_m$ in terms of $\delta_{m-1}$.
+
+Consider the value of $p$ computed for a particlar $m$, $i$, and $j$.  We have
+\begin{multline*}
+	|p - M_{i, j}^{2^m}| = |\sum_{c \in C}{(\hat{M}_{i, c}^{2^{m-1}} \times \hat{M}_{c, j}^{2^{m-1}})} - \sum_{c \in C}{(M_{i, c}^{2^{m-1}} \times M_{c, j}^{2^{m-1}})}|
+	\\
+	\leq \sum_{c \in C}{
+		\hat{M}_{i, c}^{2^{m-1}} \times \hat{M}_{c, j}^{2^{m-1}} -
+		\sum_{c \in C}{(M_{i, c}^{2^{m-1}} \times M_{c, j}^{2^{m-1}})}
+	} \\
+	\leq \sum_{c \in C}{(|\hat{M}_{i, c}^{2^{m-1}} - M_{i, c}^{2^{m-1}}| + |\hat{M}_{c, j}^{2^{m-1}} - M_{c, j}^{2^{m-1}}|)} \\
+	\leq \sum_{c \in C} 2\delta_{m-1} = 2|C|\delta_{m-1}
+\end{multline*}
+The second inequality follows because the values of $M$ are no greater than 1.
+
+Combining this bound with our bound on $|p - \hat{p}|$ above, and noting that $\hat{M}_{i, j}^{2^m} = \hat{p}$ by definition, we derive that we can have $\delta_m$ satisfy
+$$
+\delta_m \leq 2|C|\delta_{m-1} + \frac{1}{2^b}
+$$
+
+A simple induction proof verifies that this means we can have
+$$
+\delta_m \leq \frac{1}{2^b} \sum_{j=0}^{m-1}(2 |C|)^j
+$$
+Because $2|C| \geq 2$, this bound implies
+$$
+\delta_m \leq \frac{(2|C|)^m}{2^b} = 2^{
+	\log(2|C|)m - b
+}
+$$
+Observe that if
+$$
+b > \log(2|C|)m - \log(\epsilon)
+$$
+then $\delta_m \leq \epsilon$.
+
+At the top level of the recursion, $m = \log(k n^k) = \theta(\log(n))$.
+Also, $|C| \leq kn^k$.
+Thus, to achieve an $\epsilon$ error bound for arbitrary $\epsilon$ it suffices to have
+$$
+b > \theta(\log(2kn^k)\log(n) - \log(\epsilon)) = \theta(k\log(n)^2 - \log(\epsilon)) = \theta(\log(n)^2)
+$$
+
+I have not figured out how to reduce this to $\theta(\log(n))$ rather than $\theta(\log(n)^2)$, as required to achieve the space bound this problem asks for.
+
+\medskip
+\noindent \textbf{Proof of property 2 (space complexity analysis).}
+We now need to analyze the space utilization of $$\mathsf{ApproximateTransitionProbability}(T, i, j, kn^k, a \log(n))$$
+This algorithm recurses $m = \theta(\log(n))$ times and at each level of the recursion it needs to store $\theta(\log(n))$ bits.
+Therefore in total it uses $\theta(\log(n)^2)$ bits, as required.
+
+% \begin{algorithm}{$\mathsf{COUNT}(T, i, j, m)$}
+% \begin{algorithmic}[1]
+% \STATE $n \gets 0$ \COMMENT{Number of paths $i \mapsto j$ in $2^m$ steps.}
+% \IF{m = 0}
+%   \FOR{$b \in \{0, 1\}$}
+%     \IF{$T_b(i) = j$}
+% 	  \STATE $n \gets n + 1$
+% 	\ENDIF
+%   \ENDFOR
+% \ELSE
+%   \FOR{$c \in C$}
+%     \STATE $n_1 \gets \mathsf{COUNT}(T, i, c, m-1)$
+% 	\STATE $n_2 \gets \mathsf{COUNT}(T, c, j, m-1)$
+% 	\STATE $n \gets n + (n_1 \times n_2)$
+%   \ENDFOR
+% \ENDIF
+% \RETURN $n$
+% \end{algorithmic}
+% \end{algorithm}
+
+% \begin{algorithm}{$\mathsf{DecideBPL}(T, n, k, c_\text{init}, c_\text{acc})$}
+% \begin{algorithmic}[1]
+%   \STATE $n \gets \mathsf{COUNT}(T, c_\text{init}, c_\text{acc}, kn^k)$
+%   \IF{$n \geq \frac{2}{3} 2^{2^{kn^k}}$}
+% 	\RETURN 1
+%   \ELSE
+% 	\RETURN 0
+%   \ENDIF
+% \end{algorithmic}
+% \end{algorithm}
+
+% We will develop an algorithm which constructs a PRG $g : \{0, 1\}^{\log n} \to \{0, 1\}^n$ which lets us approximate each $M^m$.
+% Let $M^{m, g}_{i, j}$ denote the probability that $T$ transitions from $i$ to $j$ in $m$ steps, given that its random bit tape is populated by $g(s)$ for a uniformly random seed $s \in \text{domain}(g)$.
+
+% We will do this gradually by building up a sequence $g_0, g_1, g_2, \dots, g_{\log n}$, where $g_i : \{0, 1\}^i \to \{0, 1\}^{2^i}$ such that
+% $$
+% || M^{2^i, g_i} - M^{2^i}||_{\infty} < \delta_i
+% $$
+% (I will decide what the $\delta_i$ need to be later.)  $|| \cdot ||_\infty$ denotes the supremum norm.
+
+% We will let $g_i$ be the pairwise independent 
 
 
 
 \medskip
-\noindent \textbf{Acknowledgements.}  I read parts of Noam Nisan 1992, ``$\text{RL} \subseteq \text{SC}$'' while working on this problem.  (I tried to solve it myself for a few hours first.
-I also spent a while trying to rework parts of his result but in the end I decided his construction was quite nice and mostly replicated that.)
+\noindent \textbf{Acknowledgements.}  I read parts of Noam Nisan 1992, ``$\text{RL} \subseteq \text{SC}$'' while working on this problem.
+I also want to thank Zixuan for helpful answers to a couple of questions on Piazza.
+
+\newpage
+\subsection*{Answer to (b)}
+
+The above procedure can be used to decide $L$ in polynomial time.  Thus $\BPL \subseteq \P$.
+
+\medskip
+\noindent \textbf{Runtime analysis.}
+Consider the runtime of this procedure.
+Let $m^* = \log(kn^k)$.
+The procedure produces a tree of calls with 1 call with value $m = m^*$, 2 calls with value $m = m^*-1$, 4 with value $m = m^*-2$, and so on up to $2^{m^*}$ calls with value 0.
+This in total is $\leq 2^{m^*+1}$ calls.
+Each recursive call requires multiplying two $b$-bit values and summing $|C|$ such products, and so takes $O(|C|b)$ time.
+So the full runtime is bounded above by $|C|b2^{m^*+1}$.
+Since $m^* = \theta(\log (k n^k))$ and $b = \theta(\log(n))$, the runtime is bounded by $2|C|bk n^k = O(\log(n)n^k) = O(n^{k+1})$.
+
+% (I tried to solve it myself for a few hours first.
+% I also spent a while trying to rework parts of his result but in the end I decided his construction was quite nice and mostly replicated that.)
 % I read enough  get the gist of how he used a similar recursion to in Satvitch's theorem to get to a $\log(n)^2$ space bound, and to get the idea of searching for a way to extend the PRG as to not change the results for a particular Turing machine at hand.
 % I didn't read his analysis of the algorithm in detail.)
 
@@ -335,7 +492,6 @@ I also spent a while trying to rework parts of his result but in the end I decid
 % Either $p_\text{acc} > 2/3$ or it's $ < 1/3$.
 
 
-\newpage
 
 % Algorithm to find number of paths from S -> T in m steps:
 % Count = 0
@@ -358,7 +514,6 @@ I also spent a while trying to rework parts of his result but in the end I decid
 
 
 
-\subsection*{Answer to (b)}
 
 
 

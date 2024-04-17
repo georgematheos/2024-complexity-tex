@@ -1,0 +1,142 @@
+\documentclass{article}
+\usepackage[style=verbose]{biblatex}
+\addbibresource{references.bib}
+
+\usepackage{amsmath}
+\usepackage{fullpage}
+\usepackage{amsmath,amssymb,verbatim}
+% \usepackage{fullpage}
+\usepackage{enumerate}
+\usepackage{xcolor}
+\usepackage{algorithm}
+\usepackage{algorithmic}
+\renewcommand{\P}{\mathbf{P}}
+\newcommand{\NP}{\mathbf{NP}}
+\newcommand{\coNP}{\mathbf{coNP}}
+\newcommand{\EXP}{\mathbf{EXP}}
+\newcommand{\BPP}{\mathbf{BPP}}
+\newcommand{\RP}{\mathbf{RP}}
+\newcommand{\NEXP}{\mathbf{NEXP}}
+\newcommand{\PH}{\mathbf{PH}}
+\newcommand{\PSPACE}{\mathbf{PSPACE}}
+\newcommand{\TIME}{\mathbf{TIME}}
+\newcommand{\NTIME}{\mathbf{NTIME}}
+\newcommand{\LOG}{\mathbf{LOGSPACE}}
+\newcommand{\SIZE}{\mathbf{SIZE}}
+
+\def \F {{\mathbb F}}
+\def \N {{\mathbb N}}
+
+\def \ATIME{{\mathsf{ATIME}}}
+\def \NTIME{{\mathsf{NTIME}}}
+\def \eps {{\varepsilon}}
+
+\def \ASPACE{{\mathsf{ASPACE}}}
+\def \SPACE{{\mathsf{SPACE}}}
+\def \TIME{{\mathsf{TIME}}}
+\def \BPL{{\mathbf{BPL}}}
+
+\def \poly{\text{poly}}
+
+\begin{document}
+
+\begin{center}
+    \Large
+    6.541/18.405 Final Project, Progress Report \#1
+
+    \vspace{3pt}
+    Subject: The Computational Complexity of Probabilistic Inference
+
+    \vspace{3pt}
+    \normalsize
+    George Matheos, \today
+\end{center}
+
+\section{Literature review update}
+
+\subsection{Papers read}
+
+\begin{enumerate}
+    \item \cite{jerrum1986}
+    \item \cite{cooper1990}
+    \item \cite{dagum1993}
+    \item \cite{dagum1997optimal}
+    \item \cite{ackerman2019computability}
+    \item \cite{kwisthout2018approximate}
+\end{enumerate}
+
+\subsection{Papers remaining to read}
+\begin{enumerate}
+    \item \cite{akmal2022majority}
+    \item \cite{tantau2022satisfaction}
+    \item \cite{moitra2019approximate}
+    \item \cite{aaronson2014equivalence}
+    \item \cite{yamakami1999polynomial}
+    \item \cite{feige2002relations}
+\end{enumerate}
+
+\subsubsection{Other papers to potentially read}
+\begin{enumerate}
+    \item \cite{li2021hierarchical}
+    \item I also want to find a good introduction to one-way functions which are hard to invert for random inputs.  I’ve realized this is very relevant.  Any pointers?
+\end{enumerate}
+
+\section{Update on possible directions for new research}
+
+\subsection{Analyzing the complexity of approximating $P(X | Y)$ for average-case $Y$}
+
+\textbf{TLDR:} I have realized this is closely related to the existence of injective one-way functions which are hard to invert for average-case input.  One project direction would be to read up on such one-way functions, and spell out this connection (which I have not seen mentioned in the literature) in my project report.
+
+\subsubsection{The question to consider}
+Consider a Bayesian network (probabilistic graphical model) $B$ on a set $\mathcal{V}$ of boolean variables.  This defines a distribution $P$ on $\{0, 1\}^{\mathcal{V}}$.  Let $X, Y$ be disjoint subsets of $\mathcal{V}$ and let $x \in \{0, 1\}^X$ and $y \in \{0, 1\}^Y$.  I am interested in the complexity of computing $P(X = x | Y = y)$ up to $\epsilon$ additive error.
+
+It is known (\citeauthor{dagum1993} \citeyear{dagum1993}) that if the following condition holds, $\NP = \BPP$:
+\begin{multline}
+    \exists \epsilon \in (0, 1/2),
+    \exists \text{ ptime probabilistic Turing Machine } M \text{ such that} \forall B \text{ a description of a Bayesian network, } \\
+    \forall X, Y \text{ disjoint subsets of the variables in } B, \forall x \in \{0, 1\}^X, \forall y \in \{0, 1\}^Y, \\
+    \mathbb{P}_{r}[|M(B, X, Y, x, y, r) - P(X = x | Y = y)| \leq \epsilon] \geq 2/3
+\end{multline}
+
+Here, $r$ is uniformly sampled random bits for the probabilistic Turing machine $M$.
+% additively approximating the following function is NP hard:
+% \begin{multline*}
+%     f(B, X, Y, x, y) = P(X = x | Y = y)\text{ where } B \text{ is the description of a Bayesian network, } X, Y \text{ are as above, and } y \in \{0, 1\}^Y
+% \end{multline*}
+
+
+I have not, however, seen results casting doubt on the following proposition:
+
+\begin{multline} \label{eq:myprop}
+    \exists \epsilon << 1/2,
+    \exists \text{ ptime probabilistic Turing Machine } M \text{ such that} \forall B \text{ a description of a Bayesian network, } \\
+    \forall X, Y \text{ disjoint subsets of the variables in } B, \forall x \in \{0, 1\}^X \\
+    \mathbb{P}_{r; y \sim P}[|M(B, X, Y, x, y, r) - P(X = x | Y = y)| \leq \epsilon] >> 2/3
+\end{multline}
+
+The difference is that in the former proposition, $y$ is an arbitrary observation value.  In the second proposition, the probabilistic model $B$ is worst-case, but $y$ is sampled from the marginal of $P$ on $Y$.  (To the extent that probabilistic models describe the actual distributions with which things occur in the real world, we expect the inference problems presented by the real world to be on average-case $y$.)
+
+% \textbf{Proposition:} There exists a probabilistic Turing machine 
+
+% problem is $\NP$-hard in general.  However, I have not seen results showing that there exist a family of Bayesian networks if $y$ is sampled from the marginal of $P$ on $Y$
+
+\subsubsection{Progress toward results}
+
+\textbf{Observation 1: if $|Y| = 1$, (\ref{eq:myprop}) holds.} I have realized that if we restrict to cases where $Y$ contains one boolean variable ($|Y| = 1$), then (\ref{eq:myprop}) holds.  The reason is that if $Y$ contains one variable, either (A) $P(Y = y) > 0.001$, in which case approximate inference is easy to do via rejection sampling, or $P(Y = \neg y) \geq 0.999$, which means that with high probability, $Y \neq y$ and it is okay if it is hard to approximate $P(X | y)$.
+
+\vspace{3pt}
+\noindent \textbf{Observation 2: if we allow large $|Y|$, (\ref{eq:myprop}) implies invertible one-way functions cannot be hard to invert on most random inputs.}
+Say there exists a family of injective functions $(f_i)_{i=1}^\infty$ with $f_i : \{0, 1\}^{m_i} \to \{0, 1\}^{n_i}$ for some natural numbers $m_i, n_i$. Say these functions have the property that there is no probabilistic Turing machine $M$ which can invert $f_i$ on a random input $x$ with probability $> 2/3$ for all $i$.  That is, $\forall M$,
+$$
+\exists i \text{ s.t. }
+\mathbb{P}_{x \sim \text{Uniform}(\{0, 1\}^{n_i}), r}(M(f_i, y, r) = x) < 2/3 \quad \text{ where } y = f_i(x)
+$$
+
+\noindent Then for any $i$, we can encode a Bayesian network $B$ which (1) first samples variables $X_1, \dots, X_{m_i}$ uniformly at random, and then (2) computes $Y = f_i(X_1, \dots, X_{m_i})$ by encoding a deterministic circuit for $f_i$.
+If with high probability we could approximate $\mathbb{P}(X_1 = 0)$, we could apply an iterative algorithm to construct an assignment to $X_1, \dots, X_{m_i}$, and then check if $Y = f_i(X_1, \dots, X_{m_i})$.  If we could do this with high probability, we could invert $f_i$ with high probability.
+
+\subsection{Complexity results parametrized by information theoretic quantities}
+
+
+
+\end{document}

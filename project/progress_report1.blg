@@ -1,0 +1,15 @@
+[0] Config.pm:307> INFO - This is Biber 2.17
+[0] Config.pm:310> INFO - Logfile is 'progress_report1.blg'
+[70] biber-darwin:340> INFO - === Wed Apr 17, 2024, 10:51:21
+[84] Biber.pm:418> INFO - Reading 'progress_report1.bcf'
+[174] Biber.pm:972> INFO - Found 13 citekeys in bib section 0
+[188] Biber.pm:4383> INFO - Processing section 0
+[198] Biber.pm:4574> INFO - Looking for bibtex file 'references.bib' for section 0
+[199] bibtex.pm:1713> INFO - LaTeX decoding ...
+[213] bibtex.pm:1518> INFO - Found BibTeX data source 'references.bib'
+[298] UCollate.pm:68> INFO - Overriding locale 'en-US' defaults 'variable = shifted' with 'variable = non-ignorable'
+[299] UCollate.pm:68> INFO - Overriding locale 'en-US' defaults 'normalization = NFD' with 'normalization = prenormalized'
+[299] Biber.pm:4203> INFO - Sorting list 'nty/global//global/global' of type 'entry' with template 'nty' and locale 'en-US'
+[299] Biber.pm:4209> INFO - No sort tailoring available for locale 'en-US'
+[309] bbl.pm:654> INFO - Writing 'progress_report1.bbl' with encoding 'UTF-8'
+[315] bbl.pm:757> INFO - Output to progress_report1.bbl

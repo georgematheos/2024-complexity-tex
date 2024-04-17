@@ -1,0 +1,298 @@
+6.541/18.405 -- Complexity Theory! 
+=== LECTURE 2 ===
+
+Course URL: bit.ly/18405-2024
+
+Don't forget to sign up for the course on piazza! 
+Code is PvNPplz
+
+Pset 0 is out on piazza, due in a week.
+You can find the PDF as well as Latex source. We encourage you to write your solutions in Latex! 
+It is the platform used for all mathematics and computer science papers nowadays. 
+One way to get started with Latex is to use www.overleaf.com; you get a free account there, just by being an MIT student! 
+
+====
+Goals for complexity theory:
+(1) IMPOSSIBILITY Results for Computing (LOWER BOUNDS)
+ KNOWN LOWER BOUNDS: Many; here are some we'll discuss.
+(a) Diagonalization-based
+(b) Circuit Complexity
+(c) Communication Complexity
+(d) Query Complexity
+
+(2) TRADE-OFFS/CONNECTIONS/REDUCTIONS between resources and modes of computation 
+
+---
+
+(a) Diagonalization: 
+	[[Def. t: N -> N is time construct. if exists TM M s.t. 
+	for all n, M(1^n) outputs t(n) in binary in O(t(n)) steps.]]
+
+	Polynomials, 2^n, n!, n^{log n}, 2^{n^{1/2}}, etc are time constructible.
+
+	Time Hier Thm: There's a c > 1 s.t. for all time constr t(n) >= n,
+		there's an f s.t. f in TIME[t^c] & f notin TIME[t].
+		
+	Holds for any computational model with a "universal simulation" theorem... 
+
+	Univ. Sim. Thm: There is a TM U s.t.
+	for all TM M, strings x, integer t
+	1. U(M,x,1^t) runs in poly(|M|*t) time
+	2.  " "       acc <=> M(x) acc in <= t steps.	
+	
+	Idea: Pick alpha to be some unbounded easy-to-compute function (could be the identity function!)
+	f(M) := 1 <=> [M(M) doesn't acc in <= t(|M|)*alpha(|M|) steps] 
+
+	(use extra factor of alpha(|M|) to drown out leading constants in the O(t(n)) runtime!)
+	
+	So, f runs its input "on itself" for more than t(n) steps, outputs OPPOSITE ANSWER.
+
+	f in TIME(t^c): Follows from Universal Simulation.
+	f not in TIME(t): Show if M* decides f, then there are infinitely many inputs x for which M* must take time > alpha*(|x|)*t(|x|).
+	
+* Thm: SAT isn't in O(n^c) time and O(log n) space, for c < 2*cos(pi/7) < 1.8019...
+  holds in all reasonable computation models
+  (hasn't been improved in 15 years!)
+  (OPEN for MAX-CLIQUE)
+								
+(b) Boolean circuits: 
+ Compute f : {0,1}^n -> {0,1} using min # of "simple" fns, e.g. functions g:{0,1}^2 -> {0,1}
+
+P/poly = decision problems computable with polynomial-size circuits
+= {f : {0,1}^* -> {0,1} | there is an infinite sequence of circuits C_1,C_2,...,C_n,...
+						such that for all x, f(x) = C_{|x|}(x),
+						and there is a c such that for all n, C_n has <= n^c + c gates} 
+ 
+Note, the *description* of our "computer" deciding f could be an infinitely long description! 
+A different circuit C_n for each input length n. 
+Very different sort of complexity class. Some undecidable problems fall in P/poly! 
+
+Example:
+UNARY-HALT = {1^n | the n-th Turing machine halts on blank tape}
+is undecidable, but it is in P/poly!
+
+[For each input length n, there is either
+  (a) no string of length n in UNARY-HALT, 
+  or (b) there is exactly one string of length n, 1^n. 
+In case (a), we can set C_n to be any circuit that always outputs 0, such as x AND not-x. 
+In case (b), we can set C_n to be a circuit computing AND(x1,...,xn).
+]
+  
+Can still prove some (weak) lower bounds for P/poly, though, which we'll see.
+
+OPEN: NP is in P/poly? Harder than proving P != NP.
+
+OPEN: NTIME(2^n) is in P/poly ?? 
+ 
+Constant-depth restrictions of P/poly (note there are other interesting restrictions)
+ 
+  AC0: allow AND, OR gates of arbitrary fan-in, AND NOT gates, *CONSTANT* depth 
+		Can add two numbers, take the minimum of a sequence of numbers...
+
+* Thm [FSS]: For sufficiently large n, PARITY_n doesn't have AC0 circuits of poly(n) size. 
+		PARITY_n(x1,...,xn) = sum_i x_i (mod 2)
+
+	AC0+PARITY: allow AND, OR, PARITY gates of arbitrary fan-in, AND NOT gates. 
+	
+* Thm [RS]: For all n, MOD3_n doesn't have an AC0+PARITY circuit of poly(n) size.
+		MOD3(x1,...,xn) = 1 <=> sum_i x_i (mod 3) = 0
+		
+	AC0+PARITY+MOD3: allow AND, OR, PARITY, MOD3 gates of arbitrary fan-in, AND NOT gates. 
+	
+* Thm: For all n, ????? on n bits doesn't have an AC0+PARITY+MOD3 circuit of poly(n) size.
+	Currently we can only find functions in quasi-NP: NTIME(n^{poly(log n)}), [MW18]
+	But it should be that the MAJORITY function can't be computed with only mod-3 and mod-2 counting in constant depth??
+
+(c) Communication complexity: 
+
+Simple model of distributed computing. Imagine two inputs x and y of equal length, and two parties Alice and Bob.
+
+Alice can see x, Bob can see y, and they want to jointly compute some function f(x,y).
+They can send bits about their input to the other party.
+They do not want to send their whole string to the other party.
+For what functions f are there "interesting" protocols with "low" communication? 
+
+Interesting could be deterministic, randomized, nondeterministic, ... 
+but use few bits of communication between them.
+Here there are many lower bounds known! 
+
+Examples:
+EQUALITY. Suppose Alice and Bob both hold bit strings of length n. 
+Want to know if the strings are equal. 
+Thm: EQUALITY requires > n bits of communication -- Alice and Bob basically have to send their strings!
+Thm: EQUALITY can be done with O(log n) bits of communication, with randomness! 
+
+DISJOINTNESS. Suppose Alice and Bob both hold sets from a universe of size n. (Think of them as n-bit strings)
+Want to know if the sets are disjoint. 
+Thm: DISJOINTNESS requires Omega(n) bits of communication, even with randomness!
+
+(d) Query complexity:
+
+You (one party) want to compute a function f on an input x, 
+but you want to always query a very small number of bits of x and be able to determine f(x), regardless of x. 
+
+Informally, Query complexity of f = the maximum number of bits you need to query to compute f
+ 
+Typically modeled by decision trees
+
+(Example: f only depends on 3 variables, and the others are "irrelevant". Query complexity is 3)
+
+Q: What's a function that depends on all of its variables but has low query complexity?
+A: Let int(b1,...,bk) be a function from k bits to the set {1,2,...,2^k}.
+Consider the function f(x1,...,x_{2^k},b1,...bk) which outputs 1 iff x_{int(b1,...,bk)}=1
+This function depends on all of its variables, but has query complexity O(k), which is O(log n) for input length n = 2^k+k.
+
+What f's have low (e.g. O(poly(log n))) query complexity? 
+What if you allow nondeterministic/random choices of what to query? 
+
+Turns out randomized/deterministic query complexities are polynomially related, 
+but nondeterministic query complexity can be much shorter.
+
+Example: NOT-EQUALITY. Input is 2n bits xy, want to know if x != y. 
+Can *nondeterministically guess* an i=1,...,n and check that i-th bit of x != i-th bit of y.
+So NOT-EQUALITY has nondeterministic q.c. <= 2.
+
+Query complexity is related to many other measures of how "hard" f is, such as its degree as a polynomial.
+
+There was an decades-old open problem called the Sensitivity Conjecture.
+
+Let f : {0,1}^n -> {0,1}. For x in {0,1}^n, let x^i = x with i-th bit flipped.
+S(f) := max_{x \in {0,1}^n} [number of i such that f(x) != f(x^i)]
+
+Example: S(OR) = n: take x = all-zero input, then if any bit of x is flipped, the output of OR changes.
+Similarly, S(AND) = n. 
+
+Sensitivity Conjecture (90's): QC(f) <= poly(S(f)). 
+
+Resolved in 2019 by Huang.
+	
+---	
+	
+(2) CONNECTIONS and TRADE-OFFS between
+  RESOURCES    and    MODES of COMPUTING	 
+   ---------	   ------------------
+time v space (P vs PSPACE)		
+det v nondet. (P v NP) 		
+det v randomized (P vs BPP)	
+worst-case v average-case 
+(can worst-case hardness imply average-case hardness? related to: could P != NP alone imply cryptography?)
+exact v approx	(e.g. 3SAT vs MAX-3SAT)	
+classical/randomized v quantum	...	see Quantum Computation class 2.111							
+									
+[[[	REDUCTIONS: Relate problems together 
+ - Oracle reductions, A <=_T B: try to solve problem A using an oracle for problem B)
+ - Mapping reductions, A <=_m B: for all x, x in A iff R(x) in B (solve A by making one oracle call to B and outputting its answer)
+]]]
+									
+* Conjecture: P != PSPACE: 
+  there are problems solvable with polynomial **memory** but not with polynomial time.
+[Intuition: Can "reuse" memory over and over, can even solve NP problems with polynomial memory.
+			But can you "reuse" time? And if not, why not?]
+												
+* Conjecture: P = BPP (Deterministic Poly-Time = Randomized Poly-Time)
+  every efficient randomized algorithm has an equivalent **efficient** det. algorithm 
+  Randomness can be **removed** from computations without a huge increase in running time
+
+* OPEN whether NEXP = BPP! (NEXP = cup_c NTIME(2^{n^c})) 
+	
+*  [IW'97] (Exists f in TIME(2^n) that needs > 1.001^n size 
+            Boolean circuits, for almost every n) ==> P = BPP
+
+"almost every" = "all but finitely many"
+  i.e. (Det Time is sufficiently "hard") ==> (Randomized Time ~ Det Time)
+	CONNECTION: LOWER BOUND ==> ALGORITHM
+
+[[[	How on earth might you show such a result??
+(1) If f in 2^n time needs 1.001^n circuits to solve **on average** (> 1/2+eps) then P=BPP.
+   Instances of f look like instances of a "random" function, to 1.001^n-size circuits.
+   Intuition: BPP has small, poly(n)-size circuits. 
+   Try to replace the randomness of your algorithm with evaluations of f on O(log(n))-bit inputs.	   
+(2) If there's an f in TIME(2^n) - SIZE(1.001^n), 
+  then there's another f in TIME(2^{O(n)}) needs huge circuits to solve even on average. 
+  [Worst-case ==> average-case]
+]]]
+		
+*  Also ALGORITHM ===> LOWER BOUND: 
+	P = BPP ==> Lower Bounds
+	"Derandomization" which **barely** beats 2^n time ==> Lower Bounds!
+ 
+More Connections:  
+
+*** PCP (Prob Checkable Proofs): 
+	Amazingly efficient proof systems. 
+	Can check just a few bits to verify the solution!
+	
+*	Existence of certain PCPs <=> certain NP-hard optimization problems are NP-hard EVEN TO APPROXIMATELY solve.
+	Connects proof-checking, approximation algorithms,
+	verifiable computing (computing in the cloud)
+
+	IP = PSPACE: a randomized verifier ***communicating*** with an all-powerful prover can be convinced that a QBF is true (or false) in polynomial time!
+  
+*** FINE-GRAINED COMPLEXITY: 
+  Suppose a problem *is* in P, even solvable in n^2 time on instances of length n. 
+  But if n > 10^10, this algorithm already takes way too long. 
+  Could it be solvable in O(n) time?
+  Can we relate the complexity of important problems known to be solvable in n^2 time? 
+  (YES! COMPLETENESS THEORY)
+  Can even relate problems in n^2 time to NP-hard problems such as SAT.
+
+  Strong Exponential Time Hypothesis: 
+  CNF SAT (with n variables, m clauses) is not in poly(m)*2^{delta*n} time, for every delta < 1.
+
+Vast strengthening of P != NP. May be false!
+
+  Disjoint Sets: Given N sets from {1,...,d}, are there two which are disjoint?
+  Easily solvable in O(N^2*d) time. Is there a faster algorithm?
+  
+  Thm: Disjoint Sets is in O(N^{2-eps}*d^c) time 
+  => CNF SAT (with n variables, m clauses) is in m^{c}*2^{(1-eps/2)n} time.
+  => Strong ETH is false
+  
+  So Strong ETH => the best algorithm for Disjoint Sets is essentially quadratic time. 
+  
+  Proof: 
+  Given a CNF F with m clauses, n vars, want to reduce it to Disjoint Sets.
+  Set d := m+2.
+  Partition vars of F into parts P1 and P2, each part has <= n/2+1 vars.
+  For j=1,2, there are O(2^{n/2}) possible assignments to vars in part P_j.
+  
+  Make a set S_A for each possible assignment A. 
+  So we'll have N=O(2^{n/2}) sets.
+  
+  Put i in S_A <=> A does not satisfy i-th clause of F.
+  Put m+1 in all sets from part P1, put m+2 in all sets from part P2.
+  
+  Now any two sets coming from P1 are not disjoint, and any two sets coming from P2 are not disjoint.
+  
+  Claim: S_A from P1 and S_{A'} from P2 are disjoint <=> (A,A') is a SAT assignment for F.
+  
+  So determining if there is a disjoint pair of sets is equivalent to determining if there is a SAT assignment for F.
+  
+  Now, any algorithm for Disjoint Sets that runs in N^{2-eps}*d^c time 
+  implies a SAT algorithm running in time (2^{n/2})^{2-eps}*O(m^c) <= 2^{(1-eps/2)n}*O(m^c). 
+    
+  QED
+		
+*** ONE-WAY FUNCTIONS / CRYPTO: 
+  f is one-way if computing f is easy, but computing f^{-1} is hard. 
+
+  x -> [ f ] -> f(x) 
+	BOX
+  
+  is easy (say in P), but
+
+  y -> [ f^{-1} ] -> x s.t. f(x) = y, or "NONE"
+  
+  is "hard" (think: no polytime alg solves f^{-1} for "many" y's)  
+  
+  Thm: ONE-WAY functions exist ==> P != NP. Strong lower bound.
+	
+  Why? Suppose P = NP. Then we can invert any easily computable f! 
+  Draw up f as a logic circuit, and put the input y on its output wires. 
+  Now P = NP means we can solve Circuit-SAT, which means we can find an x that makes f output y.
+	
+  ONE-WAY functions do not exist ==> most crypto is impossible. 
+  
+Can't encrypt messages longer than a shared key.
+Many constructions in crypto require one-way functions.
+(secure signature schemes, authentication schemes, etc.)

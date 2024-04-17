@@ -1,6 +1,6 @@
 \documentclass{article}
 \usepackage{amsmath}
-\usepackage{fullpage}
+% \usepackage{fullpage}
 \usepackage{amsmath,amssymb,verbatim}
 % \usepackage{fullpage}
 \usepackage{enumerate}
@@ -336,6 +336,28 @@ Observe that we can take $\delta_0 = 0$ so long as $b \geq 1$.
 I will now upper bound $\delta_m$ in terms of $\delta_{m-1}$.
 
 Consider the value of $p$ computed for a particlar $m$, $i$, and $j$.  We have
+
+\begin{multline*}
+	|p - M_{i, j}^{2^m}|
+	= |\sum_{c \in C}{(\hat{M}_{i, c}^{2^{m-1}} \times \hat{M}_{c, j}^{2^{m-1}})} - \sum_{c \in C}{(M_{i, c}^{2^{m-1}} \times M_{c, j}^{2^{m-1}})}| \\
+	= |\sum_{c \in C}{(\hat{M}_{i, c}^{2^{m-1}} \times \hat{M}_{c, j}^{2^{m-1}}} - {M_{i, c}^{2^{m-1}} \times M_{c, j}^{2^{m-1}})}| \\
+	= |
+	\sum_c {M^{2^{m-1}}_{i, c}(\hat{M}^{2^{m-1}}_{c, j} - M^{2^{m-1}}_{c, j})} -
+	\sum_c {\hat{M}^{2^{m-1}}_{c, j}(M_{i, c} - \hat{M}^{2^{m-1}}_{i, c})}
+	| \\
+	\leq |\sum_c {M^{2^{m-1}}_{i, c}(\hat{M}^{2^{m-1}}_{c, j} - M^{2^{m-1}}_{c, j})}|
+	+ |\sum_c {\hat{M}^{2^{m-1}}_{c, j}(M^{2^{m-1}}_{i, c} - \hat{M}^{2^{m-1}}_{i, c})}| \\
+	\leq \sum_c {M^{2^{m-1}}_{i, c} \delta_{m-1}} + \sum_c {\hat{M}^{2^{m-1}}_{c, j}\delta_{m-1}} \\
+	\leq \delta_{m-1} + \sum_c {\hat{M}^{2^{m-1}}_{c, j}\delta_{m-1}} \\
+	\leq \delta_{m-1} + \delta_{m-1}(1 + |C|\delta_{m-1})
+	\\ = 2\delta_{m-1} + |C|\delta_{m-1}^2
+\end{multline*}
+
+The second to last inequality uses $\sum_c {M^{2^{m-1}}_{i, c}} = 1$ (which is true since $M^{2^{m-1}}_{i, c}$ is a probability distribution on $c$).
+The last inequality uses the fact that $\sum_c \hat{M}^{2^{m-1}} \leq 1 + |C|\delta_{m-1}$, which uses the fact that each $\hat{M}^{2^{m-1}}$ is within $\delta_{m-1}$ of $M^{2^{m-1}}$, and these values form a probability distribution.
+
+
+\newpage
 \begin{multline*}
 	|p - M_{i, j}^{2^m}| = |\sum_{c \in C}{(\hat{M}_{i, c}^{2^{m-1}} \times \hat{M}_{c, j}^{2^{m-1}})} - \sum_{c \in C}{(M_{i, c}^{2^{m-1}} \times M_{c, j}^{2^{m-1}})}|
 	\\

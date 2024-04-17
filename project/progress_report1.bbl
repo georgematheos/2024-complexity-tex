@@ -1,0 +1,456 @@
+% $ biblatex auxiliary file $
+% $ biblatex bbl format version 3.2 $
+% Do not modify the above lines!
+%
+% This is an auxiliary file used by the 'biblatex' package.
+% This file may safely be deleted. It will be recreated by
+% biber as required.
+%
+\begingroup
+\makeatletter
+\@ifundefined{ver@biblatex.sty}
+  {\@latex@error
+     {Missing 'biblatex' package}
+     {The bibliography requires the 'biblatex' package.}
+      \aftergroup\endinput}
+  {}
+\endgroup
+
+
+\refsection{0}
+  \datalist[entry]{nty/global//global/global}
+    \entry{aaronson2014equivalence}{article}{}
+      \name{author}{1}{}{%
+        {{hash=9709fc1390d4ac82cbad7750d99484bf}{%
+           family={Aaronson},
+           familyi={A\bibinitperiod},
+           given={Scott},
+           giveni={S\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {Springer}%
+      }
+      \strng{namehash}{9709fc1390d4ac82cbad7750d99484bf}
+      \strng{fullhash}{9709fc1390d4ac82cbad7750d99484bf}
+      \strng{bibnamehash}{9709fc1390d4ac82cbad7750d99484bf}
+      \strng{authorbibnamehash}{9709fc1390d4ac82cbad7750d99484bf}
+      \strng{authornamehash}{9709fc1390d4ac82cbad7750d99484bf}
+      \strng{authorfullhash}{9709fc1390d4ac82cbad7750d99484bf}
+      \field{sortinit}{A}
+      \field{sortinithash}{2f401846e2029bad6b3ecc16d50031e2}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Theory of Computing Systems}
+      \field{number}{2}
+      \field{title}{The equivalence of sampling and searching}
+      \field{volume}{55}
+      \field{year}{2014}
+      \field{pages}{281\bibrangedash 298}
+      \range{pages}{18}
+    \endentry
+    \entry{ackerman2019computability}{article}{}
+      \name{author}{3}{}{%
+        {{hash=a647d7b5a59ffec74ff01b8cdcf72306}{%
+           family={Ackerman},
+           familyi={A\bibinitperiod},
+           given={Nathanael\bibnamedelima L},
+           giveni={N\bibinitperiod\bibinitdelim L\bibinitperiod}}}%
+        {{hash=d564c5d552ef1154dd3c96611630f40d}{%
+           family={Freer},
+           familyi={F\bibinitperiod},
+           given={Cameron\bibnamedelima E},
+           giveni={C\bibinitperiod\bibinitdelim E\bibinitperiod}}}%
+        {{hash=8c119ee3a501e8daf8a47ae46559c666}{%
+           family={Roy},
+           familyi={R\bibinitperiod},
+           given={Daniel\bibnamedelima M},
+           giveni={D\bibinitperiod\bibinitdelim M\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {ACM New York, NY, USA}%
+      }
+      \strng{namehash}{1be81ce689772439bc7c6067465a547b}
+      \strng{fullhash}{1be81ce689772439bc7c6067465a547b}
+      \strng{bibnamehash}{1be81ce689772439bc7c6067465a547b}
+      \strng{authorbibnamehash}{1be81ce689772439bc7c6067465a547b}
+      \strng{authornamehash}{1be81ce689772439bc7c6067465a547b}
+      \strng{authorfullhash}{1be81ce689772439bc7c6067465a547b}
+      \field{sortinit}{A}
+      \field{sortinithash}{2f401846e2029bad6b3ecc16d50031e2}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Journal of the ACM (JACM)}
+      \field{number}{3}
+      \field{title}{On the computability of conditional probability}
+      \field{volume}{66}
+      \field{year}{2019}
+      \field{pages}{1\bibrangedash 40}
+      \range{pages}{40}
+    \endentry
+    \entry{akmal2022majority}{inproceedings}{}
+      \name{author}{2}{}{%
+        {{hash=50443cb7d49d4c5690be451dc09579a8}{%
+           family={Akmal},
+           familyi={A\bibinitperiod},
+           given={Shyan},
+           giveni={S\bibinitperiod}}}%
+        {{hash=fae3fd8ed553265acb8288519a5a1f55}{%
+           family={Williams},
+           familyi={W\bibinitperiod},
+           given={Ryan},
+           giveni={R\bibinitperiod}}}%
+      }
+      \list{organization}{1}{%
+        {IEEE}%
+      }
+      \strng{namehash}{f2d23e4d15a6a2bc10ba128d59921db8}
+      \strng{fullhash}{f2d23e4d15a6a2bc10ba128d59921db8}
+      \strng{bibnamehash}{f2d23e4d15a6a2bc10ba128d59921db8}
+      \strng{authorbibnamehash}{f2d23e4d15a6a2bc10ba128d59921db8}
+      \strng{authornamehash}{f2d23e4d15a6a2bc10ba128d59921db8}
+      \strng{authorfullhash}{f2d23e4d15a6a2bc10ba128d59921db8}
+      \field{sortinit}{A}
+      \field{sortinithash}{2f401846e2029bad6b3ecc16d50031e2}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{booktitle}{2021 IEEE 62nd Annual Symposium on Foundations of Computer Science (FOCS)}
+      \field{title}{majority-3sat (and related problems) in polynomial time}
+      \field{year}{2022}
+      \field{pages}{1033\bibrangedash 1043}
+      \range{pages}{11}
+    \endentry
+    \entry{cooper1990}{article}{}
+      \name{author}{1}{}{%
+        {{hash=ae44280700db382c780fe95952f4cb4c}{%
+           family={Cooper},
+           familyi={C\bibinitperiod},
+           given={Gregory\bibnamedelima F},
+           giveni={G\bibinitperiod\bibinitdelim F\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {Elsevier}%
+      }
+      \strng{namehash}{ae44280700db382c780fe95952f4cb4c}
+      \strng{fullhash}{ae44280700db382c780fe95952f4cb4c}
+      \strng{bibnamehash}{ae44280700db382c780fe95952f4cb4c}
+      \strng{authorbibnamehash}{ae44280700db382c780fe95952f4cb4c}
+      \strng{authornamehash}{ae44280700db382c780fe95952f4cb4c}
+      \strng{authorfullhash}{ae44280700db382c780fe95952f4cb4c}
+      \field{sortinit}{C}
+      \field{sortinithash}{4d103a86280481745c9c897c925753c0}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Artificial intelligence}
+      \field{number}{2-3}
+      \field{title}{The computational complexity of probabilistic inference using Bayesian belief networks}
+      \field{volume}{42}
+      \field{year}{1990}
+      \field{pages}{393\bibrangedash 405}
+      \range{pages}{13}
+    \endentry
+    \entry{dagum1997optimal}{article}{}
+      \name{author}{2}{}{%
+        {{hash=933c667398ff22146f95f8a2e7b0bb7a}{%
+           family={Dagum},
+           familyi={D\bibinitperiod},
+           given={Paul},
+           giveni={P\bibinitperiod}}}%
+        {{hash=e6551d9c62955309f7597c6fc741020a}{%
+           family={Luby},
+           familyi={L\bibinitperiod},
+           given={Michael},
+           giveni={M\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {Elsevier}%
+      }
+      \strng{namehash}{7d061a1afd632bfc2f7084d59f02dec6}
+      \strng{fullhash}{7d061a1afd632bfc2f7084d59f02dec6}
+      \strng{bibnamehash}{7d061a1afd632bfc2f7084d59f02dec6}
+      \strng{authorbibnamehash}{7d061a1afd632bfc2f7084d59f02dec6}
+      \strng{authornamehash}{7d061a1afd632bfc2f7084d59f02dec6}
+      \strng{authorfullhash}{7d061a1afd632bfc2f7084d59f02dec6}
+      \field{extraname}{1}
+      \field{sortinit}{D}
+      \field{sortinithash}{6f385f66841fb5e82009dc833c761848}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Artificial Intelligence}
+      \field{number}{1-2}
+      \field{title}{An optimal approximation algorithm for Bayesian inference}
+      \field{volume}{93}
+      \field{year}{1997}
+      \field{pages}{1\bibrangedash 27}
+      \range{pages}{27}
+    \endentry
+    \entry{dagum1993}{article}{}
+      \name{author}{2}{}{%
+        {{hash=933c667398ff22146f95f8a2e7b0bb7a}{%
+           family={Dagum},
+           familyi={D\bibinitperiod},
+           given={Paul},
+           giveni={P\bibinitperiod}}}%
+        {{hash=e6551d9c62955309f7597c6fc741020a}{%
+           family={Luby},
+           familyi={L\bibinitperiod},
+           given={Michael},
+           giveni={M\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {Elsevier}%
+      }
+      \strng{namehash}{7d061a1afd632bfc2f7084d59f02dec6}
+      \strng{fullhash}{7d061a1afd632bfc2f7084d59f02dec6}
+      \strng{bibnamehash}{7d061a1afd632bfc2f7084d59f02dec6}
+      \strng{authorbibnamehash}{7d061a1afd632bfc2f7084d59f02dec6}
+      \strng{authornamehash}{7d061a1afd632bfc2f7084d59f02dec6}
+      \strng{authorfullhash}{7d061a1afd632bfc2f7084d59f02dec6}
+      \field{extraname}{2}
+      \field{sortinit}{D}
+      \field{sortinithash}{6f385f66841fb5e82009dc833c761848}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Artificial intelligence}
+      \field{number}{1}
+      \field{title}{Approximating probabilistic inference in Bayesian belief networks is NP-hard}
+      \field{volume}{60}
+      \field{year}{1993}
+      \field{pages}{141\bibrangedash 153}
+      \range{pages}{13}
+    \endentry
+    \entry{feige2002relations}{inproceedings}{}
+      \name{author}{1}{}{%
+        {{hash=b1684193b9de8503418fa549b5fe487c}{%
+           family={Feige},
+           familyi={F\bibinitperiod},
+           given={Uriel},
+           giveni={U\bibinitperiod}}}%
+      }
+      \strng{namehash}{b1684193b9de8503418fa549b5fe487c}
+      \strng{fullhash}{b1684193b9de8503418fa549b5fe487c}
+      \strng{bibnamehash}{b1684193b9de8503418fa549b5fe487c}
+      \strng{authorbibnamehash}{b1684193b9de8503418fa549b5fe487c}
+      \strng{authornamehash}{b1684193b9de8503418fa549b5fe487c}
+      \strng{authorfullhash}{b1684193b9de8503418fa549b5fe487c}
+      \field{sortinit}{F}
+      \field{sortinithash}{2638baaa20439f1b5a8f80c6c08a13b4}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{booktitle}{Proceedings of the thiry-fourth annual ACM symposium on Theory of computing}
+      \field{title}{Relations between average case complexity and approximation complexity}
+      \field{year}{2002}
+      \field{pages}{534\bibrangedash 543}
+      \range{pages}{10}
+    \endentry
+    \entry{jerrum1986}{article}{}
+      \name{author}{3}{}{%
+        {{hash=da8b5cc662b638101ad76b3586ccf505}{%
+           family={Jerrum},
+           familyi={J\bibinitperiod},
+           given={Mark\bibnamedelima R},
+           giveni={M\bibinitperiod\bibinitdelim R\bibinitperiod}}}%
+        {{hash=5f6de757ace433a38a527a005db316f1}{%
+           family={Valiant},
+           familyi={V\bibinitperiod},
+           given={Leslie\bibnamedelima G},
+           giveni={L\bibinitperiod\bibinitdelim G\bibinitperiod}}}%
+        {{hash=4391dea254c3bbcaff1fefed241caed0}{%
+           family={Vazirani},
+           familyi={V\bibinitperiod},
+           given={Vijay\bibnamedelima V},
+           giveni={V\bibinitperiod\bibinitdelim V\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {Elsevier}%
+      }
+      \strng{namehash}{95718bb595874bb243fa984de233286c}
+      \strng{fullhash}{95718bb595874bb243fa984de233286c}
+      \strng{bibnamehash}{95718bb595874bb243fa984de233286c}
+      \strng{authorbibnamehash}{95718bb595874bb243fa984de233286c}
+      \strng{authornamehash}{95718bb595874bb243fa984de233286c}
+      \strng{authorfullhash}{95718bb595874bb243fa984de233286c}
+      \field{sortinit}{J}
+      \field{sortinithash}{b2f54a9081ace9966a7cb9413811edb4}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Theoretical computer science}
+      \field{title}{Random generation of combinatorial structures from a uniform distribution}
+      \field{volume}{43}
+      \field{year}{1986}
+      \field{pages}{169\bibrangedash 188}
+      \range{pages}{20}
+    \endentry
+    \entry{kwisthout2018approximate}{article}{}
+      \name{author}{1}{}{%
+        {{hash=7c0d21248daa1368123f9d053f2501bf}{%
+           family={Kwisthout},
+           familyi={K\bibinitperiod},
+           given={Johan},
+           giveni={J\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {Elsevier}%
+      }
+      \strng{namehash}{7c0d21248daa1368123f9d053f2501bf}
+      \strng{fullhash}{7c0d21248daa1368123f9d053f2501bf}
+      \strng{bibnamehash}{7c0d21248daa1368123f9d053f2501bf}
+      \strng{authorbibnamehash}{7c0d21248daa1368123f9d053f2501bf}
+      \strng{authornamehash}{7c0d21248daa1368123f9d053f2501bf}
+      \strng{authorfullhash}{7c0d21248daa1368123f9d053f2501bf}
+      \field{sortinit}{K}
+      \field{sortinithash}{c02bf6bff1c488450c352b40f5d853ab}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{International Journal of Approximate Reasoning}
+      \field{title}{Approximate inference in Bayesian networks: Parameterized complexity results}
+      \field{volume}{93}
+      \field{year}{2018}
+      \field{pages}{119\bibrangedash 131}
+      \range{pages}{13}
+    \endentry
+    \entry{li2021hierarchical}{inproceedings}{}
+      \name{author}{8}{}{%
+        {{hash=2ee3c28b643f9701eae99995e1443d35}{%
+           family={Li},
+           familyi={L\bibinitperiod},
+           given={Chunxiao},
+           giveni={C\bibinitperiod}}}%
+        {{hash=6ad6f0f7a9dd506db5776d182df60bf2}{%
+           family={Chung},
+           familyi={C\bibinitperiod},
+           given={Jonathan},
+           giveni={J\bibinitperiod}}}%
+        {{hash=b65de7534f5466c47979d156974c7112}{%
+           family={Mukherjee},
+           familyi={M\bibinitperiod},
+           given={Soham},
+           giveni={S\bibinitperiod}}}%
+        {{hash=d28b11a9afd8cf34cae450407938dee7}{%
+           family={Vinyals},
+           familyi={V\bibinitperiod},
+           given={Marc},
+           giveni={M\bibinitperiod}}}%
+        {{hash=ecb16b9462f5fdf56d2914f02132081f}{%
+           family={Fleming},
+           familyi={F\bibinitperiod},
+           given={Noah},
+           giveni={N\bibinitperiod}}}%
+        {{hash=89c7a2ab2c83f230eda8fde9e0c18a77}{%
+           family={Kolokolova},
+           familyi={K\bibinitperiod},
+           given={Antonina},
+           giveni={A\bibinitperiod}}}%
+        {{hash=ed0594d54a55bdf352527f56fc3084e1}{%
+           family={Mu},
+           familyi={M\bibinitperiod},
+           given={Alice},
+           giveni={A\bibinitperiod}}}%
+        {{hash=e7a563f2d0aa7eca2d78388c064a0db4}{%
+           family={Ganesh},
+           familyi={G\bibinitperiod},
+           given={Vijay},
+           giveni={V\bibinitperiod}}}%
+      }
+      \list{organization}{1}{%
+        {Springer}%
+      }
+      \strng{namehash}{ef26af9f7b7f8759702add1facca8dc7}
+      \strng{fullhash}{70642a45399b714c5a43ccb7215f797a}
+      \strng{bibnamehash}{ef26af9f7b7f8759702add1facca8dc7}
+      \strng{authorbibnamehash}{ef26af9f7b7f8759702add1facca8dc7}
+      \strng{authornamehash}{ef26af9f7b7f8759702add1facca8dc7}
+      \strng{authorfullhash}{70642a45399b714c5a43ccb7215f797a}
+      \field{sortinit}{L}
+      \field{sortinithash}{7c47d417cecb1f4bd38d1825c427a61a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{booktitle}{Theory and Applications of Satisfiability Testing--SAT 2021: 24th International Conference, Barcelona, Spain, July 5-9, 2021, Proceedings 24}
+      \field{title}{On the hierarchical community structure of practical Boolean formulas}
+      \field{year}{2021}
+      \field{pages}{359\bibrangedash 376}
+      \range{pages}{18}
+    \endentry
+    \entry{moitra2019approximate}{article}{}
+      \name{author}{1}{}{%
+        {{hash=d3a533fb3a2bb9d053af2a25892a7315}{%
+           family={Moitra},
+           familyi={M\bibinitperiod},
+           given={Ankur},
+           giveni={A\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {ACM New York, NY, USA}%
+      }
+      \strng{namehash}{d3a533fb3a2bb9d053af2a25892a7315}
+      \strng{fullhash}{d3a533fb3a2bb9d053af2a25892a7315}
+      \strng{bibnamehash}{d3a533fb3a2bb9d053af2a25892a7315}
+      \strng{authorbibnamehash}{d3a533fb3a2bb9d053af2a25892a7315}
+      \strng{authornamehash}{d3a533fb3a2bb9d053af2a25892a7315}
+      \strng{authorfullhash}{d3a533fb3a2bb9d053af2a25892a7315}
+      \field{sortinit}{M}
+      \field{sortinithash}{4625c616857f13d17ce56f7d4f97d451}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Journal of the ACM (JACM)}
+      \field{number}{2}
+      \field{title}{Approximate counting, the Lovász local lemma, and inference in graphical models}
+      \field{volume}{66}
+      \field{year}{2019}
+      \field{pages}{1\bibrangedash 25}
+      \range{pages}{25}
+    \endentry
+    \entry{tantau2022satisfaction}{article}{}
+      \name{author}{1}{}{%
+        {{hash=129e88d9b4e0ba07ca911d6e9aebfaca}{%
+           family={Tantau},
+           familyi={T\bibinitperiod},
+           given={Till},
+           giveni={T\bibinitperiod}}}%
+      }
+      \strng{namehash}{129e88d9b4e0ba07ca911d6e9aebfaca}
+      \strng{fullhash}{129e88d9b4e0ba07ca911d6e9aebfaca}
+      \strng{bibnamehash}{129e88d9b4e0ba07ca911d6e9aebfaca}
+      \strng{authorbibnamehash}{129e88d9b4e0ba07ca911d6e9aebfaca}
+      \strng{authornamehash}{129e88d9b4e0ba07ca911d6e9aebfaca}
+      \strng{authorfullhash}{129e88d9b4e0ba07ca911d6e9aebfaca}
+      \field{sortinit}{T}
+      \field{sortinithash}{9af77f0292593c26bde9a56e688eaee9}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{arXiv preprint arXiv:2201.08895}
+      \field{title}{On the Satisfaction Probability of $ k $-CNF Formulas}
+      \field{year}{2022}
+    \endentry
+    \entry{yamakami1999polynomial}{article}{}
+      \name{author}{1}{}{%
+        {{hash=b071d80b91f779be440bf83cd33773ef}{%
+           family={Yamakami},
+           familyi={Y\bibinitperiod},
+           given={Tomoyuki},
+           giveni={T\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {Elsevier}%
+      }
+      \strng{namehash}{b071d80b91f779be440bf83cd33773ef}
+      \strng{fullhash}{b071d80b91f779be440bf83cd33773ef}
+      \strng{bibnamehash}{b071d80b91f779be440bf83cd33773ef}
+      \strng{authorbibnamehash}{b071d80b91f779be440bf83cd33773ef}
+      \strng{authornamehash}{b071d80b91f779be440bf83cd33773ef}
+      \strng{authorfullhash}{b071d80b91f779be440bf83cd33773ef}
+      \field{sortinit}{Y}
+      \field{sortinithash}{fd67ad5a9ef0f7456bdd9aab10fe1495}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{journal of complexity}
+      \field{number}{4}
+      \field{title}{Polynomial time samplable distributions}
+      \field{volume}{15}
+      \field{year}{1999}
+      \field{pages}{557\bibrangedash 574}
+      \range{pages}{18}
+    \endentry
+  \enddatalist
+\endrefsection
+\endinput
+

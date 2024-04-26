@@ -64,7 +64,7 @@ We showed that circuit lower bound implied ``good'' PRGs. Here is a sort-of conv
 Show that if there is a $O(\log(n))$-seed 1/10-pseudorandom generator computable in $2^{O(m)}$ time on $m$-bit seeds, then there is an $\eps>0$ such that $\DTIME[2^{O(n)}]\not\subset\SIZE[2^{\eps n}]$.
 
 \subsection*{Answer}
-\textbf{TODO: clean this up!}
+\textbf{TODO: clean this up!  Currently messy enough there is a small chance my approach doesn't work.}
 
 Say there exists such a pseudorandom generator $g : \{0, 1\}* \to \{0, 1\}*$ computed
 by Turing machine $G$ running in $2^{km + l}$ time.
@@ -106,6 +106,7 @@ But certainly $f \in \DTIME[2^{O(n)}]$, because it is possible to loop over all 
 \newpage
 \section*{Problem 2: Randomized Approximate Counting with an NP Oracle (12 pts, 3 for each sub-problem)}
 
+\subsection*{Question}
 
 We will develop a real-life application of SAT solvers.
 {\bf Assume $\mathbf{P}=\mathbf{NP}$ in this question.} Let $H_{n,k}$ be a pairwise independent hash family of functions from $\{0,1\}^n$ to $\{0,1\}^k$.
@@ -124,7 +125,11 @@ We will develop a real-life application of SAT solvers.
 		Show that you can derandomize the algorithm.	That is, prove that if $\P = \NP$ then for every function $f\in \#\mathbf{P}$, and any constant $\varepsilon>0$, there is a deterministic polynomial-time algorithm that approximates $f$ within a factor of $1+\varepsilon$. (Warning: the approximate counting problem is \emph{not} a decision problem, so you cannot just ``plug in'' $\P = \NP$ here\dots)
 \end{itemize}
 
+\subsection*{Answer}
+\subsubsection*{Answer to (a)}
 
+
+\newpage
 \section*{Problem 3: Constant Round Arthur-Merlin Collapses (3 points)}
 
 Prove that for every fixed positive integer $k$, $\AM[k]\subseteq \AM[2]$.

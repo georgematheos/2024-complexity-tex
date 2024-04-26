@@ -52,6 +52,32 @@
     George Matheos, \today
 \end{center}
 
+\section{Progress Report}
+
+Thank you for the feedback on my project proposal!
+I will make sure to read Akmal and Williams 2022 and Tantau 2022, and I'll try to be careful with the results in this literature (especially about the complexity of majority counting).
+
+\subsection{Current status \& plan for next steps}
+
+My plan for next week is to try to read the remaining papers on my list.
+
+I've made progress on a couple of ``new research'' directions,\footnote{By ``new research'', I mean deriving results I haven't seen in any papers yet (though it is possible I just haven't found the right ones).} which I think could lead to a project report on the typical-case complexity of approximate inference in probabilistic graphical models.
+This could include one section showing that computing $P(X | Y)$ up to additive approximation error is hard in general, if there exist invertible one-way functions which are hard to invert on typical-case random inputs.
+It could also show that conversely, if we have upper bounds on the mutual information $I(X ; Y)$, there are upper bounds on the typical-case complexity of approximating $P(X | Y)$.
+(This is only one situation where inference is tractable, but it seems potentially worth articulating because it rephrases Dagum and Luby's 1997 result in terms of information theoretic quantities.)
+
+
+\subsection{A couple pieces of input that could be useful at this stage}
+If you have any feedback on the potential final report direction in the last paragraph, please let me know.
+I want to finish reading the papers on my list before committing to it, but if you have thoughts at this stage about whether it seems like a reasonable project report, that would be useful to know.
+
+Also, do you have any pointers to good introductory reading on invertible one-way functions which are hard to invert on random inputs?
+
+\subsection{Note on the remainder of this doc}
+I am including an appendix with details on my progress in my literature review, and on the new research directions I am considering.  No need to read this.
+
+\appendix
+
 \section{Literature review update}
 
 \subsection{Papers read}
@@ -135,7 +161,25 @@ $$
 \noindent Then for any $i$, we can encode a Bayesian network $B$ which (1) first samples variables $X_1, \dots, X_{m_i}$ uniformly at random, and then (2) computes $Y = f_i(X_1, \dots, X_{m_i})$ by encoding a deterministic circuit for $f_i$.
 If with high probability we could approximate $\mathbb{P}(X_1 = 0)$, we could apply an iterative algorithm to construct an assignment to $X_1, \dots, X_{m_i}$, and then check if $Y = f_i(X_1, \dots, X_{m_i})$.  If we could do this with high probability, we could invert $f_i$ with high probability.
 
-\subsection{Complexity results parametrized by information theoretic quantities}
+\subsection{Complexity upper bounds parametrized by information theoretic quantities}
+
+\textbf{TLDR:} I think I know how to derive upper bounds on the typical-case complexity of approximating $P(X | Y)$, given upper bounds on the mutual information $I(X ; Y)$ (or, better, the ``Chi squared information'' $I_\chi$) between $X$ and $Y$.  I'm not sure how significant these bounds are, though it is kind of nice that they reframe Dagum and Luby's classic 1997 upper bounds using somewhat less restrictive conditions than Dagum and Luby's (with the result that we can only get average-case upper bounds, not worst-case upper bounds).  These could possibly appear in a final project report on the average-case complexity of inference in graphical models, which shows (1) a reduction from 1-way function inversion, as described in the previous section, to demonstrate that typical-case inference can be hard in general, and then provides (2) upper bounds on the typical-case complexity of inference in graphical models, given upper bounds on the mutual information between variables.
+
+\subsubsection{A couple results I think I've derived}
+Dagum and Luby 1997 shows that a sufficient condition for the approximation of $P(X | Y)$ in a graphical model to be tractable is that for every variable $v$ in the model, and every assignment to the parents $Pa(v)$ in the model, $P(v | Pa(v))> \epsilon$ for some $\epsilon$.
+They show that if $\epsilon \in \theta(1/n^c)$ for some $c$, where $n$ is the number of variables in the model, and we have a uniform upper bound on the number of variables in $Y$, then approximate inference is tractable in polynomial time.
+
+I spent a while thinking about what happens if we have the less restrictive condition that the mutual information $I(X; Y) < B$ for some bound $B$.
+My WIP math suggests that we can say something like the following: if $y$ is generated from the model, then with probability $1 - \delta$, $y$ has the property that we can compute an $\epsilon$ additive approximation to $P(X | Y)$ in $$\text{Poly}(\text{exp}(\frac{I(X; Y)}{\epsilon \delta}))$$ time.
+(I need to check this math more carefully.)
+
+If we can instead bound the ``Chi squared information'' $I_\chi := \mathbb{E}_{y \sim P}[\chi^2(P(X | Y = y) || P(X))]$, then I think we can make the same guarantee about inference, but with runtime bound
+$$
+\text{Poly}(\frac{I_\chi}{\epsilon \delta})
+$$
+The reason this is better is because the $\frac{1}{\epsilon \delta}$ term is not exponentiated.
+
+
 
 
 

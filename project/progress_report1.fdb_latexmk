@@ -1,12 +1,12 @@
 # Fdb version 3
-["biber progress_report1"] 1713365480 "progress_report1.bcf" "progress_report1.bbl" "progress_report1" 1713366836
-  "progress_report1.bcf" 1713366836 108244 5602f4b8d31f4e05592bd5de5642c7d3 "pdflatex"
+["biber progress_report1"] 1713453537 "progress_report1.bcf" "progress_report1.bbl" "progress_report1" 1713490863
+  "progress_report1.bcf" 1713490862 108244 5602f4b8d31f4e05592bd5de5642c7d3 "pdflatex"
   "references.bib" 1713363825 3731 a0e0ccf9ba3b119e89d51c64da42416f ""
   (generated)
   "progress_report1.bbl"
   "progress_report1.blg"
-["pdflatex"] 1713366835 "/Users/georgematheos/Developer/classes/2024/2024-complexity-tex/project/progress_report1.tex" "progress_report1.pdf" "progress_report1" 1713366836
-  "/Users/georgematheos/Developer/classes/2024/2024-complexity-tex/project/progress_report1.tex" 1713366835 6874 64e8fac4e239578cce618a96003d24f2 ""
+["pdflatex"] 1713490862 "/Users/georgematheos/Developer/classes/2024/2024-complexity-tex/project/progress_report1.tex" "progress_report1.pdf" "progress_report1" 1713490863
+  "/Users/georgematheos/Developer/classes/2024/2024-complexity-tex/project/progress_report1.tex" 1713490861 11363 41314f185118938c0a8a1046b5f6dcbd ""
   "/usr/local/texlive/2022/texmf-dist/fonts/map/fontname/texfonts.map" 1577235249 3524 cb3e574dea2d1052e39280babc910dc8 ""
   "/usr/local/texlive/2022/texmf-dist/fonts/tfm/public/amsfonts/cmextra/cmex7.tfm" 1246382020 1004 54797486969f23fa377b128694d548df ""
   "/usr/local/texlive/2022/texmf-dist/fonts/tfm/public/amsfonts/cmextra/cmex8.tfm" 1246382020 988 bdf658c3bfc2d96d3c8b02cfc1c94c20 ""
@@ -39,7 +39,9 @@
   "/usr/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi7.pfb" 1248133631 36281 c355509802a035cadc5f15869451dcee ""
   "/usr/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb" 1248133631 35752 024fb6c41858982481f6968b5fc26508 ""
   "/usr/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb" 1248133631 32722 d7379af29a190c3f453aba36302ff5a9 ""
+  "/usr/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmr6.pfb" 1248133631 32734 69e00a6b65cedb993666e42eedb3d48f ""
   "/usr/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmr7.pfb" 1248133631 32762 224316ccc9ad3ca0423a14971cfa7fc1 ""
+  "/usr/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb" 1248133631 32726 0a1aea6fcd6468ee2cf64d891f5c43c8 ""
   "/usr/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb" 1248133631 32569 5e5ddc8df908dea60932f3c484a54c0d ""
   "/usr/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy7.pfb" 1248133631 32716 08e384dc442464e7285e891af9f45947 ""
   "/usr/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmti10.pfb" 1248133631 37944 359e864bd06cde3b1cf57bb20757fb06 ""
@@ -95,10 +97,10 @@
   "/usr/local/texlive/2022/texmf-var/fonts/map/pdftex/updmap/pdftex.map" 1647878959 4410336 7d30a02e9fa9a16d7d1f8d037ba69641 ""
   "/usr/local/texlive/2022/texmf-var/web2c/pdftex/pdflatex.fmt" 1657750608 2826441 6813871b772569010861cc2918f84d8d ""
   "/usr/local/texlive/2022/texmf.cnf" 1647878952 577 209b46be99c9075fd74d4c0369380e8c ""
-  "progress_report1.aux" 1713366836 2721 b60fc4fe33c7278fb19a6338e98be74f "pdflatex"
-  "progress_report1.bbl" 1713365482 18128 3edabe971d4e8ef295fd81c362ff3eee "biber progress_report1"
-  "progress_report1.run.xml" 1713366836 2424 bf39efc0f302c8215c3c39b9b23d631b "pdflatex"
-  "progress_report1.tex" 1713366835 6874 64e8fac4e239578cce618a96003d24f2 ""
+  "progress_report1.aux" 1713490862 3372 45bee9284b788f6e0952c784fb0826a2 "pdflatex"
+  "progress_report1.bbl" 1713453539 18128 3edabe971d4e8ef295fd81c362ff3eee "biber progress_report1"
+  "progress_report1.run.xml" 1713490862 2424 bf39efc0f302c8215c3c39b9b23d631b "pdflatex"
+  "progress_report1.tex" 1713490861 11363 41314f185118938c0a8a1046b5f6dcbd ""
   (generated)
   "progress_report1.aux"
   "progress_report1.bcf"

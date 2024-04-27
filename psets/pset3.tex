@@ -125,13 +125,166 @@ We will develop a real-life application of SAT solvers.
 		Show that you can derandomize the algorithm.	That is, prove that if $\P = \NP$ then for every function $f\in \#\mathbf{P}$, and any constant $\varepsilon>0$, there is a deterministic polynomial-time algorithm that approximates $f$ within a factor of $1+\varepsilon$. (Warning: the approximate counting problem is \emph{not} a decision problem, so you cannot just ``plug in'' $\P = \NP$ here\dots)
 \end{itemize}
 
+\newpage
 \subsection*{Answer}
 \subsubsection*{Answer to (a)}
 
+Fix $S$ s.t. $|S| \leq 2^{k - 2}$.
+
+For $x \in S$, let $A_x$ denote the event $A_x = \{h : h(x) = 0^k\}$.
+We wish to show $\Pr[\cup_{x \in S} A_x] < p - \eps$.
+
+By the inclusion-exclusion principle, letting $x_i$ denote the $i$th largest value in $S$,
+\begin{multline*}
+\Pr[\cup_{x \in S} A_x]
+\leq
+\sum_{i=1}^{|S|} \Pr[A_{x_i}]
+- \sum_{i=1}^{|S|} \sum_{j=1}^{i-1} \Pr[A_{x_i} \cap B_{x_j}]
++ \sum_{i=1}^{|S|} \sum_{j=1}^{i-1} \sum_{k = 1}^{j-1} \Pr[A_{x_i} \cap A_{x_j} \cap A_{x_k}] \\
+%
+= \frac{1}{2^k}|S| - \frac{1}{2^{2k}}{|S| \choose 2} + \sum_{k = 1}^{j-1} \Pr[A_{x_i} \cap A_{x_j} \cap A_{x_k}] \\
+%
+\leq \frac{1}{2^k}|S| - \frac{1}{2^{2k}}{|S| \choose 2} + \frac{1}{2^{2k}}{|S| \choose 3} \\
+%
+\leq \frac{1}{4} - \frac{1}{2^{2k}}{|S| \choose 2} + \frac{1}{2^{2k}}{|S| \choose 3} = \frac{1}{4} - \frac{|S|^2}{2^{2k + 1}} + \frac{|S|}{2^{2k+1}} + \frac{1}{2^{2k}}{|S| \choose 3} \\
+%
+\leq \frac{1}{4} - \frac{1}{32} + \frac{1}{2^{k + 3}} + \frac{1}{2^{2k}}{|S| \choose 3} \\
+%
+\leq \frac{1}{4} - \frac{1}{32} + \frac{1}{2^{k + 3}} + \frac{|S|(|S| - 1)(|S| - 2)}{6} \frac{1}{2^{2k}} \\ 
+%
+\leq \frac{1}{4} - \frac{1}{32} + \frac{1}{2^{k + 3}} +
+\frac{|S|^3 - 3|S|^2 + 2|S|}{6} \frac{1}{2^{2k}} \\ 
+\leq \frac{1}{4} - \frac{1}{32} + \frac{1}{2^{k + 3}} + 
+%
+% = |S|/2^k
+% - \sum_{i=1}^{|S|}{\frac{i - 1}{2^{2k}}  } + \sum_{i=1}^{|S|} \sum_{j=1}^{i-1} \sum_{k = 1}^{j-1} \Pr[A_{x_i} \cap A_{x_j} \cap A_{x_k}] \\
+% = |S|/2^k - \frac{|S|^2 - |S|}{2k^{2k}} + \sum_{i=1}^{|S|} \sum_{j=1}^{i-1} \sum_{k = 1}^{j-1} \frac{1}{2^{2k}}\\
+% %
+% % \leq 1/4 - (|S|^2 - |S|)/k^{2k}
+% = |S|/2^k - (|S|^2 - |S|)/k^{2k} +
+% \frac{1}{2^{2k}} \frac{(|S|)(|S| - 1)(|S| - 2)}{3}
+%\sum_{i=1}^{|S|} \sum_{j=1}^{i-1} (j (j - 1))/2
+\end{multline*}
+[TODO]
+
+[TODO TODO]
+
+% Then
+% % \begin{multline*}
+% % \Pr_{h \in H_{n, k}}[\exists x \in S . h(x) = 0^k] \\
+% % \leq
+% % \sum_{x \in S} \Pr [h(x) = 0^k]
+% % - \sum_{x \neq y \in S} \Pr[h(x) = 0^k \wedge h(y) = 0^k]
+% % + \sum_{x \neq y \neq z \in S} \Pr[h(x) = 0^k \wedge h(y) = 0^k \wedge h(z) = 0^k] \\
+% % = \sum_{x \in S} \frac{1}{2^k}
+% % \leq 2^{k-2}/2^k = 1/4
+% % \end{multline*}
+% where the inequality follows from the union bound, and is strict
+% because $\Pr[h(x) = 0^k \wedge h(y) = 0^y] \neq 0$ for all $x \neq y$.
+
+% First inequality -> union bound -> Pr <= 1/4.
+% And since the events overlap, we actually have < 1/4.
+
+% For any x, Pr[x is only value s.t. h(x) = 0^k]
+% = Pr[h(x) = 0^k and for all y neq x, h(y) != 0^k]
+% = Pr[h(x) = 0^k] - Pr[h(x) = 0^k AND exists y . h(y) = 0^k]
+% >= Pr[h(x) = 0^k] - sum_y[P(h(x) = 0^k AND h(y) = 0^k)]
+% = Pr[h(x) = 0^k] - (|S| - 1)p^2
+%   where p = Pr[h(x) = 0^k] = 1/2^k
+% = 1/2^k - (|S| - 1)(1/2^{2k})
+% > 1/2^k - |S|/2^{2k}
+% >= 1/2^k - 2^{k-1}2^{-2k} = 1/2^k - 1/2^{k + 1} = 1/2^{k + 1} = p/2
+
+% So P[exists a unique S in x with h(x) = 0^k]
+% = sum_{x \in S} Pr[x is only value s.t. h(x) = 0^k]
+%    [equality since disjoint events]
+% > sum_{x \in S} 1/2^{k + 1} = 1/2^{k-1} 1/2^{k + 1} = 1/4.
+
+% So we certainly have P1_k < 1/4 and P2_k > 1/4, for any k and S.
+% But how can we show we can get P1_k < 1/4 - eps, P2_k > 1/4 + eps
+% for a fixed eps independent of k?
+
+% I think the idea is that for P1, we can say the < gap is at least
+% Pr[there exist a distinct x and y s.t. h(x)=h(y)=0^k]
+% and we can show that this probability is very close to 1/4 * 1/4.
+%
+% For P2, -- TODO.
+
+\newpage
+\subsection*{Answer to (b)}
+Let $S = \{x : F(x) = 1\}$.
+Say $|S| \in [2^{k-2}, 2^{k-1}]$.
+% By part (a), $\Pr_h[\exists x \in S . h(x) = 0^k] 
+
+Algorithm:
+For each $k = 0, \dots, |x|$,
+	Do N times:
+		Check if F and [h(x) = 0] is satisfiable.
+
+	If $|S| \leq 2^{k-2}$, with high probability, it will be satisfied $< N(p - \epsilon)$ times.
+	If $|S| \geq 2^{k-1}$, with high probability, it will be satisfied $> N(p - \epsilon)$ times.
+
+So for very large N, there will be some $K$ where for $k < K$, $< N(p + \frac{\eps}{2})$ are satisfied and for $k > K$, $> N(p + \frac{\eps}{2})$ are satisfied.
+
+So our algorithm can be to return $2^{R - 1}$ (or is it $2^{R - \frac{1}{2}}$) where $R$ is the first value of $k$ where the count was $> N(p + \frac{\eps}{2})$.  We just have to show that this succeeds with high probability.
+
+[TODO: fill in the details]
+
+\newpage
+\subsection*{Answer to (c)}
+
+Let $F$ be a formula on variables $x_1, \dots, x_n$.
+Let $F_2$ be a formula, identical to $F$, but on a distinct set of variables $y_1, \dots, y_n$.
+And in factor for each $i \in \mathbb{N}$, let $F_i$ be a formula identical to $F$, but on a unique set of variables.
+
+Let $G_i = G_1 \wedge G_2 \wedge \dots \wedge G_i$, a formula on $ni$ variables.
+Observe that if $F$ has $s$ satisfying assignments, $G_i$ has $s^i$ satisfying assignments.
+
+Choose $i$ large enough that $(1 + \epsilon)^i > 4$.
+Let $s_i$ denote the number of satisfying assignments to $G_i$.
+Run our algorithm from part (b) on $G_i$ to find a value $K$ such that
+$K \in [s_i/2, 2s_i]$.
+Then $s_i \in [K/2, 2K]$.
+Thus $s^i \in [K/2, 2K]$.
+Let $k = K/2$, so $s^i \in [k, 4k]$.
+Then $$s \in [(k)^{1/i}, 4^{(1/i)}(k^{1/i})] \subseteq [(k)^{1/i}, (1 + \epsilon)(k^{1/i})]$$
+
+% We want to go from factor $2$ to factor $1 + \eps$.
+% Say $F$ has $s$ satisfying assignments out of $2^n$.
+% Say I add in a new clause to $F$ and produce a formula $G$ with
+% $\frac{1}{2}s + \frac{1}{2}$ satisfying assignments.
+% Say I find that $\frac{1}{2}s + \frac{1}{2} \in [K/2, 2K]$.
+% Then
+% $s + 1 \in [K, 4K]$ so $s \in [K - 1, 4K - 1]$.
+% This doesn't help.
+
+% Say instead $G$ has
+% $2s$ satisfying assignments.
+% Say I find that $2s \in [K/2, 2K]$.
+% Then
+% $s \in [K/4, K]$.
+% If I take $k = K/8 + K/2 = \frac{5K}{8}$, then I have
+% $s \in [\frac{2}{5}k, \frac{8}{5}k]$.
+% But this still a window of width 4x, which doesn't help.
+
+% Say $G$ has $ms$ satisfying assignments, and $ms \in [K/2, 2K]$.
+% Then $s \in [K/(2m), 2K/m]$. If I take $k = \frac{K}{4m} + \frac{4K}{4m} = \frac{5K}{4m}$ then I get
+% $s \in [\frac{2}{5}k]
+
+\newpage
+\subsection*{Answer to (d)}
+Part (c) showed that if $\P = \NP$, then
+$\#\P \in \BPP$.
+
+Let $A(F, r)$ be a randomized algorithm with randomness $r$ that, with probability $1 - \delta$, outputs a $1 + \eps/2$ approximation to $\#\textsf{SAT}(F)$.
+
+Here is a deterministic algorithm to check if $\#\textsf{SAT}(F) \leq \rho(1 + \eps)$ for any $\rho$.
+Using the fact that 
 
 \newpage
 \section*{Problem 3: Constant Round Arthur-Merlin Collapses (3 points)}
 
+\subsection*{Question}
 Prove that for every fixed positive integer $k$, $\AM[k]\subseteq \AM[2]$.
 
 \medskip
@@ -139,7 +292,46 @@ Prove that for every fixed positive integer $k$, $\AM[k]\subseteq \AM[2]$.
 \emph{Hint: Try error-reduction, to make the probability of error very small.}
 
 
+\subsection*{Answer}
+
+WLOG assume $k$ is even. Consider an AM[k] protocol to decide $f(x)$.  Say on any iteration, a sequence of messages $r_1, m_1, r_2, m_2, \dots, r_{k/2}, m_{k/2}$ are sent, where $r_i$ are the random messages from the verifier, and $m_i$ are the messages from the prover.
+% Let $M$ be an upper bound (possibly dependent on the size of the input $x$ to the Arthur Merlin protocol) on the total size of the prover's mesasges,
+% $M \geq \sum_{j} |m_{j}|$.
+Fix a given prover $P$.  Let $A_\text{acc}$ denote the event that the $r_i$ result in $V$ accepting, and let $A_\text{rej}$ denote the event that the $r_i$ result in $V$ rejecting.
+By the definition of an AM protocol, if $f(x) = 1$ there is a prover so $\Pr[A_\text{acc}] > 2/3$ and if $f(x) = 0$ then for every prover, $\Pr[A_\text{rej} < 1/3]$.
+
+By the error reduction lemma, by running this protocol in parallel $O(k)$ times (with a minor modification to be described in a moment), we obtain an AM[k] protocol such that if $f(x) = 1$, there is a prover so $\Pr[A_\text{acc}] > 1 - 2^{-k}$, and if $f(x) = 0$, for every prover, $\Pr[A_\text{rej}] < 2^{-k}$.
+
+% The following is the modification to simply running the original protocol in parallel that is needed for this to work (or, at least, I have not seen how error reduction could work without this).  We also now need the verifier to check that it is possible that the messages the prover is sending are possible from a single parallel running many times in parallel (so that the new ``parallel track prover'' isn't cheating by respoding to each )
+% same prover is being run in parallel.  That is, if two parallel tracks send the same initial sequence of random bits, the prover's messages up to that point must be identical in both branches, for the verifier to accept.)
+\textbf{[TODO: do we need to prove this lemma?]}
+
+Now, consider the following $\AM[2]$ protocol.  On the first round,
+the verifier sends a sequence of random bits $r_1, r_2, \dots, r_{k/2}$,
+where each sequence of bits is as long as the longest sequence that $r_i$ could have been in the $\AM[k]$ protocol with exponential error bounds.
+The prover will send a message which is a concatenation $m_1, m_2, \dots, m_{k/2}$, and the verifier will accept if $r_1, m_1, r_2, m_2, \dots, m_{k/2}$ would have been an acceptable transcript in the $\AM[k]$ protocol with exponential error bounds.
+
+\medskip
+\noindent \textbf{Analysis.} If $f(x) = 1$, then there is a prover which would have almost certainly been accepted in the $\AM[k]$ version of the protocol, and running it in this $\AM[2]$ will succeed with equally high probability.
+Now say $f(x) = 0$.  Let $r$ denote the full string of randomness sent by the verifier and let $m$ denote the prover's full response.
+It is sufficient to upper-bound $\Pr_r[\exists m . V(x, m, r) = 1]$.
+By the union bound,
+$$
+\Pr_r[\exists m . V(x, m, r) = 1] \leq \sum_{m}{\Pr_r[V(x, m, r) = 1]} \leq \sum_m{2^{-k}} \leq 2^M/2^k
+$$
+where $M$ is an upper bound on the length of $m$, and $k$ is the value we chose in the error bound for the reduced-error $\AM[k]$ protocol.
+If we choose to set $k > M + 2$, we get 
+$$
+\Pr_r[\exists m . V(x, m, r) = 1] < 1/4
+$$
+which is certainly sufficient.
+
+
+\newpage
+
 \section*{Problem 4: AM Protocol for Set Lower Bound (6 Points, 2 for each sub-problem)}
+
+\subsection*{Question}
 
 In this problem, we will develop an $\AM$ protocol for proving a set lower bound, which is used as a subroutine in the $\AM$ protocol for graph non-isomorphism. In a set lower bound protocol, the prover needs to prove to the verifier that given a (large) set $S\subseteq \{0,1\}^m$ (where membership in $S$ is efficiently verifiable), $S$ has cardinality at least $K$, up to a factor of $2$. More precisely, given any $K$,
 \begin{itemize}
@@ -162,8 +354,31 @@ In this problem, we will develop an $\AM$ protocol for proving a set lower bound
     \end{enumerate}
 \end{enumerate}
 
+\newpage
+\subsection*{Answer to (a)}
+
+% The verifier will send $l$ uniformly random $m$ bit strings $y_1, \dots, y_l$.
+\textbf{The protocol.} The verifier will send $l$ random pairwise independent hash functions $h_1, \dots, h_l$.  (Each one can be sent in $O(mk)$ bits.)
+
+The prover will send back $K$, and then, for each $y_i$, either a message saying there is no $x \in S$ s.t. $h_i(x) = 0^k$, or a string $x_i$.
+The verifier will reject if any $x_i$ does not satisfy $h_i(x_i) = 0^k$ or if any $x_i \notin S$.
+If the prover sends back $\geq \frac{3}{4}\frac{K}{2^k}l$ valid $x_i$, the verifier will accept.  The verifier will reject otherwise.
+
+\medskip
+\noindent \textbf{Analysis.}
+Say $|S| \geq K$.
+Then for any $h_i$,
+\begin{multline*}
+	\Pr[\exists x \in S . h_i(x) = 0^k]
+	\geq \sum_{x \in S}\frac{1}{2^k} - \sum_{x \neq y \in S}\frac{1}{2^{2k}} \\
+	> \frac{K}{2^k} - \frac{K^2}{2^{2k + 1}}
+	= \frac{K}{2^k} - \frac{1}{2} (\frac{K}{2^k})^2
+\end{multline*}
 
 
+
+
+\newpage
 \section*{Problem 5: The Limits of PCPs (4 Points, 2 for each sub-problem)}
 Recall that in class we defined $\mf{PCP}_s[r(n),q(n)]$ to be the set of functions with probabilistically checkable proofs having ``soundness'' $s$. In general, we can parametrize the ``completeness'' as well. 
 

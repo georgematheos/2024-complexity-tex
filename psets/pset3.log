@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.24 (TeX Live 2022) (preloaded format=pdflatex 2022.7.13)  26 APR 2024 10:33
+This is pdfTeX, Version 3.141592653-2.6-1.40.24 (TeX Live 2022) (preloaded format=pdflatex 2022.7.13)  27 APR 2024 10:16
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -165,25 +165,36 @@ Overfull \hbox (7.28787pt too wide) in paragraph at lines 107--107
 \OT1/cmr/bx/n/14.4 with an NP Or-a-cle (12 pts, 3 for each sub-problem) 
  []
 
-[3] [4]
-Overfull \hbox (13.25317pt too wide) in paragraph at lines 187--188
+[3]
+
+Package amsmath Warning: Foreign command \atopwithdelims;
+(amsmath)                \frac or \genfrac should be used instead
+(amsmath)                 on input line 167.
+
+
+Overfull \hbox (8.9926pt too wide) detected at line 167
+ []$[]   []\OT1/cmr/m/n/10 [\OMS/cmsy/m/n/10 [[]\OML/cmm/m/it/10 A[]\OT1/cmr/m/n/10 ] \OMS/cmsy/m/n/10 ^^T [] []\OT1/cmr/m/n/10 [\OML/cmm/m/it/10 A[]\OT1/cmr/m/n/10 ] \OMS/cmsy/m/n/10 ^^@ [] [] []\OT1/cmr/m/n/10 [\OML/cmm/m/it/10 A[] \OMS/cmsy/m/n/10 \ \OML/cmm/m/it/10 B[]\OT1/cmr/m/n/10 ] + [] [] [] [][\OML/cmm/m/it/10 A[] \OMS/cmsy/m/n/10 \ \OML/cmm/m/it/10 A[] \OMS/cmsy/m/n/10 \ \OML/cmm/m/it/10 A[]\OT1/cmr/m/n/10 ]$ 
+ []
+
+[4] [5] [6] [7] [8] [9] [10]
+Overfull \hbox (13.25317pt too wide) in paragraph at lines 402--403
 \OT1/cmr/m/it/10 Hint: Think about these 1-query and 2-query PCPs from the CSP/inapproximability
  []
 
-[5] (./pset3.aux) ) 
+[11] (./pset3.aux) ) 
 Here is how much of TeX's memory you used:
  2713 strings out of 478268
  37542 string characters out of 5846347
- 336272 words of memory out of 5000000
+ 340274 words of memory out of 5000000
  20934 multiletter control sequences out of 15000+600000
  475040 words of font info for 49 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  54i,8n,62p,755b,193s stack positions out of 10000i,1000n,20000p,200000b,200000s
-{/usr/local/texlive/2022/texmf-dist/fonts/enc/dvips/cm-super/cm-super-ts1.enc}</usr/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmbxti10.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi5.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi7.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmr5.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmr7.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmss10.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy7.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmti10.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/cm-super/sfrm1000.pfb>
-Output written on pset3.pdf (5 pages, 204733 bytes).
+{/usr/local/texlive/2022/texmf-dist/fonts/enc/dvips/cm-super/cm-super-ts1.enc}</usr/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmbxti10.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi5.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi7.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmr5.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmr7.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmss10.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy7.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmti10.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/symbols/msbm10.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/cm-super/sfrm1000.pfb>
+Output written on pset3.pdf (11 pages, 227923 bytes).
 PDF statistics:
- 101 PDF objects out of 1000 (max. 8388607)
- 61 compressed objects within 1 object stream
+ 126 PDF objects out of 1000 (max. 8388607)
+ 78 compressed objects within 1 object stream
  0 named destinations out of 1000 (max. 500000)
  1 words of extra memory for PDF output out of 10000 (max. 10000000)
 

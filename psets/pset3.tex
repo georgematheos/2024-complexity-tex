@@ -380,6 +380,7 @@ Then for any $h_i$,
 
 \newpage
 \section*{Problem 5: The Limits of PCPs (4 Points, 2 for each sub-problem)}
+\subsection*{Question}
 Recall that in class we defined $\mf{PCP}_s[r(n),q(n)]$ to be the set of functions with probabilistically checkable proofs having ``soundness'' $s$. In general, we can parametrize the ``completeness'' as well. 
 
 Specifically, define $f:\{0,1\}^* \rightarrow \{0,1\}$ to be in $\mf{PCP}_{c,s}[r(n),q(n)]$ if there is a probabilistic polynomial time algorithm $V$ such that for all $x$, $V$ uses $O(r(|x|))$ random bits, asks $q(|x|)$ oracle queries to a proof string $P$ non-adaptively, must decide whether accept or reject, and
@@ -409,8 +410,50 @@ In the PCP lectures, it was proved that $\mf{PCP}_{1,1}(\log n, 3)=\mathbf{NP}$.
 
 \emph{Hint: Use the fact that 2SAT is in NL.} 
 
+\newpage
+\subsection*{Answer to (a)}
+For contradiction, say $\mathbf{PCP}_{c, s}(\log n, 1) \not\subseteq \P$.
+Let $f \in \mathbf{PCP}_{c, s}(\log n, 1) \setminus \P$ be a decision problem,
+decided by verifier $V$.
+I will contradict this by constructing a polynomial time Turing machine that decides $f$.
+It will operate as follows.  Say input $x$ is given.
+For each $r \in \{0, 1\}^{\log n}$, let $y_r = 1$ if $V(x, r, 1) = 1$ and let $y_r = 0$ otherwise. (Each of these can be computed in polytime.) Here I write $V(x, r, y)$ to denote the value returned by verifier $V$ on input $x$ and randomness $r$, given that it received value $y$ after the one query it makes to the prover (which is a deterministic function of $x$ and $r$).
 
+Observe that if $f(x) = 1$, then $V(x, r, y_r) = 1$ for at least $c$ of the possible $r$ values.
+If $f(x) = 0$, then $V(x, r, y_r) = 0$ for at least $1 - s$ of the possible $r$ values (and in fact this would be true for any assignment to the $y$ values).
+Since there are only $n$ distinct $y_r$ values, our algorithm can simply compute $V(x, r, y_r)$ for each $r \in \{0, 1\}^n$, and accept if $\geq cn$ of them are true.
 
+\subsection*{Answer to (b)}
+In this problem I will write $V(x, r, y, z)$ to be the value that $V$ outputs on input $x$ and randomness $r$, given that it receives response $y$ and $z$ from the prover on the two queries it makes.  Since the queries are non-adaptive, for any verifier, $y$ and $z$ are a function of $x$ and $r$.
+
+Again for contradiction, say $\mathbf{PCP}_{1, s}(\log n, 1) \not\subseteq \P$.
+Let $f \in \mathbf{PCP}_{1, s}(\log n, 1) \setminus \P$.
+I will describe a polytime algorithm that decides $f$.
+
+Fix input string $x$.
+We will construct a 2SAT instance on variables $Y_0, \dots, Y_{n-1}, Z_0, \dots, Z_{n-1}$.
+For each $r \in \{0, 1\}^{\log n} = \{0, 1, \dots, n-1\}$, we will construct a clause
+$C_r$ as follows.
+Run $V(x, r, y, z)$ on this $x$ and $r$ for each of the 4 permutations of possible
+values for $y, z$.
+Let $C_r$ be a 2SAT formula on variables $Y_r, Z_r$ so that $C_r(y, z) = V(x, r, y, z)$ for all $y$, $z$.\footnote{
+Here are the details of the construction of $C_r$.
+If $V(x, r, y, z)$ is never 1, set $C_r = Y_r \wedge \neg Y_r$.
+If $V(x, r, y, z) = 1$ only on $y^*, z^*$, set $C_r = (Y_r = y^*) \wedge (Z_r = z^*)$.
+If $V(x, r, y, z) = 1$ exactly when $y = 1$, set $C_r = Y_r$; do the analogus thing if it is 1 exactly when $y = 0$ or exactly when $z = 1$ or exatly when $z = 0$.
+If $V(x, r, y, z) = 1$ exactly when $y = z$ make $C_r = (Y_r \vee \neg Z_r) \wedge (\neg Y_r \vee Z_r)$.
+If $V(x, r, y, z) = 1$ exactly when $y \neq z$ make $C_r = (Y_r \vee Z_r) \wedge (\neg Y_r \vee \neg Z_r)$.
+If $V(x, r, y, z) = 1$ in every case except $(y^*, z^*)$, set $C_r = (Y_r \neq y^*) \vee (Z_r \neq z^*)4.
+If $V(x, r, y, z) = 1$ on all $y, z$, set $C_r = \eps$, the empty clause.
+% 	If $V(x, r, y, z) = 1$ for 3 assignments to $y$ and $z$, let $C_r = (\neg) Y_r \vee (\neg) Z_r$ where we optionally include negations $\neg$, to make $C_r$ the clause which accepts exactly the 3 permutations of $(y, z)$ that $V$ accepted.
+% 	If $V(x, r, y, z) = 1$ for 2 assignments)
+}
+
+If $f(x) = 1$, then for every $r$, there is an assignment to $Y_r, Z_r$ so that $C_r$ is satisfied (this is because $c = 1$).
+If $f(x) = 0$, then for every assignment to $Y_r, Z_r$,
+$< sn$ of the $C_r$ are satisfied.
+Let $C = \wedge_{r} C_r$, which is a conjunction of 2CNF formulae, and is thus a 2CNF formula itself.
+We can determine whether $C$ is satisfiable in polynomial time (this is just a 2SAT problem); if it is, then we must have $f(x) = 1$, and if not, we must have $f(x) = 0$.
 
 
 \end{document}

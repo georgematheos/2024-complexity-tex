@@ -1,0 +1,416 @@
+\documentclass{article}
+\usepackage[sorting=none]{biblatex}
+\addbibresource{references.bib}
+
+\usepackage{amsmath}
+\usepackage{fullpage}
+\usepackage{amsmath,amssymb,verbatim}
+\usepackage{enumerate}
+\usepackage{xcolor}
+\usepackage{algorithm}
+\usepackage{algorithmicx}
+
+\usepackage{graphicx}
+\usepackage{algpseudocode}
+\usepackage{mathtools}
+\DeclarePairedDelimiter\ceil{\lceil}{\rceil}
+\DeclarePairedDelimiter\floor{\lfloor}{\rfloor}
+
+\usepackage{amsmath}
+\usepackage{mathrsfs}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage[bb=boondox]{mathalfa}
+\usepackage{enumerate}
+\usepackage{xcolor}
+
+\renewcommand{\algorithmiccomment}[1]{{\footnotesize\hfill$\triangleright$ #1}}
+
+\renewcommand{\P}{\mathbf{P}}
+\newcommand{\NP}{\mathbf{NP}}
+\newcommand{\coNP}{\mathbf{coNP}}
+\newcommand{\EXP}{\mathbf{EXP}}
+\newcommand{\BPP}{\mathbf{BPP}}
+\newcommand{\RP}{\mathbf{RP}}
+\newcommand{\NEXP}{\mathbf{NEXP}}
+\newcommand{\PH}{\mathbf{PH}}
+\newcommand{\PSPACE}{\mathbf{PSPACE}}
+\newcommand{\TIME}{\mathbf{TIME}}
+\newcommand{\NTIME}{\mathbf{NTIME}}
+\newcommand{\LOG}{\mathbf{LOGSPACE}}
+\newcommand{\SIZE}{\mathbf{SIZE}}
+
+\def \F {{\mathbb F}}
+\def \N {{\mathbb N}}
+
+\def \ATIME{{\mathsf{ATIME}}}
+\def \NTIME{{\mathsf{NTIME}}}
+\def \eps {{\varepsilon}}
+
+\def \ASPACE{{\mathsf{ASPACE}}}
+\def \SPACE{{\mathsf{SPACE}}}
+\def \TIME{{\mathsf{TIME}}}
+\def \BPL{{\mathbf{BPL}}}
+
+\def \poly{\text{poly}}
+
+\theoremstyle{definition}
+
+\newtheorem{defn}{Definition}
+\newtheorem*{defn*}{Definition}
+\newtheorem*{notn*}{Notation}
+
+\newtheorem{thm}{Theorem}
+\newtheorem*{thm*}{Theorem}
+\newtheorem{lem}[thm]{Lemma}
+\newtheorem*{lem*}{Lemma}
+\newtheorem{prop}[thm]{Proposition}
+\newtheorem*{prop*}{Proposition}
+\newtheorem{cor}[thm]{Corollary}
+\newtheorem*{cor*}{Corollary}
+
+\theoremstyle{remark}
+\newtheorem*{remark}{Remark}
+\newtheorem*{example}{Example}
+\newtheorem*{recall}{Recall}
+
+\def \Pa{\text{Pa}}
+
+\begin{document}
+
+\begin{center}
+    \Large
+    On the Complexity of Inference in Probabilistic Graphical Models on Typical-Case Observations
+
+    \vspace{3pt}
+    \normalsize
+    George Matheos, \today
+\end{center}
+
+\section{Background}
+
+\subsection{Probabilistic graphical models and inference problems}
+\begin{defn}
+A \textbf{probabilistic graphical model on binary variables} is a tuple $(V, E, P)$, where $V$ is an ordered, finite set of variables $V = \{v_1, \dots, v_n\}$, $E$ is a set of directed edges between the variables, and $P$ is a \textit{conditional probability table}.
+The directed graph $(V, E)$ must be acyclic.
+For $v \in V$, $\Pa(v)$ denotes the set of parent variables of $v$: $\Pa(v) = \{u : (u \mapsto v) \in E\}$.
+Given any assignment $a_{\Pa(v)} \in \{0, 1\}^{|\Pa(v)|}$ to the parent variables of $v$, the conditional probability table $P$ stores value $P(v = \cdot ; a_{\Pa(v)})$, which is a probability vector $[p_{v=0}, p_{v=1}]$ in $\mathbb{R}^2$.
+\end{defn}
+
+A general probabilistic graphical model lifts the restriction that each variable $v_i$ is binary, and allows it to have arbitrary finite domain.
+In this report, I will focus on binary probabilistic graphical models. Because a variable with a domain of size $k$ can be represented using $\log k$ binary variables, all the results in this case carry to the general case, except those which restrict the sizes of sets of variables under consideration.
+Henceforth, the phrase ``probabilistic graphical model'' should be understood as a graphical model on binary variables.
+
+Given a graphical model $(P, E, V)$, we can define a joint distribution on all the variables in $V$, with probability mass function
+$$
+P(a) = \prod_{v_i \in V}{P(v_i = a_i ; a_{\Pa(v_i)})} \quad \forall a \in \{0, 1\}^{|V|}
+$$
+where $a_{\Pa(v_i)}$ is the assignment to the parent variables of $v_i$ in $a$.
+I will often write $P$ to refer to the whole graphical model, the joint distribution on all its variables, and also marginal and conditional distributions on subsets of its variables.
+
+\begin{defn}
+An \textbf{inference problem} consists of a graphical model $(V, E, P)$, a set of \textit{observed variables} $Y \subseteq V$, a set of \textit{query variables} $X \subseteq V$, and an assignment $y \in \{0, 1\}^{|Y|}$ to the observed variables such that $P(Y = y) > 0$.
+\end{defn}
+The goal of an inference problem is to compute some piece of information about the posterior distribution $P(X = \cdot | Y = y)$, which is a probability distribution on $\{0, 1\}^{|X|}$.
+
+\begin{defn}
+An \textbf{inference problem schema} is the tuple $I = (V, E, P, X, Y)$ as in an inference problem, but not fixing an assignment $y$ to the observed variables.
+\end{defn}
+
+\subsection{Worst and typical case inference algorithms}
+
+\begin{defn}
+A \textbf{deterministic, worst-case additive PDF approximation algorithm with tolerance $\epsilon$} is a Turing machine $A$ which on input
+$(I, y, x)$, where $I$ is any inference problem schema, $y$ is any assignment to the observed variables, and $x$ is an assignment to the query variables, outputs a rational number $A(I, y, x)$ such that
+$$
+|A(I, y, x) - P(X = x | Y = y)| < \epsilon
+$$
+\end{defn}
+In 1993, Dagum and Luby \cite{dagum1993} showed that if there exists a worst-case additive PDF approximation algorithm with tolerance $< 1/2$, and it has polynomial runtime, then $\P = \NP$.
+
+Probabilistic graphical models are typically used to model aspects of the world.
+That is, each variable in $V$ represents some aspect of the world; $Y$ represents a set of values which we have observed; and $X$ represents a set of values which we wish to infer.
+In this setting, the probability distribution $P$ is a description of our beliefs about how probable different joint outcomes of events in the world are.
+Therefore, given a graphical model $P$ in which we must do inference, it may be acceptable to us if there is exist assignments $y$ under which computing the posterior distribution is very expensive, so long as these instances are extremeley rare.
+Since we have a probability distribution $P$ on hand which ought to roughly correspond to the distribution of $y$ values which will occur in the world, and on which we will have to run inference, a natural notion of ``rare'' is available.
+Say there is a small set of observation assignments $\mathcal{Y}_\text{hard} \subseteq \{0, 1\}^{|Y|}$ such that $P(\mathcal{Y}_\text{hard}) < \rho$ for very small $\rho$ (e.g. $\rho = 0.00001$), such that for all $y \notin \mathcal{Y}_\text{hard}$, we can compute the posterior distribution $P(X = \cdot | Y = y)$ efficiently.
+Then we can say that inference is easy in the typical case, and for many purposes this is sufficient.
+
+In fact, Dagum and Luby's construction of a worst-case inference problem $I$ involves selecting an observed assignment $y$ to a set $Y$ of one variable ($|Y| = 1$) which has extremely low marginal probability: $P(Y = y) << 1$.
+Theorem~\ref{} later in this report shows that for every inference problem schema $(P, V, E, X, Y)$ with $|Y| = 1$, efficient inference is possible on typical case observations.
+This indicates that Dagum and Luby's strategy for proving the hardness of inference in the worst case does not directly carry through to showing the hardness of inference with typical-case observations.
+
+% \begin{defn}
+% A \textbf{deterministic, typical-case relative PDF approximation algorithm with tolerances $(\epsilon, \rho)$} is a Turing machine $A$ which accepts inputs of the form
+% $(I, y, x)$, where $I$ is any inference problem schema, $y$ is any assignment to the observed variables, and $x$ is an assignment to the query variables, and outputs a rational number $A(I, y, x)$ with the following property.
+% For any graphical model $(V, E, P)$ and any subset $Y \subseteq V$,
+% there exists a ``typical set'' $\mathcal{Y}_\text{easy} \subseteq Y$ such
+% that $$P(Y \in \mathcal{Y}_\text{easy}) > 1 - \rho$$ and
+% for all $X \subseteq V$, any assignment $x$ to $X$,
+% and any $y \in \mathcal{Y}_\text{easy}$,
+% $$
+% A(I, y, x) / P(X = x | Y = y) \in (\frac{1}{1 + \epsilon}, 1 + \epsilon)
+% $$
+% That is, on all but a small fraction $\rho$ of $y$ values, the algorithm can outputs an $\epsilon$ relative approximation to the posterior PDF value $P(X = x | Y = y)$,
+% for any query variables $X$ and any query assignment $x$.
+% \end{defn}
+
+\begin{defn} \label{def:typical_case_add_alg}
+A \textbf{deterministic, typical-case additive PDF approximation algorithm with tolerances $(\epsilon, \rho)$} is a Turing machine $A$ which accepts inputs of the form
+$(I, y, x)$, where $I$ is any inference problem schema, $y$ is any assignment to the observed variables, and $x$ is an assignment to the query variables, and outputs a rational number $A(I, y, x)$ with the following property.
+For any graphical model $(V, E, P)$ and any subset $Y \subseteq V$,
+there exists a ``typical set'' $\mathcal{Y}_\text{easy} \subseteq Y$ such
+that $$P(Y \in \mathcal{Y}_\text{easy}) > 1 - \rho$$ and
+for all $X \subseteq V$, any assignment $x$ to $X$,
+any extension $Y' \subseteq V$ to $Y$, so $Y \subseteq Y'$,
+and any $y' \in \{0, 1\}^{|Y|}$ such that $y'_Y \in \mathcal{Y}_\text{easy}$,
+$$
+|A(I, y, x) - P(X = x | Y = y)| < \epsilon
+$$
+That is, on all but a small fraction $\rho$ of $y$ values, the algorithm can outputs an $\epsilon$-approximation to the posterior PDF value $P(X = x | Y' = y')$,
+for any query variables $X$, any query assignment $x$,
+and any observation constraint $Y' = y'$ which contains within it that $Y = y$.
+\end{defn}
+
+The preceding definition implies that for any $I = (P, E, V, X, Y)$ and any $x$,
+$$
+\Pr_{y \sim P(Y = \cdot)}[|A(I, y, x) - P(X = x | Y = y)| \geq \epsilon] < \rho
+$$
+The condition in definition~\ref{def:typical_case_add_alg} is a bit stronger than this probability bound, as the condition in the definition requires that for any typical observation $y$, it is easy to condition not only on $y$, but also on any assignment $y'$ extending $y$.
+That is, for any $y \in \mathcal{Y}_\text{easy}$, $P(V | Y = y)$ is a probability distribution in which both efficient marginal probability computation and efficient conditional probability computation is possible: for any $X \subseteq V$ we can approximate $P(X | Y = y)$, and for any $X, Z \subseteq V$, we can approximate $P(X | Y = y, Z = z)$.
+
+% that there is a typical set on which inference is easy for any $X, Y \subseteq V$, while the probability bound requires that for any given $X, Y \subseteq V$, we can find a typical set (possibly dependent on $X, Y$) where inference for that particular $X, Y$ is easy.
+
+
+% \begin{defn} \label{def:typical_case_add_alg}
+%     A \textbf{deterministic, typical-case additive PDF approximation algorithm with tolerances $(\epsilon, \rho)$} is a Turing machine $A$ which accepts inputs of the form
+%     $(I, y, x)$, where $I$ is any inference problem schema, $y$ is any assignment to the observed variables, and $x$ is an assignment to the query variables, and outputs a rational number $A(I, y, x)$ with the following property.
+%     For any graphical model $(V, E, P)$, there exists a ``typical set''
+%     of variable assignments $\mathcal{A}_\text{easy} \subseteq \{0, 1\}^{|V|}$
+%     such that $$P(\mathcal{A}_\text{easy}) > 1 - \rho$$
+%     and for any $X, Y \subseteq V$,
+%     any assignment $x \in \{0, 1\}^{|X|}$, and any assignment
+%     $y \in \{0, 1\}^Y$ consistent with the typical set,
+%     ie. where $\exists a \in \mathcal{A}_\text{easy}$ such that
+%     $a_Y = y$,
+%     % and any subset $Y \subseteq V$,
+%     % there exists a ``typical set'' $\mathcal{Y}_\text{easy} \subseteq Y$ such
+%     % that $$P(Y \in \mathcal{Y}_\text{easy}) > 1 - \rho$$ and
+%     % for all $X \subseteq V$, any assignment $x$ to $X$,
+%     % and any $y \in \mathcal{Y}_\text{easy}$,
+%     $$
+%     |A(I, y, x) - P(X = x | Y = y)| < \epsilon
+%     $$
+%     That is, on all but a small fraction $\rho$ of assignments to the variables, for any set of query and observed variables, the algorithm can output an $\epsilon$-approximation to the $P(X = x | Y = y)$ for any query assignment $x$, and for any observation assignment $y$ which can arise in a typical-case assignment $a \in \mathcal{A}_\text{easy}$.
+%     % $y$ values, the algorithm can outputs an $\epsilon$-approximation to the posterior PDF value $P(X = x | Y = y)$,
+%     % for any query variables $X$ and any query assignment $x$.
+% \end{defn}
+
+% The preceding definition implies that for any $(P, E, V, X, Y)$ and any $x$,
+% $$
+% \Pr_{y \sim P(Y = \cdot)}[|A((P, E, V, X, Y), y, x) - P(X = x | Y = y)| \geq \epsilon] < \rho
+% $$
+% The condition in definition~\ref{def:typical_case_add_alg} is a bit stronger than this probability bound, as the condition in the definition requires that there is a typical set on which inference is easy for any $X, Y \subseteq V$, while the probability bound requires that for any given $X, Y \subseteq V$, we can find a typical set (possibly dependent on $X, Y$) where inference for that particular $X, Y$ is easy.
+
+There are also natural versions of these definitions admitting the use of probabilistic algorithms, rather than deterministic ones. [TODO.]
+
+\subsection{One way functions}
+Proving the hardness of a computational problem $C$ is often done by reducing from an $\NP$-hard problem like $\mathsf{3SAT}$ to problem $C$, thereby showing that if $C$ could be solved in polynomial time, $\P = \NP$.
+However, problems like $\mathsf{3SAT}$ are stated in terms of behavior on all, and thus worst-case, inputs.
+Therefore, to prove the hardness of a computational problem on typical-case inputs, it is preferable to reduce to a hardness conjecture stated directly in terms of typical-case behavior.
+One such conjecture is the existance of \textit{one-way functions}, functions which can be efficiently computed, but not efficiently inverted for the majority of inputs.
+It is widely believed that such functions exist \cite{}, as there are a number of functions like multiplication of prime numbers, for which no inversion algorithms are known which are efficient in the typical case.
+Such functions are widely used in public-key cryptography.
+
+\begin{defn}
+A \textbf{one-way function} $f$ is a function $f : \{0, 1\}^* \to \{0, 1\}^*$ such that $f$ can be computed in polynomial time, and for every probabilistic polynomial time algorithm $A$,
+$$
+\Pr_{x \sim \text{Uniform}(\{0, 1\}^n)}[A(f(x), 1^n) \in f^{-1}(f(x))] \underset{n \to \infty}{\to} 0
+$$
+where $f^{-1}(f(x))$ is the set $\{x' \in \{0, 1\}^* : f(x') = f(x)\}$.
+\end{defn}
+
+\section{Hardness results for typical-case inference}
+In this section, I state a couple of basic (though so far as I can tell, new) results indicating that it is unlikely a polynomial-time algorithm can approximate the posterior distribution on typical-case observations.
+
+\begin{thm}
+Say that there exists a polynomial-time, deterministic, typical-case additive PDF approximation algorithm with tolerances $\epsilon < 1/2, \rho < 1$.
+Then one-way functions do not exist.
+\end{thm}
+\begin{proof}
+For contradiction, say that there exists a one-way function $f$, computed by Turing maching $F$,
+and there exists a deterministic typical-case additive PDF approximation algorithm $A$ with tolerances $\epsilon < 1/2, \rho < 1$.
+I will show that this implies the existance of a polynomial time algorithm $B$ which inverts $f$ on many inputs, contradicting that $f$ is a one-way function.
+
+By Lemma~\ref{lem:constant_output_length}, without loss of generality, we can assume that if $|f(x)| = s$ for any $x \in \{0, 1\}^n$, then $|f(x')| = s$ for all $x' \in \{0, 1\}^n$.
+
+Algorithm $B$ will behave as follows.
+On input $(y, 1^n)$ the goal of $B$ is to output a value $x \in \{0, 1\}^n$ such that $f(x) = y$.
+Given this input, $B$ first constructs the description of the following inference problem schema $(V, E, P, X, Y)$.
+
+Let $C$ be a circuit on $n$ inputs with $|y|$ outputs, of size polynomial in $n$, which computes $f$ on all inputs of length $n$.
+(Our Turing machine $B$ can write down a description of $C$ for any $n$, in time polynomial in $n$, using the Cook-Levin reduction.)
+Let $G = \{g_1, \dots, g_|G|\}$ be an ordering of the set of gates in circuit $C$.
+Let $Y \subseteq G$ be the set $|y|$ gates that feed to the output lines of the circuit.
+Let $X = \{x_1, \dots, x_n\}$ be an ordered set of $n$ ``input variables''.
+Let $(P, E, V)$ be a probabilistic graphical model with $V = G \cup X$,
+which implements the following logic: (1) sample a string $x$ uniformly from $\{0, 1\}^n$; (2) compute $f(x)$ using the circuit $C$; and then (3) output the value $y = f(x)$ computed by the circuit.
+In slightly more detail, construct $E$ to contain all edges between the gates in $C$, and to contain edges from $x_i$ to gate $g_j$ for every gate $g_j$ receiving input from input bit $i$.
+Construct $P$ so that for each $g \in G$, $P(g | a_\Pa(g))$ is a deterministic probability table that computes the operation of gate $g$, and for each $x_i \in X$, $P(x_i ; \emptyset) = [\frac{1}{2}, \frac{1}{2}]$.
+This yields an inference problem schema $(V, E, P, X, Y)$.
+(For more details on the construction, see Appendix~\ref{}).
+
+Algorithm $B$ then proceeds as follows.
+Let $X_1 = \{x_1\}$, where $x_1 \in X$.
+Observe that $(V, E, P, X_1, Y)$ is an inference problem schema.
+Algorithm $B$ runs algorithm $A$ on input $(V, E, P, X_1, Y, y, 1)$, and computes a value $p_1$ such that, if $y$ is a typical-case value 
+$$
+|P(x_1 = 1 | Y = y) - p_1| < \epsilon
+$$
+(The details regarding $y$ being a typical case value will be elaborated on below.)
+If $p_1 > \frac{1}{2}$, set $x_1 = 1$.
+Otherwise, set $x_1 = 0$.
+
+Next, $B$ constructs a new inference problem schema $(V, E, P, X', Y')$
+where $X' = X \setminus \{x_1\}$ and $Y' = Y \cup \{x_1\}$.
+% $(V', E', P', X', Y')$ which computes $f'(x') = f(x_1 \cdot x')$,
+% the function which on input $x'$ computes $f(x)$ where $x$ is the concatenation of $x_1$ followed by $x'$.
+Set $X_2 = \{x_2\}$, and use algorithm $A$ to compute $p_2$
+approximating $P(X_2 = 1 | Y = y, X_1 = x_1)$.
+Set $x_2 = 1$ if $p_2 > 1/2$.
+Proceed in this manner, to generate an assignment $(x_1, \dots, x_n)$.
+Then, output $(x_1, \dots, x_n)$.
+
+It turns out (to be proven momentarily) that
+$$
+\forall n,
+\Pr_{x \sim \text{Uniform}(\{0, 1\}^n)}[f(B(f(x))) = f(x)] \geq 1 - \rho
+$$
+Because $\rho < 1$, this implies that this probability term cannot converge to 0 as $n$ increases.
+Thus $f$ is not a one-way function, contradicting the setup.
+
+What remains is to show that the value $(x_1, \dots, x_n)$ returned by algorithm $B$ satisfies $f(x_1 \dots x_n) = y$ with probability $\geq 1 - \rho$,
+if $y = f(x)$ for an $x$ chosen uniformly at random from $\{0, 1\}^n$.
+Observe that this distribution over values $y$ is identical to the distribution $P(Y = y)$ induced by the probabilistic graphical model above.
+
+By our definition of $A$, there exists a set $\mathcal{Y}_\text{easy}$
+such that $P(Y \in \mathcal{Y}_\text{easy}) > 1 - \rho$.
+Due to this probability bound, it suffices to prove that algorithm $B$ outputs $(x_1, \dots, x_n)$ with $f(x_1, \dots, x_n) = y$ for any $y \in \mathcal{Y}_\text{easy}$.
+Thus, henceforth, assume $y \in \mathcal{Y}_\text{easy}$.
+
+% Thus, by our definition of $A$, there exists a set $\mathcal{A}_\text{easy}$
+% such that $P(\mathcal{A}_\text{easy}) > 1 - \rho$.
+% Due to this probability bound, it suffices to prove that algorithm $B$ outputs $(x_1, \dots, x_n)$ with $f(x_1, \dots, x_n) = y$ for any $y$ consistent with $\mathcal{A}_\text{easy}$.
+% Thus, henceforth, assume $y$ is consistent with $\mathcal{A}_\text{easy}$.
+
+If it were the case that for all $x' \in \{0, 1\}^{n-1}$,
+$f(1 \cdot x') \neq y$, then $P(x_1 = 1 | Y = y) = 0$.
+Thus, if $p_1 > 1/2$, we must have $P(x_1 = 1 | Y = y) > 0$, so
+there exists $x'$ such that $f(1 \cdot x') = y$.
+Otherwise, it must be that $P(x_1 = 0 | Y = y) > 0$,
+so there exists $x'$ such that $f(0 \cdot x') = 0$.
+Either way, algorithm $B$ chooses a value for $x_1$
+which can be extended into a value in $f^{-1}(y)$.
+% Thus observation $Y = y, X_1 = x_1$ is a valid observation
+% to condition on, because $P(Y = y, X_1 = x_1) \neq 0$.
+
+Now, say that we have an assignment $(x_1, \dots, x_i)$ such that
+there exists $x' \in \{0, 1\}^{n - i}$ so $f(x_1, \dots, x_i \cdot x') = y$.
+Then $P(Y = y, X_{1:i} = x_{1:i}) > 0$, 
+the value $P(X_{i + 1} = 1 | Y = y, X_{1:i} = x_{1:i})$ is well-defined.
+By our definition of $A$, algorithm $A$ can compute an additive $\epsilon$
+approximation $p_{i+1}$ of this value,
+as the assignment being conditioned on, $Y \cup X_{1:i}$,
+is an extension to assignment $y$.
+If $p_{i+1} > 1/2$, then it must be the case
+that $P(X_{i + 1} = 1 | Y = y, X_{1:i} = x_{1:i}) > 0$, implying
+that $(x_1, \dots, x_i, 1)$ can be extended into an assignment $x$
+such that $f(x) = y$.
+Otherwise, $p_{i + 1} < 1/2$, so by symmetric logic,
+$(x_1, \dots, x_i, 0)$ can be extended to a value in $f^{-1}(y)$.
+
+This induction shows that if $y \in \mathcal{Y}_\text{easy}$,
+algorithm $B$ is guaranteed to find an assignment $(x_1 \dots, x_n)$
+so $f(x_1, \dots, x_n) = y$.
+
+
+
+
+
+% To do this, $B$ first writes down the description of a circuit $C$ on $n$ inputs and $|y|$ outputs, such that $C$ implements $f$ on inputs of length $n$.
+% Let $G = \{g_1, \dots, g_{|G|}\}$ be an ordered set of binary variables,
+% representing the values of each gate in the circuit $C$.
+% Let $Y \subseteq G$ be the set $|y|$ gates that feed to the output lines of the circuit.
+% Let $E_G$ be the collection of edges between gates in the circuit.
+
+% Additionally, introduce a set $X$ of $n$ variables $\{x_1, x_2, \dots, x_n\}$ with no parents.
+% Set $V = X \cup G$.
+% Let $E_X$ be the set of edges containing an edge $(x_i \mapsto g_j)$ for every gate $g_j$ in circuit $C$ which receives input from the $i$th input bit.
+% Set $E = E_G \cup E_X$.
+% Finally, we construct probability table $P$ as follows.
+% For each $g \in G$, we set $P(g = 1 ; a_{\Pa(g)}) = 1$ if gate $g$ applied to inputs $a_{\Pa(g)}$ would compute $1$, and we set this to 0 otherwise.
+% For each $x_i \in X$, we set $P(x_i = \cdot ; \emptyset) = [\frac{1}{2}, \frac{1}{2}]$.
+
+% $P(x_i ; \emptyset) = [\frac{1}{2}, \frac{1}{2}]$.
+\end{proof}
+
+\begin{lem} \label{lem:constant_output_length}
+Say that there exists a one-way function $f$.
+Then there exists a one-way function $g$ such that the output length is a function of the input length.
+That is, there exists a one-way function $g$, and a function $s : \N \to \N$ such that $\forall n, \forall x \in \{0, 1\}^n$, $|g(x)| = s(n)$.
+\end{lem}
+\begin{proof}
+    TODO
+\end{proof}
+
+\newpage
+\section{Misc}
+\subsection{The worst-case complexity of inference}
+
+\textbf{On worst and typical case complexity.} Cooper \cite{cooper1990} and Dagum and Luby \cite{dagum1993} have proven that if there exists an $\epsilon < 1/2$ and a polynomial time algorithm $A$ such that for any inference problem $(I, y)$, $|A(I, y, x) - P(X = x | Y = y)| < \epsilon$, then $\P = \NP$.
+Their constructions involve constructing inference problems $I$, and then selecting an observed assignment $y$ to a set $Y$ of one variable ($|Y| = 1$).
+This assignment may have extremely low marginal probability: $P(Y = y) << 1$.
+As probabilistic graphical models are typically used to model aspects of the world, we ought expect that in practice, the observation values which we must condition our inferences upon will not be worst-case values, but typical-case values.
+Thus, in this project, I propose to study the complexity of inference under arbitrary (worst case) graphical models $(P, V, E)$, arbitrary latent variable subsets $X$, and arbitrary observation variable subsets $Y$, but typical-case observation values $y$.
+
+My plan is to prove the following results suggesting that typical-case inference can be difficult.
+\begin{enumerate}
+    \item Say that there exists $\epsilon, \delta < 1/2$ and a polynomial-time algorithm $A$ such that for any $I$ and any assignment $x$, $$\Pr_{y \sim P}[|A(I, y, X) - P(X = x | Y = y)| > \epsilon] < 1 - \delta$$ Then one-way functions do not exist.
+    \item The above result also holds if $A$ is a probabilistic rather than deterministic algorithm.  (The proof will involve a Chernoff style bound.)
+    \item Corollary: if one-way functions exist, then approximate posterior sampling given typical case observations, can be hard.  There does not exist a probabilistic polynomial time algorithm $A$ where $A(I, y)$ outputs an assignment $x$, such that its output distribution $O$ has bounded total variation distance from the posterior: for any $\epsilon < 1/2$, we cannot have $||O - P(X | Y = y)||_{\text{TV}} < \epsilon$ for all inference problems.
+\end{enumerate}
+These results will use similar constructions to Dagum and Luby's \cite{dagum1993}, though some extensions and modifications are needed to reduce from one-way functions rather than from SAT solving.
+
+My plan is to additionally prove the following results about several cases in which typical-case inference \textit{is} possible.
+\begin{enumerate}
+    \item Say $|Y| = 1$.  Then algorithms $A$ as in item (2) and (3) in the previous list exists.  (This is of interest because it shows that the constructions in \cite{cooper1990} and \cite{dagum1993} do not directly carry through to showing the hardness of inference with typical-case observations.)
+    \item Say we have either an upper bound $B_I$ on the mutual information $I(X ; Y)$, or an upper bound $B_\chi$ on the $\chi^2$-information $I_{\chi^2}(X; Y)$ \cite{f_information}. Then probabilistic polynomial time algorithms $A$ as in items (2) and (3) on the previous list exist, which work for all graphical models satisfying these upper bounds.  (That is, the parametrized complexity of inference, on typical-case observations, with either of these information quantities as parameters, is polynomial.)  Given a $\chi^2$-information upper bound $B_\chi$, we can bound the algorithm runtime by a polynomial in $B_\chi$.  (We cannot get a polynomial bound based on the Shannon mutual information bound.)
+    \item (Tentative.) Inference in graphical models with upper-bounded mutual information $I(X; Y)$ on worst-case observations cannot be done in polynomial time unless $\P = \NP$.
+    (The ability to state bounds like this therefore requires typical-case analysis.)
+\end{enumerate}
+These upper bounds on the complexity of information in information-limited settings 
+
+% My plan A is to not include any of the following.
+% But if I have time, I believe I know how to show:
+% \begin{enumerate}
+%     \item 
+% \end{enumerate}
+
+I am planning to also include a discussion briefly surveying all of the papers about compmlexity of inference which I read during this project, to give you a sense of what I have studied (much of which ended up not being directly informative about these results).
+
+
+\section{Papers I have read}
+Here is a list of most of the papers I have read as a part of this course project: \cite{jerrum1986, cooper1990, dagum1993, dagum1997optimal, ackerman2019computability, kwisthout2018approximate, akmal2022majority, tantau2022satisfaction, aaronson2014equivalence}.
+I also looked at \cite{feige2002relations, moitra2019approximate}, but I have not read them in detail.
+My plan at this stage is to halt my literature review and try to write a project report
+proving the statements I described above.
+
+I really enjoyed the papers about Majority K-SAT, by the way!
+I watched Shyan's video about it in addition to reading the paper, and thought it did a great job making clear the structural decomposition of the space of CNF formulae that informs the result.
+I was not able to figure out any new results related to this I thought I could prove, so for this project I thought I would write a report on the topics outlined above.
+But I'm quite interested in the line of research studying the combinatorial structure in concrete classes of probabilistic models, and understanding how this affects the complexity of probabilistic operations in them.
+(In the k-sat work, the probabilistic class of models is ``sample $n$ binary variables uniformly at random, then compute these CNF formulae on them'', and the probabilistic operation under study is to compute a threshold on the marginal probability of observing all the CNF formlae.)
+
+\printbibliography
+
+\end{document}

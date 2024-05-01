@@ -50,80 +50,109 @@
     Subject: The Computational Complexity of Probabilistic Inference
 
     \vspace{3pt}
-    Proposed project title: On the Complexity of Inference in Probabilistic Graphical Models on Typical-Case Observations
+    \normalsize Proposed project title: Progress Toward Characterizing the Complexity of Inference in Probabilistic Graphical Models on Typical-Case Observations
 
     \vspace{3pt}
     \normalsize
     George Matheos, \today
 \end{center}
 
-\section{My plan for the final project}
+\section{Progress report}
+\textbf{Papers read.} I have read a range of papers surveying the study of the complexity of probabilistic inference, including \cite{jerrum1986, cooper1990, dagum1993, dagum1997optimal, ackerman2019computability, kwisthout2018approximate, akmal2022majority, aaronson2014equivalence, freer2010probabilistic}, and read the abstract and introduction of several others, including \cite{feige2002relations, moitra2019approximate, tantau2022satisfaction}.
 
-\subsection{High-level plan and input needed}
-My current plan is to write a research project, with a few new results I believe I know how to prove.
-These results build on analysis from Dagum and Luby \cite{dagum1993,dagum1997optimal}, and provide typical-case analysis counterparts to two theorems they prove relying on a worst-case analysis.
-I could alternatively write a literature report, as I have read a range of papers surveying the study of the complexity of inference.
-I could use input on whether the new results I am planning to include would be sufficient for a class project report, or if it would be better to do a literature report.
-I will go to Prof. William's office hours on Wed May 1 to ask him about this.
+\medskip
+\noindent \textbf{New results.} I've also spent a while trying to derive new results, extending the study of inference in probabilistic graphical models by Dagum and Luby \cite{dagum1993, dagum1997optimal} from doing a worst-case analysis to doing a specific type of typical-case analysis which I believe captures the hardness of probabilistic inference in graphical models in many practical settings.
 
-\subsection{My plan}
+I have discovered that the results I was initially hoping to prove are more subtle than I had anticipated.
+I am not entirely certain the main result I wanted to prove is even true!
+However, I believe I have managed to prove weaker versions of these new results.
+I also think the difficulty that arose in proving the main result is pretty interesting, and worth writing up.
 
-My plan is to study the complexity of probabilitic inference in probabilistic graphical models, on typical-case observations.
-To clearly articulate what I plan to study, I will introduce some notation.
+\medskip
+\noindent \textbf{My plan for the report.} I think that I have enough content that it is worth writing a report on my progress toward new results, rather than just doing a literature review.
+(I will also see if I can make more progress over the coming week; I don't think I've hit a wall yet, but I don't know exactly how far I can get by the project deadline.)
+\textbf{
+It would help me if you could please sign off that writing a project report like this will fulfill the course requirements!}
+(I'll ask Prof. W about this in OH.)
 
-A \textbf{probabilistic graphical model} is a tuple $(V, E, P)$, where $V$ is a finite set of variables, $E$ is a set of directed edges among the variable, and $P$ describes a probability distribution over the value of each variable $v \in V$, given an assignment to its parent variables $\Pa(v) \subseteq V$.  $\Pa(v)$ is the set of vertices $u \in \Pa(v)$ such that there is a directed edge $u \mapsto v \in E$.
-For any $v \in V$ and any assignment $a_{\Pa(v)}$ to $\Pa(v)$, I write $P(v = \cdot ; a_{\Pa(v)})$ to denote the probability distribution on the domain of $v$ induced by this assignment and this graphical model.
-For our purposes, it is sufficient to take each $v \in V$ to be a boolean variable, so this domain can be taken as $\{0, 1\}$.
-It is required that $(V, E)$ be a DAG.
-Then, $P$ defines a joint distribution on all the variables in $V$, in a natural way.
-
-For this report, I define an \textbf{inference problem} to consist of (1) a graphical model $(V, E, P)$, (2) a set of \textit{observed variables} $Y \subseteq V$, (3) a set of \textit{query variables} $X \subseteq V$ and (4) an assignment $y \in \{0, 1\}^{|Y|}$ to the collection of variables $Y$.
-I will write $I$ to denote the tuple $(P, E, V, X, Y)$, the full inference problem, except excluding the assignment $y$.
-I will study several different types of inference problems, which will require an algorithm to return different types of information about the posterior distribution $P(X | Y = y)$.
-
-\textbf{On worst and typical case complexity.} Cooper \cite{cooper1990} and Dagum and Luby \cite{dagum1993} have proven that if there exists an $\epsilon < 1/2$ and a polynomial time algorithm $A$ such that for any inference problem $(I, y)$, $|A(I, y, x) - P(X = x | Y = y)| < \epsilon$, then $\P = \NP$.
-Their constructions involve constructing inference problems $I$, and then selecting an observed assignment $y$ to a set $Y$ of one variable ($|Y| = 1$).
-This assignment may have extremely low marginal probability: $P(Y = y) << 1$.
-As probabilistic graphical models are typically used to model aspects of the world, we ought expect that in practice, the observation values which we must condition our inferences upon will not be worst-case values, but typical-case values.
-Thus, in this project, I propose to study the complexity of inference under arbitrary (worst case) graphical models $(P, V, E)$, arbitrary latent variable subsets $X$, and arbitrary observation variable subsets $Y$, but typical-case observation values $y$.
-
-My plan is to prove the following results suggesting that typical-case inference can be difficult.
+\medskip
+\noindent \textbf{Potential rough report outline.} Here is a rough outline for the project report I am planning to write, assuming I don't manage to derive new results beyond what I believe I can already prove.
 \begin{enumerate}
-    \item Say that there exists $\epsilon, \delta < 1/2$ and a polynomial-time algorithm $A$ such that for any $I$ and any assignment $x$, $$\Pr_{y \sim P}[|A(I, y, X) - P(X = x | Y = y)| > \epsilon] < 1 - \delta$$ Then one-way functions do not exist.
-    \item The above result also holds if $A$ is a probabilistic rather than deterministic algorithm.  (The proof will involve a Chernoff style bound.)
-    \item Corollary: if one-way functions exist, then approximate posterior sampling given typical case observations, can be hard.  There does not exist a probabilistic polynomial time algorithm $A$ where $A(I, y)$ outputs an assignment $x$, such that its output distribution $O$ has bounded total variation distance from the posterior: for any $\epsilon < 1/2$, we cannot have $||O - P(X | Y = y)||_{\text{TV}} < \epsilon$ for all inference problems.
+    \item Introduce probabilistic graphical models, and define several different inference problems we may want an algorithm to solve (including sampling from a posterior distribution, computing the posterior probability mass function up to an additive error, and computing it up to a relative error).  State a couple results from the literature on the relations between the hardness of these problems.
+    \item Introduce Dagum and Luby's result about hardness of inference in graphical models \cite{dagum1993}, for posterior PMF (probability mass function) approximation up to additive error.
+    \item Define the problem of ``doing inference in graphical models on typical-case inputs'', and motivate why I believe this is a relevant problem.
+    \item State and prove a new hardness result, extending Dagum and Luby's approach to do typical-case analysis (but with weaker aspects in the theorem statement than I would like).  This result will show that a polynomial time algorithm for typical-case relative-approximation to posterior PMF computation implies the nonexistance of one-way functions.
+    \item Discuss the difficulties encountered in strengthening this result, and state a couple of questions regarding the existance of efficient inference algorithms that succeed on typical-case observations.  (One example strengthening of the hardness result I am not sure is possible: showing that not only is relative PMF approximation hard, but additive PMF approximation is hard as well.)
 \end{enumerate}
-These results will use similar constructions to Dagum and Luby's \cite{dagum1993}, though some extensions and modifications are needed to reduce from one-way functions rather than from SAT solving.
 
-My plan is to additionally prove the following results about several cases in which typical-case inference \textit{is} possible.
-\begin{enumerate}
-    \item Say $|Y| = 1$.  Then algorithms $A$ as in item (2) and (3) in the previous list exists.  (This is of interest because it shows that the constructions in \cite{cooper1990} and \cite{dagum1993} do not directly carry through to showing the hardness of inference with typical-case observations.)
-    \item Say we have either an upper bound $B_I$ on the mutual information $I(X ; Y)$, or an upper bound $B_\chi$ on the $\chi^2$-information $I_{\chi^2}(X; Y)$ \cite{f_information}. Then probabilistic polynomial time algorithms $A$ as in items (2) and (3) on the previous list exist, which work for all graphical models satisfying these upper bounds.  (That is, the parametrized complexity of inference, on typical-case observations, with either of these information quantities as parameters, is polynomial.)  Given a $\chi^2$-information upper bound $B_\chi$, we can bound the algorithm runtime by a polynomial in $B_\chi$.  (We cannot get a polynomial bound based on the Shannon mutual information bound.)
-    \item (Tentative.) Inference in graphical models with upper-bounded mutual information $I(X; Y)$ on worst-case observations cannot be done in polynomial time unless $\P = \NP$.
-    (The ability to state bounds like this therefore requires typical-case analysis.)
-\end{enumerate}
-These upper bounds on the complexity of information in information-limited settings 
+\noindent If it would help the report fulfill the course requirements, I could also include a related work section at the end where I give a terse summary of the topics covered in the differnet papers I read (which were very interesting, but not all directly relevant to the area of inference in graphical models where I have made a little bit of new research progress).
 
-% My plan A is to not include any of the following.
-% But if I have time, I believe I know how to show:
+
+% \subsection{High-level plan and input needed}
+% My current plan is to write a research project, with a few new results I believe I know how to prove.
+% These results build on analysis from Dagum and Luby \cite{dagum1993,dagum1997optimal}, and provide typical-case analysis counterparts to two theorems they prove relying on a worst-case analysis.
+% I could alternatively write a literature report, as I have read a range of papers surveying the study of the complexity of inference.
+% I could use input on whether the new results I am planning to include would be sufficient for a class project report, or if it would be better to do a literature report.
+% I will go to Prof. William's office hours on Wed May 1 to ask him about this.
+
+% \subsection{My plan}
+
+% My plan is to study the complexity of probabilitic inference in probabilistic graphical models, on typical-case observations.
+% To clearly articulate what I plan to study, I will introduce some notation.
+
+% A \textbf{probabilistic graphical model} is a tuple $(V, E, P)$, where $V$ is a finite set of variables, $E$ is a set of directed edges among the variable, and $P$ describes a probability distribution over the value of each variable $v \in V$, given an assignment to its parent variables $\Pa(v) \subseteq V$.  $\Pa(v)$ is the set of vertices $u \in \Pa(v)$ such that there is a directed edge $u \mapsto v \in E$.
+% For any $v \in V$ and any assignment $a_{\Pa(v)}$ to $\Pa(v)$, I write $P(v = \cdot ; a_{\Pa(v)})$ to denote the probability distribution on the domain of $v$ induced by this assignment and this graphical model.
+% For our purposes, it is sufficient to take each $v \in V$ to be a boolean variable, so this domain can be taken as $\{0, 1\}$.
+% It is required that $(V, E)$ be a DAG.
+% Then, $P$ defines a joint distribution on all the variables in $V$, in a natural way.
+
+% For this report, I define an \textbf{inference problem} to consist of (1) a graphical model $(V, E, P)$, (2) a set of \textit{observed variables} $Y \subseteq V$, (3) a set of \textit{query variables} $X \subseteq V$ and (4) an assignment $y \in \{0, 1\}^{|Y|}$ to the collection of variables $Y$.
+% I will write $I$ to denote the tuple $(P, E, V, X, Y)$, the full inference problem, except excluding the assignment $y$.
+% I will study several different types of inference problems, which will require an algorithm to return different types of information about the posterior distribution $P(X | Y = y)$.
+
+% \textbf{On worst and typical case complexity.} Cooper \cite{cooper1990} and Dagum and Luby \cite{dagum1993} have proven that if there exists an $\epsilon < 1/2$ and a polynomial time algorithm $A$ such that for any inference problem $(I, y)$, $|A(I, y, x) - P(X = x | Y = y)| < \epsilon$, then $\P = \NP$.
+% Their constructions involve constructing inference problems $I$, and then selecting an observed assignment $y$ to a set $Y$ of one variable ($|Y| = 1$).
+% This assignment may have extremely low marginal probability: $P(Y = y) << 1$.
+% As probabilistic graphical models are typically used to model aspects of the world, we ought expect that in practice, the observation values which we must condition our inferences upon will not be worst-case values, but typical-case values.
+% Thus, in this project, I propose to study the complexity of inference under arbitrary (worst case) graphical models $(P, V, E)$, arbitrary latent variable subsets $X$, and arbitrary observation variable subsets $Y$, but typical-case observation values $y$.
+
+% My plan is to prove the following results suggesting that typical-case inference can be difficult.
 % \begin{enumerate}
-%     \item 
+%     \item Say that there exists $\epsilon, \delta < 1/2$ and a polynomial-time algorithm $A$ such that for any $I$ and any assignment $x$, $$\Pr_{y \sim P}[|A(I, y, X) - P(X = x | Y = y)| > \epsilon] < 1 - \delta$$ Then one-way functions do not exist.
+%     \item The above result also holds if $A$ is a probabilistic rather than deterministic algorithm.  (The proof will involve a Chernoff style bound.)
+%     \item Corollary: if one-way functions exist, then approximate posterior sampling given typical case observations, can be hard.  There does not exist a probabilistic polynomial time algorithm $A$ where $A(I, y)$ outputs an assignment $x$, such that its output distribution $O$ has bounded total variation distance from the posterior: for any $\epsilon < 1/2$, we cannot have $||O - P(X | Y = y)||_{\text{TV}} < \epsilon$ for all inference problems.
 % \end{enumerate}
+% These results will use similar constructions to Dagum and Luby's \cite{dagum1993}, though some extensions and modifications are needed to reduce from one-way functions rather than from SAT solving.
 
-I am planning to also include a discussion briefly surveying all of the papers about compmlexity of inference which I read during this project, to give you a sense of what I have studied (much of which ended up not being directly informative about these results).
+% My plan is to additionally prove the following results about several cases in which typical-case inference \textit{is} possible.
+% \begin{enumerate}
+%     \item Say $|Y| = 1$.  Then algorithms $A$ as in item (2) and (3) in the previous list exists.  (This is of interest because it shows that the constructions in \cite{cooper1990} and \cite{dagum1993} do not directly carry through to showing the hardness of inference with typical-case observations.)
+%     \item Say we have either an upper bound $B_I$ on the mutual information $I(X ; Y)$, or an upper bound $B_\chi$ on the $\chi^2$-information $I_{\chi^2}(X; Y)$ \cite{f_information}. Then probabilistic polynomial time algorithms $A$ as in items (2) and (3) on the previous list exist, which work for all graphical models satisfying these upper bounds.  (That is, the parametrized complexity of inference, on typical-case observations, with either of these information quantities as parameters, is polynomial.)  Given a $\chi^2$-information upper bound $B_\chi$, we can bound the algorithm runtime by a polynomial in $B_\chi$.  (We cannot get a polynomial bound based on the Shannon mutual information bound.)
+%     \item (Tentative.) Inference in graphical models with upper-bounded mutual information $I(X; Y)$ on worst-case observations cannot be done in polynomial time unless $\P = \NP$.
+%     (The ability to state bounds like this therefore requires typical-case analysis.)
+% \end{enumerate}
+% These upper bounds on the complexity of information in information-limited settings 
+
+% % My plan A is to not include any of the following.
+% % But if I have time, I believe I know how to show:
+% % \begin{enumerate}
+% %     \item 
+% % \end{enumerate}
+
+% I am planning to also include a discussion briefly surveying all of the papers about compmlexity of inference which I read during this project, to give you a sense of what I have studied (much of which ended up not being directly informative about these results).
 
 
-\section{Papers I have read}
-Here is a list of most of the papers I have read as a part of this course project: \cite{jerrum1986, cooper1990, dagum1993, dagum1997optimal, ackerman2019computability, kwisthout2018approximate, akmal2022majority, tantau2022satisfaction, aaronson2014equivalence}.
-I also looked at \cite{feige2002relations, moitra2019approximate}, but I have not read them in detail.
-My plan at this stage is to halt my literature review and try to write a project report
-proving the statements I described above.
+% \section{Papers I have read}
+% Here is a list of most of the papers I have read as a part of this course project: \cite{jerrum1986, cooper1990, dagum1993, dagum1997optimal, ackerman2019computability, kwisthout2018approximate, akmal2022majority, tantau2022satisfaction, aaronson2014equivalence}.
+% I also looked at \cite{feige2002relations, moitra2019approximate}, but I have not read them in detail.
+% My plan at this stage is to halt my literature review and try to write a project report
+% proving the statements I described above.
 
-I really enjoyed the papers about Majority K-SAT, by the way!
-I watched Shyan's video about it in addition to reading the paper, and thought it did a great job making clear the structural decomposition of the space of CNF formulae that informs the result.
-I was not able to figure out any new results related to this I thought I could prove, so for this project I thought I would write a report on the topics outlined above.
-But I'm quite interested in the line of research studying the combinatorial structure in concrete classes of probabilistic models, and understanding how this affects the complexity of probabilistic operations in them.
-(In the k-sat work, the probabilistic class of models is ``sample $n$ binary variables uniformly at random, then compute these CNF formulae on them'', and the probabilistic operation under study is to compute a threshold on the marginal probability of observing all the CNF formlae.)
+% I really enjoyed the papers about Majority K-SAT, by the way!
+% I watched Shyan's video about it in addition to reading the paper, and thought it did a great job making clear the structural decomposition of the space of CNF formulae that informs the result.
+% I was not able to figure out any new results related to this I thought I could prove, so for this project I thought I would write a report on the topics outlined above.
+% But I'm quite interested in the line of research studying the combinatorial structure in concrete classes of probabilistic models, and understanding how this affects the complexity of probabilistic operations in them.
+% (In the k-sat work, the probabilistic class of models is ``sample $n$ binary variables uniformly at random, then compute these CNF formulae on them'', and the probabilistic operation under study is to compute a threshold on the marginal probability of observing all the CNF formlae.)
 
 \printbibliography
 

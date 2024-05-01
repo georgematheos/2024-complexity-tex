@@ -163,13 +163,16 @@ $$
 I wish to upper bound $\Pr(\cup_{x \in S} A_x) = \Pr(T \geq 1)$.
 I proceed as follows, using Cantelli's inequality:
 \begin{multline*}
-\Pr(T \geq 1) = \Pr(T - \frac{1}{2} \geq \frac{1}{2}) = \Pr(T - E[T] \geq \frac{1}{2})
+\Pr(T = 0) =
+\Pr(T \leq 0) = \Pr(T - \frac{1}{2} \leq -\frac{1}{2}) = \Pr(T - E[T] \leq -\frac{1}{2})
 \leq \frac{\text{Var}[T]}{\text{Var}[T] + (\frac{1}{2})^2} \\
-= \frac{1/2}{1/2 + 1/4} = 2/3
+= \frac{\frac{1}{2} - \frac{1}{2^{k+1}}}{
+	\frac{1}{2} - \frac{1}{2^{k+1}} + 1/4
+} \leq \frac{1/2}{1/2 + 1/4} = 2/3
 \end{multline*}
 Thus,
 $$
-\Pr(\exists x \in S \text{ s.t. } h(x) = 0^k) = \Pr(T < 1) \leq 1 - 2/3 = 1/3
+\Pr(\exists x \in S \text{ s.t. } h(x) = 0^k) = \Pr(T \geq 1) = 1 - \Pr(T = 0) \geq 1/3
 $$
 
 \medskip
@@ -320,7 +323,9 @@ Thus, this has yielded a $(1 + \epsilon)$ approximation to $\#\mathsf{SAT}(F)$.
 \subsection*{Answer to (d)}
 The preceding parts have shown that if $\P = \NP$, then there exists a probabilistic polynomial time algorithm $A$ such that $A(F)$ outputs a number $K$ such that $\#\mathsf{SAT}(F) \in (K, (1 + \epsilon) K)$.
 Let $L$ denote the decision problem where $L(F, k) = 1$ iff $A(F)$ outputs a value less than $k$ with probability at least $2/3$.
-Then certainly $L \in \BPP$. \textbf{TODO: this isn't true...}
+
+
+
 Because $\P = \NP$, the polynomial hierarchy collapses, so since $\BPP \subseteq \PH$,
 we have $\BPP \subseteq \P$, and thus $L \in \P$.
 
@@ -542,23 +547,81 @@ In this problem, we will develop an $\AM$ protocol for proving a set lower bound
 \newpage
 \subsection*{Answer to (a)}
 
-% The verifier will send $l$ uniformly random $m$ bit strings $y_1, \dots, y_l$.
-\textbf{The protocol.} The verifier will send $l$ random pairwise independent hash functions $h_1, \dots, h_l$.  (Each one can be sent in $O(mk)$ bits.)
+\textbf{The protocol.}
+Let $\mathcal{H}$ be a family of pairwise independent hash functions from $\{0, 1\}^m$ to $\{0, 1\}^k$, where $k$ is chosen so that $K \geq 2^{k - 1}$.
+The prover will first send $K$, and then send a hash function $h \in \mathcal{H}$, such that
+$|h(S)| \geq K$.
+The verifier will send back $N$ random values $y_1, \dots, y_N$.
+For each $i = 1, \dots, N$, the prover will either say that there is no $x \in S$ so that $h(x) = y_i$, or it will send a value $x_i \in S$ such that $h(x_i) = y_i$.
+For each $x_i$ value the prover sends, the verifier will confirm that $x_i \in S$ and $h(x_i) = y_i$ and reject otherwise.
+If all these tests pass, the verifier will accept iff the prover sent at least $\frac{3}{4} \frac{K}{2^k}N$ values $x_i$.
 
-The prover will send back $K$, and then, for each $y_i$, either a message saying there is no $x \in S$ s.t. $h_i(x) = 0^k$, or a string $x_i$.
-The verifier will reject if any $x_i$ does not satisfy $h_i(x_i) = 0^k$ or if any $x_i \notin S$.
-If the prover sends back $\geq \frac{3}{4}\frac{K}{2^k}l$ valid $x_i$, the verifier will accept.  The verifier will reject otherwise.
+This protocol uses more than 2 rounds, but we can turn it into a 2-round protocol using the reduction from question 3.
 
 \medskip
-\noindent \textbf{Analysis.}
+\noindent
+\textbf{Analysis.}
+It suffices to prove the following three lemmata:
+\begin{enumerate}
+	\item Lemma 1. If $|S| \geq K$, there exists a hash function $h$ such that $|h(S)| \geq K$.
+	\item Lemma 2. If $|h(S)| \geq K$, then with high probability, there exist $\frac{3}{4} \frac{K}{2^k}N$ values $x_i$ such that $h(x_i) = y_i$.
+	\item Lemma 3. If $|S| < K/2$, then for any function $h : \{0, 1\}^m \to \{0, 1\}^k$, with high probability, there exist $\frac{3}{4} \frac{K}{2^k}N$ values $x_i$ such that $h(x_i) = y_i$.
+\end{enumerate}
+
+\smallskip
+\noindent
+\textbf{Proof of lemma 1.}
 Say $|S| \geq K$.
-Then for any $h_i$,
-\begin{multline*}
-	\Pr[\exists x \in S . h_i(x) = 0^k]
-	\geq \sum_{x \in S}\frac{1}{2^k} - \sum_{x \neq y \in S}\frac{1}{2^{2k}} \\
-	> \frac{K}{2^k} - \frac{K^2}{2^{2k + 1}}
-	= \frac{K}{2^k} - \frac{1}{2} (\frac{K}{2^k})^2
-\end{multline*}
+Let $h$ be a random independent hash function.
+For any $y \in \{0, 1\}^k$, let $A_y := \{h : \exists x \in S . h(x) = y\}$.
+Let $A_{y, x} := \{h : h(x) = y\}$, so $A_y = \cup_{x \in S} A_{y, x}$.
+Then by inclusion-exclusion,
+% \begin{multline*}
+$$
+\Pr_h[A_y] \geq \sum_{x \in S} \Pr[A_{y, x}] - \sum_{x\in S, x < z \in S}\Pr[A_{y, x} \cap A_{y, z}]
+= |S|\frac{1}{2^k} - (|S|^2 - |S|)\frac{1}{2^{2k}} \\
+\geq |S|/2^k - (|S|/2^k)^2
+$$
+% \geq \frac{K}{2^k}  (\frac{K}{2^k})^2
+% \end{multline*}
+% \textbf{}
+Observing that (A) $x - x^2$ is a decreasing function on $(\frac{1}{2}, 1)$, (B) $|S|/2^k \in (\frac{1}{2}, 1)$ because $|S| \geq K$ and $K/2^k > 1/2$, and (C) $\frac{K}{2^k} \geq \frac{|S|}{2^k}$, we derive
+$$
+\Pr_h[A_y] \geq |S|/2^k - (|S|/2^k)^2 \geq \frac{K}{2^k} - (\frac{K}{2^k})^2
+$$
+
+Thus 
+$$
+E[\sum_{y \in \{0, 1\}^k}1_{A_y}] \geq 2^k(\frac{K}{2^k} - (\frac{K}{2^k})^2) = K - \frac{K^2}{2^k}
+$$
+Thus, for a randomly chosen hash function $h$, we expect that at least $K - \frac{K^2}{2^k}$ distinct $y$ values in $\{0, 1\}^k$ are covered by $h(S)$.
+This implies that there must exist some hash function function $h^*$ with $h^*(S) \geq K - \frac{K^2}{2^k}$.
+
+\medskip
+\noindent
+\textbf{Proof of lemma 2.}
+
+% \textbf{}
+
+% \textbf{}
+
+% The verifier will send $l$ uniformly random $m$ bit strings $y_1, \dots, y_l$.
+% \textbf{The protocol.} The verifier will send $l$ random pairwise independent hash functions $h_1, \dots, h_l$.  (Each one can be sent in $O(mk)$ bits.)
+
+% The prover will send back $K$, and then, for each $y_i$, either a message saying there is no $x \in S$ s.t. $h_i(x) = 0^k$, or a string $x_i$.
+% The verifier will reject if any $x_i$ does not satisfy $h_i(x_i) = 0^k$ or if any $x_i \notin S$.
+% If the prover sends back $\geq \frac{3}{4}\frac{K}{2^k}l$ valid $x_i$, the verifier will accept.  The verifier will reject otherwise.
+
+% \medskip
+% \noindent \textbf{Analysis.}
+% Say $|S| \geq K$.
+% Then for any $h_i$,
+% \begin{multline*}
+% 	\Pr[\exists x \in S . h_i(x) = 0^k]
+% 	\geq \sum_{x \in S}\frac{1}{2^k} - \sum_{x \neq y \in S}\frac{1}{2^{2k}} \\
+% 	> \frac{K}{2^k} - \frac{K^2}{2^{2k + 1}}
+% 	= \frac{K}{2^k} - \frac{1}{2} (\frac{K}{2^k})^2
+% \end{multline*}
 
 
 
@@ -628,7 +691,7 @@ If $V(x, r, y, z) = 1$ only on $y^*, z^*$, set $C_r = (Y_r = y^*) \wedge (Z_r = 
 If $V(x, r, y, z) = 1$ exactly when $y = 1$, set $C_r = Y_r$; do the analogus thing if it is 1 exactly when $y = 0$ or exactly when $z = 1$ or exatly when $z = 0$.
 If $V(x, r, y, z) = 1$ exactly when $y = z$ make $C_r = (Y_r \vee \neg Z_r) \wedge (\neg Y_r \vee Z_r)$.
 If $V(x, r, y, z) = 1$ exactly when $y \neq z$ make $C_r = (Y_r \vee Z_r) \wedge (\neg Y_r \vee \neg Z_r)$.
-If $V(x, r, y, z) = 1$ in every case except $(y^*, z^*)$, set $C_r = (Y_r \neq y^*) \vee (Z_r \neq z^*)4.
+If $V(x, r, y, z) = 1$ in every case except $(y^*, z^*)$, set $C_r = (Y_r \neq y^*) \vee (Z_r \neq z^*)4$.
 If $V(x, r, y, z) = 1$ on all $y, z$, set $C_r = \eps$, the empty clause.
 % 	If $V(x, r, y, z) = 1$ for 3 assignments to $y$ and $z$, let $C_r = (\neg) Y_r \vee (\neg) Z_r$ where we optionally include negations $\neg$, to make $C_r$ the clause which accepts exactly the 3 permutations of $(y, z)$ that $V$ accepted.
 % 	If $V(x, r, y, z) = 1$ for 2 assignments)
@@ -640,5 +703,8 @@ $< sn$ of the $C_r$ are satisfied.
 Let $C = \wedge_{r} C_r$, which is a conjunction of 2CNF formulae, and is thus a 2CNF formula itself.
 We can determine whether $C$ is satisfiable in polynomial time (this is just a 2SAT problem); if it is, then we must have $f(x) = 1$, and if not, we must have $f(x) = 0$.
 
+\newpage
+\section*{Acknowledgements}
+I went to Zixuan's office hours, and she helped me understand how to solve problems 2 and 4.
 
 \end{document}

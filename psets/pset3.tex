@@ -600,6 +600,37 @@ We chose $4k$ specifically because $(5/6)^4 < 1/2$.
 
 This strict inequality $\Pr[\cap_y \cup_i A_{i, y}] > 0$ completes the proof.
 
+\subsection*{Answer to (c)}
+Consider a decision problem $f : \{0, 1\}^* \to \{0, 1\}$ decided by a Merlin-Arthur protocol with verifier $V$.
+WLOG, say that the transcripts for this protocol use exactly $kn^k$ random bits on inputs of size $n$.
+Fix an input $x$ and an optimal prover $P$.
+Let $n = |x|$ and let $R = kn^k$.
+Let $S \subseteq \{0, 1\}^{R}$ denote the set of random strings on which $(V, P)$ will accept $x$.
+It is guaranteed that either $|S| \geq \frac{2}{3}2^R$ and $f(x) = 1$, or $|S| \leq \frac{1}{2}2^R$ and $f(x) = 0$ (this is the ``BPP promise'' for the interactive proof protocol).
+We can slightly adapt the idea from part (b) to have the prover prove to the verifier, with perfect completeness, that $|S| \geq \frac{2}{3}2^R$.
+
+\medskip
+\noindent
+\textbf{The protocol.}
+Identically to as in the protocol in part (b), the prover first sends $l$ hash functions $h_1, \dots, h_l$.
+The verifier then sends a random value $y \in \{0, 1\}^t$ where here $t$ plays the role played by $k$ in part (b) [it is computed analogously to there].
+The prover then sends back a string $x_1 \cdot x_2 \dots x_{M} \in \{0, 1\}^{MR}$ for some multiplier $M$ (called $n$ in part (b)), and an integer $i$, claiming that (1) $h_i(x_1, \dots, x_M) = y$ and (2) each $x_j$ is in the set $S$.
+The verifier can immediately verify condition (1).
+To enable the verifier to confirm condition (2), the prover simply needs to send the verifier the messages it would have sent in a round of interaction where the verifier sent the string $x_j$; the verifier can then check that it would have accepted on this response.
+
+\medskip
+\noindent
+\textbf{Analysis.}
+Per the analysis in part (b), this procedure has perfect completeness.
+To show soundness all that we need to do is ensure that the verifier can succeed
+in checking whether $x_j \in S$.
+Well, say $x_j \notin S$.
+Due the assumed optimality of $P$, this implies there does not exist a response to string $x_j$ which would have caused the verifier to accept.
+Thus, the prover in the protocol in the previous paragraph could not have produced a message to convince the verifier $x_j \in S$.
+(This shows that in the protocol above, the verifier never mistakenly thinks that a string $x_j \in S$.
+It does not show the protocol has perfect soundness, for the same reason as in part (b): there
+is a small but nonzero chance that the verifier happens to choose a string $y$ where some sequence $x_1 \dots x_M$ of values in $S$ hash to $y$ under one of the $h_i$.)
+
 \newpage
 \section*{Problem 5: The Limits of PCPs (4 Points, 2 for each sub-problem)}
 \subsection*{Question}

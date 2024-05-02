@@ -1,6 +1,6 @@
 # Fdb version 3
-["pdflatex"] 1714610010 "/Users/georgematheos/Developer/classes/2024/2024-complexity-tex/psets/pset3.tex" "pset3.pdf" "pset3" 1714610010
-  "/Users/georgematheos/Developer/classes/2024/2024-complexity-tex/psets/pset3.tex" 1714610010 31689 3444ddbc0023aa5adcd84b171518d922 ""
+["pdflatex"] 1714614584 "/Users/georgematheos/Developer/classes/2024/2024-complexity-tex/psets/pset3.tex" "pset3.pdf" "pset3" 1714614585
+  "/Users/georgematheos/Developer/classes/2024/2024-complexity-tex/psets/pset3.tex" 1714614584 33290 b7f54c62bc53b36ff3b7d4c7a95efec6 ""
   "/usr/local/texlive/2022/texmf-dist/fonts/enc/dvips/cm-super/cm-super-ts1.enc" 1136849721 2900 1537cc8184ad1792082cd229ecc269f4 ""
   "/usr/local/texlive/2022/texmf-dist/fonts/map/fontname/texfonts.map" 1577235249 3524 cb3e574dea2d1052e39280babc910dc8 ""
   "/usr/local/texlive/2022/texmf-dist/fonts/tfm/jknappen/ec/tcrm1000.tfm" 1136768653 1536 e07581a4bb3136ece9eeb4c3ffab8233 ""
@@ -81,8 +81,8 @@
   "/usr/local/texlive/2022/texmf-var/fonts/map/pdftex/updmap/pdftex.map" 1647878959 4410336 7d30a02e9fa9a16d7d1f8d037ba69641 ""
   "/usr/local/texlive/2022/texmf-var/web2c/pdftex/pdflatex.fmt" 1657750608 2826441 6813871b772569010861cc2918f84d8d ""
   "/usr/local/texlive/2022/texmf.cnf" 1647878952 577 209b46be99c9075fd74d4c0369380e8c ""
-  "pset3.aux" 1714610010 137 1c99c213934d9075a14e6b9aafe7413e "pdflatex"
-  "pset3.tex" 1714610010 31689 3444ddbc0023aa5adcd84b171518d922 ""
+  "pset3.aux" 1714614585 137 924bd5b2da7c0455024a5a68f6ea6072 "pdflatex"
+  "pset3.tex" 1714614584 33290 b7f54c62bc53b36ff3b7d4c7a95efec6 ""
   (generated)
   "pset3.aux"
   "pset3.log"

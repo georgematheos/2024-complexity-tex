@@ -418,6 +418,46 @@ In this problem, we will develop an $\AM$ protocol for proving a set lower bound
 
 \newpage
 \subsection*{Answer to (a)}
+\textbf{The protocol.}
+Choose $k$ so that $2^{k-2} \leq K \leq 2^{k-1}$.
+Let $\mathcal{H}$ be a family of pairwise independent hash functions from $\{0, 1\}^m$ to $\{0, 1\}^k$.
+The verifier first sends a random hash function $h$ to the prover,
+then sends $N$ independent values chosen uniformly at random from $\{0, 1\}^k$, $y_1, \dots, y_N$.
+For each $i = 1, \dots, N$, the prover will either say that there is no $x \in S$ so that $h(x) = y_i$, or it will send a value $x_i \in S$ such that $h(x_i) = y_i$.
+
+\medskip
+\noindent
+\textbf{Analysis.}
+[See notebook.]
+% For any $y \in \{0, 1\}^k$, let $A_y := \{h : \exists x \in S . h(x) = y\}$.
+% Let $A_{y, x} := \{h : h(x) = y\}$, so $A_y = \cup_{x \in S} A_{y, x}$.
+
+% Say $|S| \geq K$.
+% By inclusion-exclusion,
+% % \begin{multline*}
+% $$
+% \Pr_h[A_y] \geq \sum_{x \in S} \Pr[A_{y, x}] - \sum_{x\in S, x < z \in S}\Pr[A_{y, x} \cap A_{y, z}]
+% = |S|\frac{1}{2^k} - (|S|^2 - |S|)\frac{1}{2^{2k}} \\
+% \geq |S|/2^k - (|S|/2^k)^2
+% $$
+% % \geq \frac{K}{2^k}  (\frac{K}{2^k})^2
+% % \end{multline*}
+% % \textbf{}
+% Observing that (A) $x - x^2$ is a decreasing function on $(\frac{1}{2}, 1)$, (B) $|S|/2^k \in (\frac{1}{2}, 1)$ because $|S| \geq K$ and $K/2^k > 1/2$, and (C) $\frac{K}{2^k} \geq \frac{|S|}{2^k}$, we derive
+% $$
+% \Pr_h[A_y] \geq |S|/2^k - (|S|/2^k)^2 \geq \frac{K}{2^k} - (\frac{K}{2^k})^2
+% \geq 1/2 - 1/4 = 1/4
+% $$
+% where the last inequality uses $K \geq 2^{k-1}$.
+
+% Say $|S| \leq K/2$. By inclusion-exclusion
+% $$
+% \Pr_h[A_y] \leq |S|/2^k \leq K/(2 \times 2^k) \leq 2^{-2}
+% $$
+ 
+
+\newpage
+\subsection*{Answer to (a) [scrapped!]}
 
 \textbf{The protocol.}
 Let $\mathcal{H}$ be a family of pairwise independent hash functions from $\{0, 1\}^m$ to $\{0, 1\}^k$, where $k$ is chosen so that $K \geq 2^{k - 1}$.

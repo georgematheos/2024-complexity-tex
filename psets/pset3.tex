@@ -499,6 +499,107 @@ Likewise, if $|S| \leq K/2$, $\Pr[m \leq pN] < 1/3$.
 Finally, notice that since $\frac{0.9999}{6}\frac{K}{2^{k+1}} \leq \frac{0.9999}{6} \frac{2^{k-1}}{2^{k+1}} = \frac{0.999}{24}$,
 it suffices to take $N = 600$.
 
+\subsection*{Answer to (b)}
+\textbf{The protocol.} 
+Let $n$ be an integer such that
+$$
+\frac{4 (n \log(K) + 2)}{2^{n+1}} < \frac{1}{100}
+$$
+Let $k$ be such that $K^n \in [2^{k-2}, 2^{k-1}]$.
+Let $S^n$ denote the set $S^n = \{x_1 \cdot x_2 \cdot \dots \cdot x_n : \forall i . x_i \in S\}$.
+In the protocol,
+the prover will first send $l = 4k$ hash functions,
+$h_1, \dots, h_l$, each s.t. $h_i : \{0, 1\}^{nm} \to \{0, 1\}^k$,
+to the verifier.
+The prover is claiming that for any $y \in \{0, 1\}^k$,
+there exists an $i$ and a $x \in S^n$ s.t. $h_i(x) = y$.
+The verifier then sends one uniformly random string $y \in \{0, 1\}^k$ to the prover.
+The prover sends back a pair $(i, x)$ with $i \in \{1, \dots, l\}$ and $x \in S^n$.
+If $h_i(x) = y$, the verifier accepts; otherwise it rejects.
+
+\medskip
+\noindent
+\textbf{Analysis.}
+
+First, say $|S| \leq K/2$.
+Then $|S^n| \leq K^n/2^n$.
+Thus for any $i$, $|h_i(S^n)| \leq K^n/2^n$.
+Thus
+$$
+|\cup_{i=1}^l h_i(S^n)| \leq \sum_{i=1}^l |h_i(S^n)|
+\leq \sum_{i=1}^l K^n/2^n =
+l K^n/2^n
+$$
+Thus
+$$
+\frac{1}{2^k}|\cup_{i=1}^l h_i(S^n)| \leq \frac{lK^n}{2^{n + k}}
+= \frac{4k}{2^{n}} \frac{K^n}{2^k}
+\leq \frac{4k}{2^{n}} \frac{2^{k-1}}{2^k}
+= \frac{4k}{2^{n+1}}
+$$
+Observe that since $K^n \geq 2^{k-2}$, $k-2 \leq \log(K^n)$
+so $k \leq \log(K^n) + 2$.
+
+Thus
+$$
+\frac{1}{2^k}|\cup_{i=1}^l h_i(S^n)| \leq 4(n\log(K) + 2)/2^{n+1} < 1/100
+$$
+where the last inequality follows due to our choice of sufficiently large $n$.
+
+This shows that the fraction of the values in $\{0, 1\}^k$ covered by the sets $h_i(S)$ is les than $1/100$.
+Thus, regardless of what $l$ hash functions the prover sends to the verifier,
+if $|S| \leq K/2$, with probability $99/100$, the prover will not be able to produce
+an $(i, x)$ pair such that $h_i(x) = y$ for the random $y \in \{0, 1\}^k$ the verifier sends to the prover.
+
+\medskip
+Now, say $|S| \geq K$.
+To show that the protocol has perfect completeness, our goal is to show that
+in this case, there exist some hash functions $h_1, \dots, h_n$ such that
+$\forall y \in \{0, 1\}^k, \exists i \in \mathbb{Z}_l, x \in S^n . h_i(x) = y$.
+Then, the prover can simply send these hash functions,
+and is guaranteed to be able to respond successfully to any query
+the verifier makes (that is, any $y$ it sends.)
+To prove this I will use the probabilistic method, and show that if 
+the hash functions are generated uniformly at random, there is nonzero probability
+of obtaining a set $h_{1:l} := \{h_1, \dots, h_l\}$ satisfying this condition.
+
+Let $A_{i, y} := \{h_{1:l} : \exists x . h_i(x) = y\}$.
+The goal is to show that
+$$
+\Pr_{h_{1:l}}[\cap_y \cup_i A_{i, y}] > 0
+$$
+First, letting $A_{i, y}^C$ denote the complement of $A_{i, y}$, note that
+$$
+\Pr[\cap_y \cup_i A_{i, y}] = 1 - \Pr[\cup_y \cap_i A_{i, y}^C]
+\geq 1 - \sum_{y \in \{0, 1\}^k} \Pr[\cap_i A_{i, y}^C] = 1 - 2^k\Pr[\cap_i A_{i, 0^k}^C] \quad (*)
+$$
+Because the $h_i$ are independent, 
+$
+\Pr[\cap_i A_{i, 0^k}^C]
+= \Pr[A_{1, 0^k}^C]^l
+$.
+Our analysis from part (a) shows that
+$
+\Pr[A_{1, 0^k}] \geq \frac{4}{3} \frac{K}{2^{k+1}}
+$
+and because $K \geq 2^{k-2}$, this implies
+$
+\Pr[A_{1, 0^k}] \geq \frac{4}{3} \frac{1}{8} = \frac{1}{6}
+$.
+Thus $\Pr[A_{1, 0^k}^C] \leq \frac{5}{6}$, so 
+$
+\Pr[\cap_i A_{i, 0^k}^C] \leq (\frac{5}{6})^l
+$.
+Combining this with (*), we see
+$$
+\Pr[\cap_y \cup_i A_{i, y}] \geq 1 - 2^k \Pr[\cap_i A_{i, 0^k}^C] \geq 1 - 2^k (\frac{5}{6})^l
+= 1 - 2^k (5/6)^{4k} > 1 - 2^k (1/2)^k = 0
+$$
+The second inequality here plugged in $l = 4k$, which we set at the beginning of the protocol.
+We chose $4k$ specifically because $(5/6)^4 < 1/2$.
+
+This strict inequality $\Pr[\cap_y \cup_i A_{i, y}] > 0$ completes the proof.
+
 \newpage
 \section*{Problem 5: The Limits of PCPs (4 Points, 2 for each sub-problem)}
 \subsection*{Question}

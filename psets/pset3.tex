@@ -183,21 +183,21 @@ and when $|S| \geq 2^{k-1}$, $\Pr[\exists x \in S . h(x) =0^k] \geq 1/4 > p + \e
 
 \subsection*{Answer to (b)}
 
-Let $c$ be a constant whose value we will set below.
+Let $m$ be a constant whose value we will set below.
 
 \begin{algorithm}{$\mathsf{RandomizedApproximateCounting}$}
 \begin{algorithmic}[1]
 \Require Formula $F$ on $n$ variables.
-\For{$k = 0, \dots, n$}
+\For{$k = 0, \dots, n$} \label{line:inner_for}
 	\State Initialize a count $c$ to $0$.
-	\State $N \gets \left \lceil{(n + c)/\epsilon^2}\right \rceil$
+	\State $N \gets \left \lceil{(n + m)/\epsilon^2}\right \rceil$
 	\For{$i = 0, \dots, N$}
 		\State Generate a pairwise independent hash function $h : \{0, 1\}^n \to \{0, 1\}^k$.
 		\State Construct a formula $\phi \gets (x \mapsto [F(x) \wedge h(x) = 0^k])$.
 		\State Use a polynomial time SAT solver to compute $s_\phi \gets \mathsf{SAT}(\phi)$.
 		\State If the $s_\phi = 1$, increment $c$.
-	\EndFor
-	\State If $c / N < p$, return $2^{k-2}$.
+	\EndFor \label{line:end_inner_for}
+	\State If $c / N < p$, return $2^{k-2}$. \label{line:return}
 \EndFor
 \State Return $n$.
 \end{algorithmic}
@@ -225,9 +225,9 @@ By Hoeffding's inequality, this implies
 $$
 \Pr[c_k < Np] \leq e^{-2N\epsilon^2}
 $$
-Since $N \geq \frac{n}{\epsilon^2}$,
+Since $N \geq \frac{n + m}{\epsilon^2}$,
 $$
-\Pr[c_k < Np] \leq e^{-2n}
+\Pr[c_k < Np] \leq e^{-2(n + m)}
 $$
 Thus, the probability that the algorithm returns in an iteration $k$
 where $2^{k-1} \leq \#\mathsf{SAT}(F)$ is
@@ -240,41 +240,12 @@ We can continue bounding this:
 1 - \prod_{k=0}^{\log(\#\mathsf{SAT}(F)) + 1}{\Pr[c_k \geq Np]}
 \leq 1 - \prod_{k = 0}^n{\Pr[c_k \geq Np]} \\
 = 1 - \prod_{k = 0}^n{(1 - \Pr[c_k < Np])} 
-\leq 1 - (1 - e^{-2n})^n
-\leq ne^{-2n}
+\leq 1 - (1 - e^{-2(n + m)})^n
+\leq ne^{-2(n + m)}
 < 2/3
 \end{multline*}
+This inequality holds for all $n$ if we choose a sufficiently large $m$.
 This guarantees that it is unlikely we return a value $2^{k-2} \leq \frac{1}{2}\#\mathsf{SAT}(F)$.
-
-\bigskip
-Say $\#\mathsf{SAT}(F) \leq 2^{k-2}$ and consider the $k$th iteration of the
-outer for loop.
-By part (a), taking $S$ to be the set of assignments satisfying $F$,
-the probability that $s_\phi = 1$ is $< p - \epsilon$.
-Let $c_k$ denote the value of $c$ in the algorithm on iteration $k$.
-Then $\Pr[c_k < Np] \leq \Pr_{v \sim \text{Binomial}(p - \epsilon, N)}[v < Np]$.
-By Hoeffding's inequality, this implies
-$$
-\Pr[c_k < Np] \leq e^{-2N\epsilon^2}
-$$
-Since $N \geq \frac{n + c}{\epsilon^2}$,
-$$
-\Pr[c_k < Np] \leq e^{-2(n + c)}
-$$
-so, since the hashs function generated at each iteration of the loop
-are independent,
-\begin{multline*}
-\Pr[\exists k \text{ s.t. } \#\mathsf{SAT}(F) \leq 2^{k-2} \wedge c_k < Np]
-= 1 - \prod_{k=0}^{\log(\#\mathsf{SAT}(F)) - 2}{\Pr[c_k \geq Np]} \\
-= 1 - \prod_{k=0}^{\log(\#\mathsf{SAT}(F)) - 2}(1 - \Pr[c_k < Np])
-\\
-\leq 1 - (1 - e^{-2(n + c)})^{\log(\#\mathsf{SAT}(F)) - 2} 
-\leq 1 - (1 - e^{-2(n + c)})^n
-\leq ne^{-2(n + c)}
-% \leq 1 - (1 - ne^{-2n}) = e^{-2n}
-% \leq (1 - e^{-ne^{-2n}})
-\end{multline*}
-Since $xe^{-2x} \to 0$ as $x \to \infty$, by taking $c$ to be a large enough constant, we can guarantee $ne^{-2(n + c)} < (2/3)^2$ for all $n$.
 
 \medskip
 Now we need to prove that 
@@ -297,8 +268,11 @@ For this part of the proof, note that by part (a),
 $\#\mathsf{SAT}(F) \leq 2^{k-2}$ implies that
 $\Pr[s_\phi = 1] > p - \epsilon$ in the algorithm,
 so by the same analysis as last time using the Hoeffding bound,
-$\Pr[c_k \geq Np] < e^{-2(n + c)} < 1/9$.
-Thus it is highly likely that the algorithm will return (line 10)
+$\Pr[c_k \geq Np] < e^{-2(n + m)} < 1/3$.
+(As before, getting this lower bound depends upon choosing a large enough constant $,m$.)
+% NOTE to self - presumably we can drive this error
+% down to be arbitrarily low, by playing with the constants here.
+Thus it is highly likely that $c_k < Np$ so the algorithm will return (line 10)
 in any iteration of the loop where $\#\mathsf{SAT}(F) \leq 2^{k-2}$,
 if it reaches such an iteration.
 
@@ -321,155 +295,53 @@ Then $$s \in [(k)^{1/i}, 4^{(1/i)}(k^{1/i})] \subseteq [(k)^{1/i}, (1 + \epsilon
 Thus, this has yielded a $(1 + \epsilon)$ approximation to $\#\mathsf{SAT}(F)$.
 
 \subsection*{Answer to (d)}
-The preceding parts have shown that if $\P = \NP$, then there exists a probabilistic polynomial time algorithm $A$ such that $A(F)$ outputs a number $K$ such that $\#\mathsf{SAT}(F) \in (K, (1 + \epsilon) K)$.
-Let $L$ denote the decision problem where $L(F, k) = 1$ iff $A(F)$ outputs a value less than $k$ with probability at least $2/3$.
+First, observe that if $\P = \NP$, the polynomial hierarchy collapses, so since $\BPP \subseteq \PH$,
+we have $\BPP \subseteq \P$.
+I do not know a way to directly use this fact to answer this question, but I will give a derandomization based on a similar idea to how we proved $\BPP \subseteq \PH$.
 
+Consider lines \ref{line:inner_for}-\ref{line:end_inner_for} in $\mathsf{RandomizedApproximateCounting}$.
+Let $A(F, k, r)$ denote the Turing machine that runs these lines of the algorithm for loop iteration $f$, given formula $F$, invoking randomness $r$,
+and outputting the indicator $1_{c/N < p}$. 
+(That is, $A$ outputs 1 iff $c/N < p$ when line $\ref{line:end_inner_for}$ of the algorithm is reached.)
 
+In part (b), we proved that If $|S| \leq 2^{k-2}$ then with probability $\geq 2/3$, $A(F, k, r) = 1$, and if $|S| \geq 2^{k-1}$ then with probability $\geq 1/3$, $A(F, k, r) = 0$.
+By repetition, with $O(n)$ iterates, we can boost these probabilities to $1 - 2^{-n}$ and $2^{-n}$.
+Let $A'$ be a (still polynomial probabilistic time algorithm) which is boosted to probabilities $1 - 2^{-100n}$, $2^{-100n}$ for inputs of length $n$.
 
-Because $\P = \NP$, the polynomial hierarchy collapses, so since $\BPP \subseteq \PH$,
-we have $\BPP \subseteq \P$, and thus $L \in \P$.
+Let $M_n$ be the set of $n$-strings $(F, k)$ such that the resulting set $S$ satisfies $|S| \geq 2^{k-1}$.
+For any $x \in M_n$, $\Pr_r[A'(x, r) = 1] < 2^{-100n}$.
+Since $|M_n| \leq 2^n$,
+Thus $\Pr_r[\exists x \in M_n . A'(x, r) = 0] < 2^n 2^{-100n} = 2^{-99n}$.
+Let $M'_n$ be the set of $n$-strings $(F, k)$ such that the resulting set $S$ satisfies $|S| \leq 2^{k-2}$.
+By the same logic, $\Pr_r[\exists x \in M'_n . A'(x, r) = 0] < 2^{-99n}$.
+Thus
+$$
+\Pr_r[\exists x \in M'_n . A'(x, r) = 0 \vee \exists x \in M_n . A(x, r) = 1] < 2^{-99n + 1} < 1
+$$
+Thus there is some random string $r^*$ such that
+$$
+\forall  x \in M'_n . A'(x, r^*) = 1 \wedge \forall x \in M_n . A'(x, r^*) = 0 \quad (*)
+$$
 
-The following deterministic algorithm $B$, using a polynomial time algorithm for $L$ as a subprocedure, on input $F$ returns a value $K$ such that $\#\mathsf{SAT}(F) \in (K, (1 + \epsilon) K)$.
-The algorithm is simply to do binary search 
+If $\P = \NP$ (and hence $\P = \PH$), I claim it is possible to in fact construct such a random string $r^*$ in polynomial time.
+For bitstring $y$, let $T_y$ be the statement ``There exists a bitstring $z$ such that (*) holds with $r^* := y \cdot z$.''
+Since we can upper bound the length of $r^*$, the quantification for $z$ in this statement can be quantification of a fixed length.
+Thus the statement $T_y \in \PH$ (it requires only 2 levels of quantification),
+and so can be decided in polynomial time.
+Thus, we can apply the idea underlying the $\mathsf{SearchSAT}$ to $\mathsf{SAT}$ reduction to find a string $r^*$ with property (*) in polynomial time.
+(We first check if such an $r^*$ exists where the first bit is 1, then set the first bit accordingly.  Then we find the second bit, and so on.)
 
+Let $B$ be the deterministic polynomial time algorithm which on input $(F, k)$ first finds a string $r^*$ such that satisfies property (*), and then runs $A'(F, k, r^*)$ and returns the result.
+Algorithm $B$ is a deterministic algorithm which yields 1 on any $(F, k)$ such that $|S| \leq 2^{k-2}$ and which yields 0 on any $(F, k)$ such that $|S| \geq 2^{k-1}$.
 
+Thus, if we replace lines \ref{line:inner_for}-\ref{line:end_inner_for} in $\mathsf{RandomizedApproximateCounting}$ with algorithm $B$, this yields a derandomized algorithm which is also guaranteed to return a multiplicative 4-approximation to $\#\mathsf{SAT}$.
+The same boosting argument from part (c) can then be applied to boost this to an arbitrary $(1 + \epsilon)$ approximation.
 
-% \newpage
-% \newpage
-% Fix $S$ s.t. $|S| \leq 2^{k - 2}$.
+% Let $f$ be the function so $f(k, F) = 1$ iff, when $k = 1$, after lines \ref{line:inner_for}-\ref{line:end_inner_for} in $\mathsf{RandomizedApproximateCounting}(F)$, the count $c$ satisfies $c/N < p$ with probability at least $2/3$.
+% Observe that $f \in \BPP$, since $f$ is 
 
-% For $x \in S$, let $A_x$ denote the event $A_x = \{h : h(x) = 0^k\}$.
-% We wish to show $\Pr[\cup_{x \in S} A_x] < p - \eps$.
-
-% By the inclusion-exclusion principle, letting $x_i$ denote the $i$th largest value in $S$,
-% \begin{multline*}
-% \Pr[\cup_{x \in S} A_x]
-% \leq
-% \sum_{i=1}^{|S|} \Pr[A_{x_i}]
-% - \sum_{i=1}^{|S|} \sum_{j=1}^{i-1} \Pr[A_{x_i} \cap B_{x_j}]
-% + \sum_{i=1}^{|S|} \sum_{j=1}^{i-1} \sum_{k = 1}^{j-1} \Pr[A_{x_i} \cap A_{x_j} \cap A_{x_k}] \\
-% %
-% = \frac{1}{2^k}|S| - \frac{1}{2^{2k}}{|S| \choose 2} + \sum_{k = 1}^{j-1} \Pr[A_{x_i} \cap A_{x_j} \cap A_{x_k}] \\
-% %
-% \leq \frac{1}{2^k}|S| - \frac{1}{2^{2k}}{|S| \choose 2} + \frac{1}{2^{2k}}{|S| \choose 3} \\
-% %
-% \leq \frac{1}{4} - \frac{1}{2^{2k}}{|S| \choose 2} + \frac{1}{2^{2k}}{|S| \choose 3} = \frac{1}{4} - \frac{|S|^2}{2^{2k + 1}} + \frac{|S|}{2^{2k+1}} + \frac{1}{2^{2k}}{|S| \choose 3} \\
-% %
-% \leq \frac{1}{4} - \frac{1}{32} + \frac{1}{2^{k + 3}} + \frac{1}{2^{2k}}{|S| \choose 3} \\
-% %
-% \leq \frac{1}{4} - \frac{1}{32} + \frac{1}{2^{k + 3}} + \frac{|S|(|S| - 1)(|S| - 2)}{6} \frac{1}{2^{2k}} \\ 
-% %
-% \leq \frac{1}{4} - \frac{1}{32} + \frac{1}{2^{k + 3}} +
-% \frac{|S|^3 - 3|S|^2 + 2|S|}{6} \frac{1}{2^{2k}} \\ 
-% \leq \frac{1}{4} - \frac{1}{32} + \frac{1}{2^{k + 3}} + 
-% %
-% % = |S|/2^k
-% % - \sum_{i=1}^{|S|}{\frac{i - 1}{2^{2k}}  } + \sum_{i=1}^{|S|} \sum_{j=1}^{i-1} \sum_{k = 1}^{j-1} \Pr[A_{x_i} \cap A_{x_j} \cap A_{x_k}] \\
-% % = |S|/2^k - \frac{|S|^2 - |S|}{2k^{2k}} + \sum_{i=1}^{|S|} \sum_{j=1}^{i-1} \sum_{k = 1}^{j-1} \frac{1}{2^{2k}}\\
-% % %
-% % % \leq 1/4 - (|S|^2 - |S|)/k^{2k}
-% % = |S|/2^k - (|S|^2 - |S|)/k^{2k} +
-% % \frac{1}{2^{2k}} \frac{(|S|)(|S| - 1)(|S| - 2)}{3}
-% %\sum_{i=1}^{|S|} \sum_{j=1}^{i-1} (j (j - 1))/2
-% \end{multline*}
-% [TODO]
-
-% [TODO TODO]
-
-% Then
-% % \begin{multline*}
-% % \Pr_{h \in H_{n, k}}[\exists x \in S . h(x) = 0^k] \\
-% % \leq
-% % \sum_{x \in S} \Pr [h(x) = 0^k]
-% % - \sum_{x \neq y \in S} \Pr[h(x) = 0^k \wedge h(y) = 0^k]
-% % + \sum_{x \neq y \neq z \in S} \Pr[h(x) = 0^k \wedge h(y) = 0^k \wedge h(z) = 0^k] \\
-% % = \sum_{x \in S} \frac{1}{2^k}
-% % \leq 2^{k-2}/2^k = 1/4
-% % \end{multline*}
-% where the inequality follows from the union bound, and is strict
-% because $\Pr[h(x) = 0^k \wedge h(y) = 0^y] \neq 0$ for all $x \neq y$.
-
-% First inequality -> union bound -> Pr <= 1/4.
-% And since the events overlap, we actually have < 1/4.
-
-% For any x, Pr[x is only value s.t. h(x) = 0^k]
-% = Pr[h(x) = 0^k and for all y neq x, h(y) != 0^k]
-% = Pr[h(x) = 0^k] - Pr[h(x) = 0^k AND exists y . h(y) = 0^k]
-% >= Pr[h(x) = 0^k] - sum_y[P(h(x) = 0^k AND h(y) = 0^k)]
-% = Pr[h(x) = 0^k] - (|S| - 1)p^2
-%   where p = Pr[h(x) = 0^k] = 1/2^k
-% = 1/2^k - (|S| - 1)(1/2^{2k})
-% > 1/2^k - |S|/2^{2k}
-% >= 1/2^k - 2^{k-1}2^{-2k} = 1/2^k - 1/2^{k + 1} = 1/2^{k + 1} = p/2
-
-% So P[exists a unique S in x with h(x) = 0^k]
-% = sum_{x \in S} Pr[x is only value s.t. h(x) = 0^k]
-%    [equality since disjoint events]
-% > sum_{x \in S} 1/2^{k + 1} = 1/2^{k-1} 1/2^{k + 1} = 1/4.
-
-% So we certainly have P1_k < 1/4 and P2_k > 1/4, for any k and S.
-% But how can we show we can get P1_k < 1/4 - eps, P2_k > 1/4 + eps
-% for a fixed eps independent of k?
-
-% I think the idea is that for P1, we can say the < gap is at least
-% Pr[there exist a distinct x and y s.t. h(x)=h(y)=0^k]
-% and we can show that this probability is very close to 1/4 * 1/4.
-%
-% For P2, -- TODO.
-
-% \newpage
-% \subsection*{Answer to (b)}
-% Let $S = \{x : F(x) = 1\}$.
-% Say $|S| \in [2^{k-2}, 2^{k-1}]$.
-% % By part (a), $\Pr_h[\exists x \in S . h(x) = 0^k] 
-
-% Algorithm:
-% For each $k = 0, \dots, |x|$,
-% 	Do N times:
-% 		Check if F and [h(x) = 0] is satisfiable.
-
-% 	If $|S| \leq 2^{k-2}$, with high probability, it will be satisfied $< N(p - \epsilon)$ times.
-% 	If $|S| \geq 2^{k-1}$, with high probability, it will be satisfied $> N(p - \epsilon)$ times.
-
-% So for very large N, there will be some $K$ where for $k < K$, $< N(p + \frac{\eps}{2})$ are satisfied and for $k > K$, $> N(p + \frac{\eps}{2})$ are satisfied.
-
-% So our algorithm can be to return $2^{R - 1}$ (or is it $2^{R - \frac{1}{2}}$) where $R$ is the first value of $k$ where the count was $> N(p + \frac{\eps}{2})$.  We just have to show that this succeeds with high probability.
-
-% [TODO: fill in the details]
-
-% \newpage
-
-% % We want to go from factor $2$ to factor $1 + \eps$.
-% % Say $F$ has $s$ satisfying assignments out of $2^n$.
-% % Say I add in a new clause to $F$ and produce a formula $G$ with
-% % $\frac{1}{2}s + \frac{1}{2}$ satisfying assignments.
-% % Say I find that $\frac{1}{2}s + \frac{1}{2} \in [K/2, 2K]$.
-% % Then
-% % $s + 1 \in [K, 4K]$ so $s \in [K - 1, 4K - 1]$.
-% % This doesn't help.
-
-% % Say instead $G$ has
-% % $2s$ satisfying assignments.
-% % Say I find that $2s \in [K/2, 2K]$.
-% % Then
-% % $s \in [K/4, K]$.
-% % If I take $k = K/8 + K/2 = \frac{5K}{8}$, then I have
-% % $s \in [\frac{2}{5}k, \frac{8}{5}k]$.
-% % But this still a window of width 4x, which doesn't help.
-
-% % Say $G$ has $ms$ satisfying assignments, and $ms \in [K/2, 2K]$.
-% % Then $s \in [K/(2m), 2K/m]$. If I take $k = \frac{K}{4m} + \frac{4K}{4m} = \frac{5K}{4m}$ then I get
-% % $s \in [\frac{2}{5}k]
-
-% \newpage
-% \subsection*{Answer to (d)}
-% Part (c) showed that if $\P = \NP$, then
-% $\#\P \in \BPP$.
-
-% Let $A(F, r)$ be a randomized algorithm with randomness $r$ that, with probability $1 - \delta$, outputs a $1 + \eps/2$ approximation to $\#\textsf{SAT}(F)$.
-
-% Here is a deterministic algorithm to check if $\#\textsf{SAT}(F) \leq \rho(1 + \eps)$ for any $\rho$.
-% Using the fact that 
+% lines~-\ref{line:return} in 
+% implement 
 
 \newpage
 \section*{Problem 3: Constant Round Arthur-Merlin Collapses (3 points)}

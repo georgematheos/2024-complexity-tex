@@ -1,5 +1,6 @@
 Paper outline
 
+Title: Is posterior inference usually easy, in all graphical models?
 
 - Background / technical introduction
     - The task of posterior inference is, given P, X, Y, y, to characterize P(X | Y = y)

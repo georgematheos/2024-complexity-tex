@@ -364,6 +364,122 @@ That is, there exists a one-way function $g$, and a function $s : \N \to \N$ suc
 \end{proof}
 
 \newpage
+\section{Attempt at reducing from PRGs}
+
+Let $G : \{0, 1\}^* \to \{0, 1\}^*$ be a pseudorandom generator of stretch $l(n)$.
+Let $(P_n, V_n, E_n)$ be a probabilistic graphical model which (1) samples a seed $s$ uniformly at random from $\{0, 1\}^n$; (2) samples a value $a$ uniformly at random from $\{0, 1\}^{l(n)}$; (3) samples a choice bit $x$ uniformly at random from $\{0, 1\}$, (4) computes $b \gets G(s)$; and (5) outputs $a$ if $x = 0$ and $b$ if $x = 1$.
+Let $Y$ denote the set of $l(n)$ output bits $y_1 \dots y_{l(n)}$.
+Let $X$ be the set containing only $x$.
+Given a string $y$, $P(x | Y = y)$ asks how likely it was that $y$ came from the PRG, or is truly uniform in $\{0, 1\}^{l(n)}$.
+Note that
+$$
+y \notin G(\{0, 1\}^n) \implies P(x = 1 | Y = y) = 0
+$$
+and
+$$
+y \in G(\{0, 1\}^n) \implies P(x = 1 | Y = y) = \frac{(m_y)/2^n}{m_y/2^n + 1/2^{l(n)}}
+$$
+where $m_y$ is the number of distinct values in $\{0, 1\}^n$ which get sent to $y$ by $G$.
+Evaluating the derivative $dP(x = 1 | Y = y)/dm_y$ shows it is positive for all $m_y \geq 1$, so the minimum value of this function on this region occurs when $m_y = 1$:
+$$
+y \in G(\{0, 1\}^n) \implies P(x = 1 | Y = y) \geq \frac{2^{-n}}{2^{-n} + 2^{-l(n)}} = \frac{2^{l(n) - n}}{1 + 2^{l(n) - n}}
+$$
+so
+$$
+y \in G(\{0, 1\}^n) \implies P(x = 0 | Y = y) \leq \frac{1}{1 + 2^{l(n) - n}} < \frac{1}{2^{l(n) - n}}
+$$
+
+So if we have nontrivial stretch, we get a super high posterior probability that the string came from the PRG.
+
+Observe that if we had an $\epsilon$ approximation for $\epsilon < \frac{1}{2} - 2^{n - l(n)}$,
+we could distinguish the two cases.
+
+Let $\epsilon$ obey this bound.
+Say we have an algorithm $A$ which on $4/5$ of $y$ values sampled from $P$ computes an $\epsilon$ additive approximation to $P(x = 1 | y)$.
+Let $\mathcal{Y}$ be this set of $y$ values.
+Let $B$ be an algorithm which on input $y$ outputs $1$ if the approximation to $P(x = 1 | y)$ is greater than $1/2$ and outputs 0 otherwise.
+
+Our construction establishes that
+$$
+P(\mathcal{Y}) = \frac{1}{2} \Pr_{x \sim \{0, 1\}^n}[G(x) \in \mathcal{Y}] + \frac{1}{2} \Pr_{a \sim \{0, 1\}^{l(n)}} [a \in \mathcal{Y}]
+$$
+Thus, since $P(\mathcal{Y}) \geq 4/5$, we have that either
+$$
+\Pr_{x \sim \{0, 1\}^n} [G(x) \in \mathcal{Y}] \geq 4/5 \quad \text{(case 1)}
+$$
+or
+$$
+\Pr_{a \sim \{0, 1\}^{l(n)}} [a \in \mathcal{Y}] \geq 4/5 \quad \text{(case 2)}
+$$
+(or both).
+Further, in either case, it is guaranteed that
+$$
+1/2\Pr_{x \sim \{0, 1\}^n} [G(x) \in \mathcal{Y}] \geq 3/5 \text{ and }
+\Pr_{a \sim \{0, 1\}^{l(n)}} [a \in \mathcal{Y}] \geq 3/5
+$$
+This follows because for either of these probability values $p$ we must have
+$
+\frac{1}{2} + \frac{1}{2}p \geq 4/5
+$ and thus
+$
+\frac{1}{2}p \geq \frac{3}{10} \implies p \geq 3/5
+$.
+
+Thus in case 1,
+$$
+\Pr_{x \sim \{0, 1\}^n} [B(G(x)) = 1] \geq 4/5
+$$
+and
+$$
+\Pr_{a \sim \{0, 1\}^{l(n)}} [B(a) = 1] \leq 2/5
+$$
+so 
+$$
+|\Pr_{x \sim \{0, 1\}^n} [B(G(x)) = 1] - \Pr_{a \sim \{0, 1\}^{l(n)}} [B(a) = 1]| \geq 2/5
+$$
+
+In case 2,
+$$
+\Pr_{x \sim \{0, 1\}^n} [B(G(x)) = 1] \geq 3/5
+$$
+and
+$$
+\Pr_{a \sim \{0, 1\}^{l(n)}} [B(a) = 1] \leq 1/5
+$$
+so 
+$$
+|\Pr_{x \sim \{0, 1\}^n} [B(G(x)) = 1] - \Pr_{a \sim \{0, 1\}^{l(n)}} [B(a) = 1]| \geq 2/5
+$$
+
+Thus if $B$ is a polynomial time algorithm, $G$ cannot be a 1/6 PRG.
+
+\medskip
+\subsection{Probabilistic algorithms}
+The preceding section shows that if secure PRGs exist then there cannot be a ptime deterministic algorithm which can do inference in any graphical model up to additive error on 4/5-typical observations.
+A next question is whether there exist probabilistic algorithms which do this.
+
+Say there exist secure PRGs with exponential stretch (that is, with $O(\log(l))$ seeds).
+Say we have a probabilistic ptime algorithm such that for any graphical model $(P, E, V)$, there is a set $\mathcal{Y}$ with $P(\mathcal{Y}) \geq 4/5$ s.t.
+$$
+\forall y \in \mathcal{Y},
+\Pr_r[|A((P, E, V), X, Y, x, y) - P(X = x | Y = y)| > \epsilon] < 1/3
+$$
+Consider how algorithm $A$ would be used by our algorithm $B$ in the preceding section.
+Algorithm $B$ would sometimes check if the output of $A$ is $\geq 1/2$.
+If so, our probbilistic $A$ would return a value $\geq 1/2$ w.p. $> 2/3$.
+But we can use our exponential stretch PRG to check if $P(A(...) > 1/2) > 2/3$
+deterministically.
+
+This shows that if exponential-stretch PRGs exist, then no probabilistic algorithm can do typical-case inference.
+
+\subsection{Some notes}
+\begin{enumerate}
+    \item Is it the case that for any probabilistic graphical model, there is a ptime TM that does typical-case inference?  The above proof shows that if so, PRGs don't exist.
+    \item Is it the case there is a ptime TM that, given a graphical model as input, does typical-case inference?  This existance is strictly stronger than the above existence, and therefore also implies that PRGs don't exist.
+    \item If the exponential stretch thing is too strong, I can also use my reduction from 1-way functions to show that relative approximation is hard.  (And this might be good to write up, since I have it anyway.)
+\end{enumerate}
+
+\newpage
 \section{Misc}
 \subsection{The worst-case complexity of inference}
 

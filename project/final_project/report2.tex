@@ -1,0 +1,459 @@
+\documentclass{article}
+\usepackage[sorting=none]{biblatex}
+\addbibresource{references.bib}
+
+\usepackage{amsmath}
+\usepackage{fullpage}
+\usepackage{amsmath,amssymb,verbatim}
+\usepackage{enumerate}
+\usepackage{xcolor}
+\usepackage{algorithm}
+\usepackage{algorithmicx}
+
+\usepackage{graphicx}
+\usepackage{algpseudocode}
+\usepackage{mathtools}
+\DeclarePairedDelimiter\ceil{\lceil}{\rceil}
+\DeclarePairedDelimiter\floor{\lfloor}{\rfloor}
+
+\usepackage{amsmath}
+\usepackage{mathrsfs}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage[bb=boondox]{mathalfa}
+\usepackage{enumerate}
+\usepackage{xcolor}
+
+\renewcommand{\algorithmiccomment}[1]{{\footnotesize\hfill$\triangleright$ #1}}
+
+\renewcommand{\P}{\mathbf{P}}
+\newcommand{\NP}{\mathbf{NP}}
+\newcommand{\coNP}{\mathbf{coNP}}
+\newcommand{\EXP}{\mathbf{EXP}}
+\newcommand{\BPP}{\mathbf{BPP}}
+\newcommand{\RP}{\mathbf{RP}}
+\newcommand{\NEXP}{\mathbf{NEXP}}
+\newcommand{\PH}{\mathbf{PH}}
+\newcommand{\PSPACE}{\mathbf{PSPACE}}
+\newcommand{\TIME}{\mathbf{TIME}}
+\newcommand{\NTIME}{\mathbf{NTIME}}
+\newcommand{\LOG}{\mathbf{LOGSPACE}}
+\newcommand{\SIZE}{\mathbf{SIZE}}
+
+\def \F {{\mathbb F}}
+\def \N {{\mathbb N}}
+
+\def \ATIME{{\mathsf{ATIME}}}
+\def \NTIME{{\mathsf{NTIME}}}
+\def \eps {{\varepsilon}}
+
+\def \ASPACE{{\mathsf{ASPACE}}}
+\def \SPACE{{\mathsf{SPACE}}}
+\def \TIME{{\mathsf{TIME}}}
+\def \BPL{{\mathbf{BPL}}}
+
+\def \poly{\text{poly}}
+
+\def \Ygood{\mathcal{Y}_\text{good}}
+\def \by{{\bar{y}}}
+
+\theoremstyle{definition}
+
+\newtheorem{defn}{Definition}
+\newtheorem*{defn*}{Definition}
+\newtheorem*{notn*}{Notation}
+
+\newtheorem{thm}{Theorem}
+\newtheorem*{thm*}{Theorem}
+\newtheorem{lem}[thm]{Lemma}
+\newtheorem*{lem*}{Lemma}
+\newtheorem{prop}[thm]{Proposition}
+\newtheorem*{prop*}{Proposition}
+\newtheorem{cor}[thm]{Corollary}
+\newtheorem*{cor*}{Corollary}
+
+\theoremstyle{remark}
+\newtheorem*{remark}{Remark}
+\newtheorem*{example}{Example}
+\newtheorem*{recall}{Recall}
+
+\def \Pa{\text{Pa}}
+
+\begin{document}
+
+\begin{center}
+    \Large
+    Is posterior inference usually easy, in all graphical models?
+
+    \vspace{3pt}
+    \normalsize
+    George Matheos, \today
+\end{center}
+
+
+\section{Background}
+
+\subsection{Probabilistic graphical models and inference problems}
+\begin{defn}
+A \textbf{probabilistic graphical model on binary variables} is a tuple $(V, E, P)$, where $V$ is an ordered, finite set of variables $V = \{v_1, \dots, v_n\}$, $E$ is a set of directed edges between the variables, and $P$ is a \textit{conditional probability table}.
+The directed graph $(V, E)$ must be acyclic.
+For $v \in V$, $\Pa(v)$ denotes the set of parent variables of $v$: $\Pa(v) = \{u : (u \mapsto v) \in E\}$.
+Given any assignment $a_{\Pa(v)} \in \{0, 1\}^{|\Pa(v)|}$ to the parent variables of $v$, the conditional probability table $P$ stores value $P(v = \cdot ; a_{\Pa(v)})$, which is a probability vector $[p_{v=0}, p_{v=1}]$ in $\mathbb{R}^2$.
+\end{defn}
+
+A general probabilistic graphical model lifts the restriction that each variable $v_i$ is binary, and allows it to have arbitrary finite domain.
+In this report, I will focus on binary probabilistic graphical models. Because a variable with a domain of size $k$ can be represented using $\log k$ binary variables, all the results in this case carry to the general case, except those which restrict the sizes of sets of variables under consideration.
+Henceforth, the phrase ``probabilistic graphical model'' should be understood as a graphical model on binary variables.
+
+Given a graphical model $(P, E, V)$, we can define a joint distribution on all the variables in $V$, with probability mass function
+$$
+P(a) = \prod_{v_i \in V}{P(v_i = a_i ; a_{\Pa(v_i)})} \quad \forall a \in \{0, 1\}^{|V|}
+$$
+where $a_{\Pa(v_i)}$ is the assignment to the parent variables of $v_i$ in $a$.
+I will often write $P$ to refer to the whole graphical model, the joint distribution on all its variables, and also marginal and conditional distributions on subsets of its variables.
+
+\begin{defn}
+An \textbf{inference problem} consists of a graphical model $(V, E, P)$, a set of \textit{observed variables} $Y \subseteq V$, a set of \textit{query variables} $X \subseteq V$, and an assignment $y \in \{0, 1\}^{|Y|}$ to the observed variables such that $P(Y = y) > 0$.
+\end{defn}
+The goal of an inference problem is to compute some piece of information about the posterior distribution $P(X = \cdot | Y = y)$, which is a probability distribution on $\{0, 1\}^{|X|}$.
+
+\begin{defn}
+An \textbf{inference problem schema} is the tuple $I = (V, E, P, X, Y)$ as in an inference problem, but not fixing an assignment $y$ to the observed variables.
+\end{defn}
+
+\subsection{Worst and typical case inference algorithms}
+
+\begin{defn}
+A \textbf{deterministic, worst-case additive PDF approximation algorithm with tolerance $\epsilon$} is a Turing machine $A$ which on input
+$(I, y, x)$, where $I$ is any inference problem schema, $y$ is any assignment to the observed variables, and $x$ is an assignment to the query variables, outputs a rational number $A(I, y, x)$ such that
+$$
+|A(I, y, x) - P(X = x | Y = y)| < \epsilon
+$$
+\end{defn}
+In 1993, Dagum and Luby \cite{dagum1993} showed that if there exists a worst-case additive PDF approximation algorithm with tolerance $< 1/2$, and it has polynomial runtime, then $\P = \NP$.
+
+Probabilistic graphical models are typically used to model aspects of the world.
+That is, each variable in $V$ represents some aspect of the world; $Y$ represents a set of values which we have observed; and $X$ represents a set of values which we wish to infer.
+In this setting, the probability distribution $P$ is a description of our beliefs about how probable different joint outcomes of events in the world are.
+Therefore, given a graphical model $P$ in which we must do inference, it may be acceptable to us if there is exist assignments $y$ under which computing the posterior distribution is very expensive, so long as these instances are extremeley rare.
+Since we have a probability distribution $P$ on hand which ought to roughly correspond to the distribution of $y$ values which will occur in the world, and on which we will have to run inference, a natural notion of ``rare'' is available.
+Say there is a small set of observation assignments $\mathcal{Y}_\text{hard} \subseteq \{0, 1\}^{|Y|}$ such that $P(\mathcal{Y}_\text{hard}) < \rho$ for very small $\rho$ (e.g. $\rho = 0.00001$), such that for all $y \notin \mathcal{Y}_\text{hard}$, we can compute the posterior distribution $P(X = \cdot | Y = y)$ efficiently.
+Then we can say that inference is easy in the typical case, and for many purposes this is sufficient.
+
+In fact, Dagum and Luby's construction of a worst-case inference problem $I$ involves selecting an observed assignment $y$ to a set $Y$ of one variable ($|Y| = 1$) which has extremely low marginal probability: $P(Y = y) << 1$.
+Theorem~\ref{} later in this report shows that for every inference problem schema $(P, V, E, X, Y)$ with $|Y| = 1$, efficient inference is possible on typical case observations.
+This indicates that Dagum and Luby's strategy for proving the hardness of inference in the worst case does not directly carry through to showing the hardness of inference with typical-case observations.
+
+% \begin{defn}
+% A \textbf{deterministic, typical-case relative PDF approximation algorithm with tolerances $(\epsilon, \rho)$} is a Turing machine $A$ which accepts inputs of the form
+% $(I, y, x)$, where $I$ is any inference problem schema, $y$ is any assignment to the observed variables, and $x$ is an assignment to the query variables, and outputs a rational number $A(I, y, x)$ with the following property.
+% For any graphical model $(V, E, P)$ and any subset $Y \subseteq V$,
+% there exists a ``typical set'' $\mathcal{Y}_\text{easy} \subseteq Y$ such
+% that $$P(Y \in \mathcal{Y}_\text{easy}) > 1 - \rho$$ and
+% for all $X \subseteq V$, any assignment $x$ to $X$,
+% and any $y \in \mathcal{Y}_\text{easy}$,
+% $$
+% A(I, y, x) / P(X = x | Y = y) \in (\frac{1}{1 + \epsilon}, 1 + \epsilon)
+% $$
+% That is, on all but a small fraction $\rho$ of $y$ values, the algorithm can outputs an $\epsilon$ relative approximation to the posterior PDF value $P(X = x | Y = y)$,
+% for any query variables $X$ and any query assignment $x$.
+% \end{defn}
+
+\begin{defn} \label{def:typical_case_add_alg}
+A \textbf{deterministic, typical-case additive PDF approximation algorithm with tolerances $(\epsilon, \rho)$} is a Turing machine $A$ which accepts inputs of the form
+$(I, y, x)$, where $I$ is any inference problem schema, $y$ is any assignment to the observed variables, and $x$ is an assignment to the query variables, and outputs a rational number $A(I, y, x)$ with the following property.
+For any inference schema $I$ and any value $x$,
+$$
+\Pr_{y \sim P(Y = \cdot)}[|A(I, x, y) - P(X = x | Y = y)| \geq \epsilon] < \rho
+$$
+% For any inference schema $I = (P, V, E, X, Y)$ there
+% there exists a ``typical set'' $\mathcal{Y}_\text{easy} \subseteq Y$ such
+% that $$P(Y \in \mathcal{Y}_\text{easy}) > 1 - \rho$$
+% and for all any $x \in X$ and any $y \in \mathcal{Y}_\text{easy}$,
+% % any extension $Y' \subseteq V$ to $Y$, so $Y \subseteq Y'$,
+% % and any $y' \in \{0, 1\}^{|Y|}$ such that $y'_Y \in \mathcal{Y}_\text{easy}$,
+% $$
+% |A(I, y, x) - P(X = x | Y = y)| < \epsilon
+% $$
+% That is, on all but a small fraction $\rho$ of $y$ values, the algorithm can output an $\epsilon$-approximation to the posterior PDF value $P(X = x | Y = y)$.
+% for any query variables $X$, any query assignment $x$,
+% and any observation constraint $Y' = y'$ which contains within it that $Y = y$.
+\end{defn}
+Given such an algorithm $A$, a given inference schema $I$, and a value $x$, I will write $\Ygood$ to denote the set
+$$
+\Ygood := \{y : |A(I, x, y) - P(X = x | Y = y)| < \epsilon\}
+$$
+The above definition guarantees that $P(\Ygood) > 1 - \rho$.
+
+\subsection{One-way functions and pseudorandom generators}
+Proving the hardness of a computational problem $C$ is often done by reducing from an $\NP$-hard problem like $\mathsf{3SAT}$ to problem $C$, thereby showing that if $C$ could be solved in polynomial time, $\P = \NP$.
+However, problems like $\mathsf{3SAT}$ are stated in terms of behavior on all, and thus worst-case, inputs.
+Therefore, to prove the hardness of a computational problem on typical-case inputs, it is preferable to reduce to a hardness conjecture stated directly in terms of typical-case behavior.
+
+In this report I will reference two such conjectures, which are known to be related.
+The first conjecture is the existance of \textit{one-way functions}, functions which can be efficiently computed, but not efficiently inverted for the majority of inputs.
+It is widely believed that such functions exist \cite{}, as there are a number of functions like multiplication of prime numbers, for which no inversion algorithms are known which are efficient in the typical case.
+Such functions are widely used in public-key cryptography.
+
+\begin{defn}{(Arora and Barak Def. 9.4)}
+A \textbf{one-way function} $f$ is a function $f : \{0, 1\}^* \to \{0, 1\}^*$ such that $f$ can be computed in polynomial time, and for every probabilistic polynomial time algorithm $A$,
+$$
+\Pr_{x \sim \text{Uniform}(\{0, 1\}^n)}[A(f(x), 1^n) \in f^{-1}(f(x))] \underset{n \to \infty}{\to} 0
+$$
+where $f^{-1}(f(x))$ is the set $\{x' \in \{0, 1\}^* : f(x') = f(x)\}$.
+\end{defn}
+
+The second conjecture is the existance of \textit{secure pseudorandom generators}, which are functions which take a short random seed and expand it into a long string which is indistinguishable from a truly random string.
+Specifically, I consider PRGs which are secure against all polynomial-time adversaries, once the strings being generated are sufficiently long.
+
+\begin{defn}{(Arora and Barak Def. 9.8)}
+A \textit{secure pseudorandom generator} (PRG) is a polynomial time computable function $\{0, 1\}^* \to \{0, 1\}^*$ such that $|G(x)| = |l(|x|)|$ for some function $l : \mathbb{N} \to \mathbb{N}$, such that for every probabilistic polynomial time algorithm $A$,
+$$
+|\Pr_{s \sim \text{Uniform}(\{0, 1\}^n)}[A(G(s)) = 1] - \Pr_{y \sim \text{Uniform}(\{0, 1\}^{l(n)})}[A(y) = 1]| \underset{n \to \infty}{\to} 0
+$$
+
+The function $l$ is called the stretch of the PRG.
+\end{defn}
+
+It is known that the existence of one-way functions implies the existence of secure pseudorandom generators.
+Thus, to the extent that it is believed that one-way functions exist, it is also believed that secure pseudorandom generators exist.
+\begin{prop}{(Arora and Barak Thm. 9.9)}
+If there exists a one-way function, then there exists a secure pseudorandom generator with stretch $l(n) = n^c$.
+\end{prop}
+
+\section{Main result}
+\begin{thm} \label{thm:main}
+If there exists a polnomial-time, deterministic, typical-case additive PMF approximation algorithm with tolerances $\epsilon < \frac{1}{2} - \delta$, $\rho < \frac{1}{4}$,
+then there does not exist a secure pseudorandom generator with stretch $l$ s.t. $l(n) - n \underset{n \to \infty}{\to} \infty$.
+\end{thm}
+
+\begin{cor}
+If there exists a polnomial-time, deterministic, typical-case additive PMF approximation algorithm with tolerances $\epsilon < \frac{1}{2}$, $\rho < \frac{1}{4}$,
+then one-way functions do not exist.
+\end{cor}
+\noindent The corollary follows because if one-way functions exist, there exists a secure PRG with stretch $l(n) = n^2$.
+
+\begin{proof}{(Proof of Theorem~\ref{thm:main}.)} \textcolor{red}{TODO: clean up the $\delta$s.}
+
+\medskip
+\noindent \textbf{Proof setup.}
+For contradiction, suppose $A$ is a polynomial-time typical-case additive PMF approximation algorithm with tolerances $\epsilon < \frac{1}{2} - \delta$ and $\rho < \frac{1}{4}$,
+and suppose $G$ is a secure PRG with stretch $l(n)$ s.t. $n > N \implies l(n) \geq n + \log(1/\delta)$.
+By lemma~\ref{lem:bijective_stretch}, I will assume without loss of generality that $l$ is a bijection and that the $l^{-1}$ can be computed in polynomial time.
+
+\medskip
+\noindent \textbf{Proof outline.}
+I will construct a Turing machine $B$ which can distinguish the distribution of $G$ on seeds of length $n$ from the uniform distribution on $\{0, 1\}^{l(n)}$, for arbitrarily large $n$, contradicting that $G$ is a secure PRG.
+
+Given input $y$, Turing machine $B$ will guess whether it was sampled from the pseudo-random generator, or from the uniform on $\{0, 1\}^{|y|}$.
+If $|y|$ is not in the range of $l$, then $B$ can immediately reject.
+Otherwise, $B$ will compute $n = l^{-1}(|y|)$ to find the seed length needed for $G$ to produce $y$.
+
+Second, $B$ will construct the description of an inference schema $I = (P, V, E, X, Y)$ where $|Y| = l(n)$ and $|X| = 1$, such that
+$$
+y' \in G(\{0, 1\}^n) \implies P(X = 1 | Y = y') > 1 - \delta \quad (*)
+$$
+and
+$$
+y' \notin G(\{0, 1\}^n) \implies P(X = 1 | Y = y') = 0 \quad (**)
+$$
+Third, $B$ will compute $a \gets A(I, 1, y)$.
+If $a < 1/2$, $B$ will output 0; otherwise $B$ will output 1.
+I will first show that this implies that on typical $y$ values ($y \in \Ygood$),
+$B$ exactly decides whether $y \in \text{range}(G)$.
+Using this,
+I will then show that, because we can guarantee $P(y \in \Ygood) > 3/4 = 1 - \rho$,
+this implies that there exists a $\gamma > 0$ such that
+$$
+|\Pr_{s \sim \text{Uniform}(\{0, 1\}^n)}[B(G(s)) = 1] - \Pr_{y \sim \text{Uniform}(\{0, 1\}^{l(n)})}[B(y) = 1]| \geq \gamma \quad (***)
+$$
+for all sufficiently large $n$, contradicting that $G$ is a secure pseudorandom generator.
+% This part of the proof will involve a case analysis regarding how the values in $\mathcal{Y}_\text{easy}$ are distributed among range of $G$, and its complement.
+
+I now proceed to complete the proof by (1) proving that $B$ can construct an inference shema with properties $(*)$ and $(**)$, and (2) proving that $(***)$ holds.
+
+\medskip
+\noindent \textbf{Construction of the inference schema.}
+Let $(P, V, E)$ be the probabilistic graphical model which implements the following process.
+$P$ samples $s = s_1 s_2 \dots s_n$ uniformly at random from $\{0, 1\}^n$.
+$P$ samples $\bar{y} = \bar{y}_1 \bar{y}_2 \dots \bar{y}_{l(n)}$ uniformly at random from $\{0, 1\}^{l(n)}$.
+$P$ samples $x$ uniformly at random from $\{0, 1\}$.
+If $x = 0$, $P$ computes $y = \bar{y}$.
+Otherwise, $P$ computes $y = G(s)$.
+Clearly, writing a graphical model which does the sampling and multiplexing steps can be done in polynomial time.
+And writing out the part of the graphical model which computes $G(s)$ can be done in polynomial time in $n$ using the Cook-Levin reduction for writing a circuit which implements the same behavior as the Turing machine for $G$, on inputs of length $n$.
+
+\medskip
+\noindent \textbf{Analysis of the posteriors (proof of $(*)$ and $(**)$).}
+First, note that if $y \notin \text{range}(G)$,
+$$
+P(X = 1 | Y = y) = \frac{P(X = 1, Y = y)}{P(Y = y)} = \frac{0}{P(Y = y)} = 0
+$$
+because it is impossible for $P$ to sample $x = 1$ yet output a value not in the range of $G$.
+This proves $(**)$.
+
+Now, say $y \in \text{range}(G)$.
+Let $m = |G^{-1}(y)|$, the number of seeds in $\{0, 1\}^n$ that get mapped to $G$.
+Then
+$$
+P(X = 1 | Y = y) = \frac{P(X = 1, Y = y)}{P(X = 0, Y = y) + P(X = 1, Y = y)}
+= \frac{
+    \frac{1}{2} \frac{m}{2^n}
+}{
+    \frac{1}{2} \frac{1}{2^{l(n)}} + \frac{1}{2} \frac{m}{2^n}
+}
+$$
+The numerator here is $P(X = 1, Y = y) = \frac{1}{2} \frac{m}{2^n}$ 
+because $X = 1$ with probability $\frac{1}{2}$, and given that $X = 1$, we will have $Y = y$ iff the seed $s$ is in $G^{-1}(y)$, which occurs with probability $\frac{m}{2^n}$.
+The denominator contains the term $P(X = 0, Y = y) = \frac{1}{2} \frac{1}{2^{l(n)}}$ because there is a $1/2$ probability that $X = 0$, and if it is $0$, $Y = y$ only if one of the $2^{l(n)}$ equally probable values in $\{0, 1\}^{l(n)}$ is chosen as $\bar{y}$.
+
+Simplifying this, 
+$$
+P(X = 1 | Y = y) = \frac{
+    m/2^n
+}{
+    1/2^{l(n)} + m/2^n
+}
+$$
+so
+$$
+P(X = 0 | Y = y) = \frac{
+    1/2^{l(n)}
+}{
+    1/2^{l(n)} + m/2^n
+} = \frac{1}{1 + m 2^{l(n) - n}}
+$$
+Since $l(n) - n > 0$, this is maximized when $m = 1$, so for all $m$,
+$$
+P(X = 0 | Y = y) \leq \frac{1}{1 + 2^{l(n) - n}} < \frac{1}{2^{l(n) - n}}
+$$
+If $n > N$, plugging in $l(n) - n > \log(1/\delta)$, we get $2^{l(n) - n} > 1/\delta$, so
+$$
+P(X = 0 | Y = y) < \delta
+$$
+and thus
+$$
+P(X = 1 | Y = y) > 1 - \delta
+$$
+This proves $(*)$.
+
+\medskip
+\noindent \textbf{Proof that on $\Ygood$, $B$ exactly identifies $\text{range}(G)$.}
+Let $\Ygood$ be the good set of observations for inference schema $I$ constructed above, and assignment $x = 1$.
+Then if the given $y$ satisfies $y \in \Ygood$, $|A(I, x, y) - P(X = x | Y = y)| < \frac{1}{2} - \delta$.
+Thus if $y \notin \text{range}(G)$, $|A(I, x, y) - 0| < \frac{1}{2} - \delta$ so $A(I, x, y) < 1/2$.
+And if $y \in \text{range}(G)$ but $A(I, x, y) < 1/2$, we would have $|P(X = 1 | Y = y) - A(I, x, y)| \geq |(1 - \delta) - 1/2| \geq 1/2 - \delta$, so it must be the case that $A(I, x, y) > 1/2$.
+That is,
+$$
+y \in \Ygood \implies [y \notin \text{range}(G) \implies A(I, x, y) < 1/2 \wedge y \in \text{range}(G) \implies A(I, x, y) > 1/2]
+$$
+Thus for $y \in \Ygood$, algorithm $B$ correctly outputs a bit indicating whether $y \in \text{range}(G)$.
+
+\medskip
+\noindent \textbf{Proof that $B$ identifies outputs from the PRG with nontrivial probability (proof of $(***)$).}
+In this section I will write $\Pr_s$ as shorthand for $\Pr_{s \sim \text{Uniform}(\{0, 1\}^n)}$ and $\Pr_{\bar{y}}$ as shorthand for $\Pr_{\bar{y} \sim \text{Uniform}(\{0, 1\}^{l(n)})}$.
+
+The goal of this section is to establish that there exists a $\gamma > 0$ such that
+$$
+|
+\Pr_s[B(G(s)) = 1] - \Pr_{\bar{y}}[B(\bar{y}) = 1]
+| \geq \gamma
+$$
+Let $p_s := \Pr_s[B(G(s)) = 1]$ and $p_\by := \Pr_{\bar{y}}[B(\bar{y}) = 1]$.
+Let $p_{s, 1} := \Pr_s[B(G(s)) = 1 \wedge G(s) \in \Ygood]$,
+$p_{s, 2} := \Pr_s[B(G(s)) = 1 \wedge G(s) \notin \Ygood]$,
+$p_{\by, 1} = \Pr_{\bar{y}}[B(\bar{y}) = 1 \wedge \by \in \Ygood]$,
+and
+$p_{\by, 2} = \Pr_{\bar{y}}[B(\bar{y}) = 1 \wedge \by \notin \Ygood]$.
+Observe that
+$p_s = p_{s, 1} + p_{s, 2}$ and $p_\by = p_{\by, 1} + p_{\by, 2}$.
+By the triangle inequaltiy,
+\begin{equation} \label{eq:triangle_inequality_application}
+|p_s - p_\by| = |p_{s, 1} + p_{s, 2} - p_{\by, 1} - p_{\by, 2}| \geq |p_{s, 1} - p_{\by, 1}| - |p_{s, 2} - p_{\by, 2}|
+\end{equation}
+
+We have
+\begin{multline} \label{eq:terms_ybad}
+|p_{s, 2} - p_{\by, 2}| = 
+|\Pr_{s}[G(s) \notin \Ygood] \Pr_s[B(G(s)) = 1 | G(s) \notin \Ygood]
+ - \Pr_\by[\by \notin \Ygood] \Pr_\by[B(\by) = 1 | \by \notin \Ygood]|
+\\
+\leq \max(\Pr_s[G(s) \notin \Ygood], \Pr_\by[\by \notin \Ygood])
+\end{multline}
+
+We also have
+\begin{multline} \label{eq:terms_ygood}
+p_{s, 1} - p_{\by, 1} =
+\Pr_s[B(G(s)) = 1 \wedge G(s) \in \Ygood] - \Pr_\by[B(\by) = 1 \wedge \by \in \Ygood]
+ \\
+= 
+\Pr_s[G(s) \in \text{range}(G) \wedge G(s) \in \Ygood] -
+\Pr_\by[\by \in \text{range}(G) \wedge \by \in \Ygood]
+\\
+= \Pr_s[G(s) \in \Ygood] - \Pr_\by[\by \in \text{range}(G) \wedge \by \in \Ygood] \\
+\geq \Pr_s[G(s) \in \Ygood] - \Pr_\by[\by \in \text{range}(G)] 
+= \Pr_s[G(s) \in \Ygood] - 2^n/2^{l(n)}
+\end{multline}
+The second equality here follows from the fact established above, that for $y \in \Ygood$, algorithm $B$ exactly decides whether $y \in \text{range}(G)$.
+
+We now need to bound $\Pr_s[G(s) \in \Ygood]$ and $\Pr_\by[\by \in \Ygood]$.
+Observe that
+$$
+P(\Ygood) = \frac{1}{2}\Pr_s[G(s) \in \Ygood] + \frac{1}{2}\Pr_\by[\by \in \Ygood]
+$$
+because under the model $P$, $y$ is set equal to $G(s)$ half the time and equal to $\by$ the other half of the time.
+Since each of these probability terms are no greater than $1$, we have
+\begin{equation} \label{eq:branch_probs_ygood}
+\Pr_s[G(s) \in \Ygood] \geq 2P(\Ygood) - 1;
+\quad
+\Pr_\by[\by \in \Ygood] \geq 2P(\Ygood) - 1        
+\end{equation}
+By subtracting each side of these inequalities from 1, we also obtain
+\begin{equation} \label{eq:branch_probs_ybad}
+\Pr_s[G(s) \notin \Ygood] \leq 2 - 2P(\Ygood);
+\quad
+\Pr_\by[\by \notin \Ygood] \leq 2 - 2P(\Ygood)
+\end{equation}
+
+Combining equations \ref{eq:terms_ybad} and \ref{eq:branch_probs_ybad}, we get
+$$
+|p_{s, 2} - p_{\by, 2}| \leq 2 - 2P(\Ygood)
+$$
+and combining equations \ref{eq:terms_ygood} and \ref{eq:branch_probs_ygood}, we get
+$$
+|p_{s, 1} - p_{\by, 1}| \geq 2P(\Ygood) - 1 - 2^{n - l(n)}
+$$
+Plugging in these bounds to equation~\ref{eq:triangle_inequality_application}, we obtain
+\begin{equation}
+|p_s - p_\by| \geq
+2P(\Ygood) - 1 - 2^{n - l(n)}
+- (2 - 2P(\Ygood))
+= 4 P(\Ygood) - 3 - 2^{n - l(n)}
+\end{equation}
+Thus, 
+$$
+P(\Ygood) \geq \frac{3}{4} + \frac{1}{4 \cdot 2^{l(n) - n}} + \frac{1}{4}\gamma
+\implies |p_s - p_\by| \geq \gamma
+$$
+If $l(n) - n$ grows in $n$, the term $\frac{1}{4 \cdot 2^{l(n) - n}} \to 0$,
+so
+$$
+P(\Ygood) > \frac{3}{4} \implies \exists \gamma > 0 \text{ s.t. } |\Pr_s[B(G(s)) = 1] - \Pr_{\bar{y}}[B(\bar{y}) = 1]| \geq \gamma
+$$
+
+\end{proof}
+
+Finally, here is a proof of the minor lemma used at the beginning of the proof of Theorem~\ref{thm:main}.
+\begin{lem} \label{lem:bijective_stretch}
+If there exists a secure PRG $G$ with stretch $l(n)$ s.t. $n > N \implies l(n) \geq n + \log(1/\delta)$,
+there exists a PRG $G'$ with stretch $l'$ satisfying the same property, and such that $l'$ is a bijection
+such that $(l')^{-1}$ can be computed in polynomial time.
+\end{lem}
+\begin{proof}
+It suffices to take $G'$ to compute the identity on seeds of length $\leq N$, and let $G'$ output the first $n + \log(1/\delta)$ bits of $G(s)$ on seeds $s$ with $|s| > N$.
+(This means $G'$ does not appear random n short seeds, but our definition of secure PRG only requires that $G'$ appears random in the limit of long seeds.)
+\end{proof}
+
+% \printbibliography
+
+\end{document}

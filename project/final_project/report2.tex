@@ -83,7 +83,7 @@
 
 \begin{center}
     \Large
-    Is posterior inference usually easy, in all graphical models?
+    Are there Bayesian networks in which posterior inference is often difficult?
 
     \vspace{3pt}
     \normalsize
@@ -178,12 +178,13 @@ $$
 % That is, on all but a small fraction $\rho$ of $y$ values, the algorithm can output an $\epsilon$-approximation to the posterior PDF value $P(X = x | Y = y)$.
 % for any query variables $X$, any query assignment $x$,
 % and any observation constraint $Y' = y'$ which contains within it that $Y = y$.
-\end{defn}
+
 Given such an algorithm $A$, a given inference schema $I$, and a value $x$, I will write $\Ygood$ to denote the set
 $$
 \Ygood := \{y : |A(I, x, y) - P(X = x | Y = y)| < \epsilon\}
 $$
-The above definition guarantees that $P(\Ygood) > 1 - \rho$.
+Note that $P(\Ygood) > 1 - \rho$.
+\end{defn}
 
 \subsection{One-way functions and pseudorandom generators}
 Proving the hardness of a computational problem $C$ is often done by reducing from an $\NP$-hard problem like $\mathsf{3SAT}$ to problem $C$, thereby showing that if $C$ could be solved in polynomial time, $\P = \NP$.
@@ -223,7 +224,7 @@ If there exists a one-way function, then there exists a secure pseudorandom gene
 
 \section{Main result}
 \begin{thm} \label{thm:main}
-If there exists a polnomial-time, deterministic, typical-case additive PMF approximation algorithm with tolerances $\epsilon < \frac{1}{2} - \delta$, $\rho < \frac{1}{4}$,
+If there exists a polnomial-time, deterministic, typical-case additive PMF approximation algorithm with tolerances $\epsilon < \frac{1}{2}$, $\rho < \frac{1}{4}$,
 then there does not exist a secure pseudorandom generator with stretch $l$ s.t. $l(n) - n \underset{n \to \infty}{\to} \infty$.
 \end{thm}
 
@@ -233,23 +234,25 @@ then one-way functions do not exist.
 \end{cor}
 \noindent The corollary follows because if one-way functions exist, there exists a secure PRG with stretch $l(n) = n^2$.
 
-\begin{proof}{(Proof of Theorem~\ref{thm:main}.)} \textcolor{red}{TODO: clean up the $\delta$s.}
+\begin{proof}{(Proof of Theorem~\ref{thm:main}.)}
 
 \medskip
 \noindent \textbf{Proof setup.}
-For contradiction, suppose $A$ is a polynomial-time typical-case additive PMF approximation algorithm with tolerances $\epsilon < \frac{1}{2} - \delta$ and $\rho < \frac{1}{4}$,
-and suppose $G$ is a secure PRG with stretch $l(n)$ s.t. $n > N \implies l(n) \geq n + \log(1/\delta)$.
+For contradiction, suppose $A$ is a polynomial-time typical-case additive PMF approximation algorithm with tolerances $\epsilon < \frac{1}{2}$ and $\rho < \frac{1}{4}$.
+Let $\delta > 0$ be s.t. $\epsilon < \frac{1}{2} - \delta$.
+Suppose $G$ is a secure PRG with stretch $l(n)$ s.t. $\lim_{n \to \infty} [l(n) - n] = \infty$.
 By lemma~\ref{lem:bijective_stretch}, I will assume without loss of generality that $l$ is a bijection and that the $l^{-1}$ can be computed in polynomial time.
 
 \medskip
 \noindent \textbf{Proof outline.}
-I will construct a Turing machine $B$ which can distinguish the distribution of $G$ on seeds of length $n$ from the uniform distribution on $\{0, 1\}^{l(n)}$, for arbitrarily large $n$, contradicting that $G$ is a secure PRG.
+I will construct a Turing machine $B$ which can distinguish the distributions $\text{Uniform}(\{0, 1\}^n) \circ G^{-1}$ and $\text{Uniform}(\{0, 1\}^{l(n)})$ for all $n > N$, where $N$ is a constant.  This contradicts that $G$ is a secure PRG.
 
-Given input $y$, Turing machine $B$ will guess whether it was sampled from the pseudo-random generator, or from the uniform on $\{0, 1\}^{|y|}$.
-If $|y|$ is not in the range of $l$, then $B$ can immediately reject.
+Given input $y \in \{0, 1\}^{l(n)}$,
+Turing machine $B$ will guess whether it was sampled from the pseudo-random generator, or from the uniform on $\{0, 1\}^{|y|}$.
+If a string $y$ is given such that $|y|$ is not in the range of $l$, then $B$ can immediately reject.
 Otherwise, $B$ will compute $n = l^{-1}(|y|)$ to find the seed length needed for $G$ to produce $y$.
 
-Second, $B$ will construct the description of an inference schema $I = (P, V, E, X, Y)$ where $|Y| = l(n)$ and $|X| = 1$, such that
+Second, $B$ will construct the description of an inference schema $I = (P, V, E, X, Y)$ where $|Y| = l(n)$ and $|X| = 1$, such that if $n > N$,
 $$
 y' \in G(\{0, 1\}^n) \implies P(X = 1 | Y = y') > 1 - \delta \quad (*)
 $$
@@ -259,18 +262,20 @@ y' \notin G(\{0, 1\}^n) \implies P(X = 1 | Y = y') = 0 \quad (**)
 $$
 Third, $B$ will compute $a \gets A(I, 1, y)$.
 If $a < 1/2$, $B$ will output 0; otherwise $B$ will output 1.
-I will first show that this implies that on typical $y$ values ($y \in \Ygood$),
+I will first show that this implies that on typical $y$ values,
 $B$ exactly decides whether $y \in \text{range}(G)$.
+Specifically, there is a set $\Ygood \subseteq \{0, 1\}^{l(n)}$ with $P(\Ygood) > 3/4$ such that
+$y \in \Ygood \implies B(y) = 1_{y \in \text{range}(G)}$.
 Using this,
 I will then show that, because we can guarantee $P(y \in \Ygood) > 3/4 = 1 - \rho$,
 this implies that there exists a $\gamma > 0$ such that
 $$
-|\Pr_{s \sim \text{Uniform}(\{0, 1\}^n)}[B(G(s)) = 1] - \Pr_{y \sim \text{Uniform}(\{0, 1\}^{l(n)})}[B(y) = 1]| \geq \gamma \quad (***)
+|\Pr_{s \sim \text{Uniform}(\{0, 1\}^n)}[B(G(s)) = 1] - \Pr_{\by \sim \text{Uniform}(\{0, 1\}^{l(n)})}[B(\by) = 1]| \geq \gamma \quad (***)
 $$
 for all sufficiently large $n$, contradicting that $G$ is a secure pseudorandom generator.
 % This part of the proof will involve a case analysis regarding how the values in $\mathcal{Y}_\text{easy}$ are distributed among range of $G$, and its complement.
 
-I now proceed to complete the proof by (1) proving that $B$ can construct an inference shema with properties $(*)$ and $(**)$, and (2) proving that $(***)$ holds.
+I now proceed to complete the proof by (1) proving that $B$ can construct an inference schema with properties $(*)$ and $(**)$, and (2) proving that $(***)$ holds.
 
 \medskip
 \noindent \textbf{Construction of the inference schema.}
@@ -293,7 +298,7 @@ because it is impossible for $P$ to sample $x = 1$ yet output a value not in the
 This proves $(**)$.
 
 Now, say $y \in \text{range}(G)$.
-Let $m = |G^{-1}(y)|$, the number of seeds in $\{0, 1\}^n$ that get mapped to $G$.
+Let $m = |G^{-1}(y)|$, the number of seeds in $\{0, 1\}^n$ that get mapped to $y$.
 Then
 $$
 P(X = 1 | Y = y) = \frac{P(X = 1, Y = y)}{P(X = 0, Y = y) + P(X = 1, Y = y)}
@@ -323,11 +328,17 @@ P(X = 0 | Y = y) = \frac{
     1/2^{l(n)} + m/2^n
 } = \frac{1}{1 + m 2^{l(n) - n}}
 $$
-Since $l(n) - n > 0$, this is maximized when $m = 1$, so for all $m$,
+Since $2^{l(n) - n} > 0$, this expression decreases in $m$.
+Since $y \in \text{range}(G)$, $m \geq 1$.
+Thus this expression is maximized when $m = 1$.
+Therefore, for all $m$,
 $$
 P(X = 0 | Y = y) \leq \frac{1}{1 + 2^{l(n) - n}} < \frac{1}{2^{l(n) - n}}
 $$
-If $n > N$, plugging in $l(n) - n > \log(1/\delta)$, we get $2^{l(n) - n} > 1/\delta$, so
+Let $N_1$ be an integer such that
+$n > N_1 \implies l(n) - n > \log(1/\delta)$.
+Then $n > N_1 \implies 2^{l(n) - n} > 1/\delta$,
+so for all such $n$,
 $$
 P(X = 0 | Y = y) < \delta
 $$
@@ -339,15 +350,15 @@ This proves $(*)$.
 
 \medskip
 \noindent \textbf{Proof that on $\Ygood$, $B$ exactly identifies $\text{range}(G)$.}
-Let $\Ygood$ be the good set of observations for inference schema $I$ constructed above, and assignment $x = 1$.
-Then if the given $y$ satisfies $y \in \Ygood$, $|A(I, x, y) - P(X = x | Y = y)| < \frac{1}{2} - \delta$.
-Thus if $y \notin \text{range}(G)$, $|A(I, x, y) - 0| < \frac{1}{2} - \delta$ so $A(I, x, y) < 1/2$.
-And if $y \in \text{range}(G)$ but $A(I, x, y) < 1/2$, we would have $|P(X = 1 | Y = y) - A(I, x, y)| \geq |(1 - \delta) - 1/2| \geq 1/2 - \delta$, so it must be the case that $A(I, x, y) > 1/2$.
+Let $\Ygood$ be the good set of observations for inference schema $I$ constructed above, and assignment $x = 1$, as defined in Definition~\ref{def:typical_case_add_alg}.
+Then if the given $y$ satisfies $y \in \Ygood$, $|A(I, x, y) - P(X = x | Y = y)| < \epsilon < \frac{1}{2} - \delta$.
+Thus if $y \notin \text{range}(G)$, by $(**)$, $|A(I, x, y) - 0| < \frac{1}{2} - \delta$ so $A(I, x, y) < 1/2$.
+And if $y \in \text{range}(G)$ but $A(I, x, y) < 1/2$, by $(*)$ we would have $|P(X = 1 | Y = y) - A(I, x, y)| \geq |(1 - \delta) - 1/2| \geq 1/2 - \delta > \epsilon$, so it must be the case that $A(I, x, y) > 1/2$.
 That is,
 $$
 y \in \Ygood \implies [y \notin \text{range}(G) \implies A(I, x, y) < 1/2 \wedge y \in \text{range}(G) \implies A(I, x, y) > 1/2]
 $$
-Thus for $y \in \Ygood$, algorithm $B$ correctly outputs a bit indicating whether $y \in \text{range}(G)$.
+Thus for $y \in \Ygood$, algorithm $B$ exaclty decides whether $y \in \text{range}(G)$: $y \in \Ygood \implies B(y) = 1_{y \in \text{range}(G)}$.
 
 \medskip
 \noindent \textbf{Proof that $B$ identifies outputs from the PRG with nontrivial probability (proof of $(***)$).}
@@ -435,23 +446,27 @@ $$
 P(\Ygood) \geq \frac{3}{4} + \frac{1}{4 \cdot 2^{l(n) - n}} + \frac{1}{4}\gamma
 \implies |p_s - p_\by| \geq \gamma
 $$
-If $l(n) - n$ grows in $n$, the term $\frac{1}{4 \cdot 2^{l(n) - n}} \to 0$,
-so
+Since $l(n) - n \to \infty$, the term $\frac{1}{4 \cdot 2^{l(n) - n}} \to 0$,
+so there exists $N_2$ such that for all $n > N_2$,
 $$
 P(\Ygood) > \frac{3}{4} \implies \exists \gamma > 0 \text{ s.t. } |\Pr_s[B(G(s)) = 1] - \Pr_{\bar{y}}[B(\bar{y}) = 1]| \geq \gamma
 $$
+Finally, it suffices to take $N = \max(N_1, N_2)$.
 
 \end{proof}
 
 Finally, here is a proof of the minor lemma used at the beginning of the proof of Theorem~\ref{thm:main}.
 \begin{lem} \label{lem:bijective_stretch}
-If there exists a secure PRG $G$ with stretch $l(n)$ s.t. $n > N \implies l(n) \geq n + \log(1/\delta)$,
+If there exists a secure PRG $G$ with stretch $l(n)$ 
+s.t. $\lim_{n\to\infty}[l(n) - n] = \infty$, then
+% s.t. $n > N \implies l(n) \geq n + \log(1/\delta)$,
 there exists a PRG $G'$ with stretch $l'$ satisfying the same property, and such that $l'$ is a bijection
 such that $(l')^{-1}$ can be computed in polynomial time.
 \end{lem}
 \begin{proof}
-It suffices to take $G'$ to compute the identity on seeds of length $\leq N$, and let $G'$ output the first $n + \log(1/\delta)$ bits of $G(s)$ on seeds $s$ with $|s| > N$.
-(This means $G'$ does not appear random n short seeds, but our definition of secure PRG only requires that $G'$ appears random in the limit of long seeds.)
+\textbf{TODO.}
+% It suffices to take $G'$ to compute the identity on seeds of length $\leq N$, and let $G'$ output the first $n + \log(1/\delta)$ bits of $G(s)$ on seeds $s$ with $|s| > N$.
+% (This means $G'$ does not appear random n short seeds, but our definition of secure PRG only requires that $G'$ appears random in the limit of long seeds.)
 \end{proof}
 
 % \printbibliography

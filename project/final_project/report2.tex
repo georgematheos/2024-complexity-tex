@@ -55,6 +55,7 @@
 \def \poly{\text{poly}}
 
 \def \Ygood{\mathcal{Y}_\text{good}}
+\def \Rgood{\mathcal{R}_\text{good}}
 \def \by{{\bar{y}}}
 
 \theoremstyle{definition}
@@ -358,7 +359,7 @@ That is,
 $$
 y \in \Ygood \implies [y \notin \text{range}(G) \implies A(I, x, y) < 1/2 \wedge y \in \text{range}(G) \implies A(I, x, y) > 1/2]
 $$
-Thus for $y \in \Ygood$, algorithm $B$ exaclty decides whether $y \in \text{range}(G)$: $y \in \Ygood \implies B(y) = 1_{y \in \text{range}(G)}$.
+Thus for $y \in \Ygood$, algorithm $B$ exactly decides whether $y \in \text{range}(G)$: $y \in \Ygood \implies B(y) = 1_{y \in \text{range}(G)}$.
 
 \medskip
 \noindent \textbf{Proof that $B$ identifies outputs from the PRG with nontrivial probability (proof of $(***)$).}
@@ -427,15 +428,15 @@ By subtracting each side of these inequalities from 1, we also obtain
 \end{equation}
 
 Combining equations \ref{eq:terms_ybad} and \ref{eq:branch_probs_ybad}, we get
-$$
-|p_{s, 2} - p_{\by, 2}| \leq 2 - 2P(\Ygood)
-$$
-and combining equations \ref{eq:terms_ygood} and \ref{eq:branch_probs_ygood}, we get
-$$
-|p_{s, 1} - p_{\by, 1}| \geq 2P(\Ygood) - 1 - 2^{n - l(n)}
-$$
-Plugging in these bounds to equation~\ref{eq:triangle_inequality_application}, we obtain
 \begin{equation}
+|p_{s, 2} - p_{\by, 2}| \leq 2 - 2P(\Ygood)    
+\end{equation}
+and combining equations \ref{eq:terms_ygood} and \ref{eq:branch_probs_ygood}, we get
+\begin{equation} \label{eq:term1s_err_bound}
+|p_{s, 1} - p_{\by, 1}| \geq 2P(\Ygood) - 1 - 2^{n - l(n)}    
+\end{equation}
+Plugging in these bounds to equation~\ref{eq:triangle_inequality_application}, we obtain
+\begin{equation} \label{eq:final_ps_py_bound}
 |p_s - p_\by| \geq
 2P(\Ygood) - 1 - 2^{n - l(n)}
 - (2 - 2P(\Ygood))
@@ -452,6 +453,87 @@ $$
 P(\Ygood) > \frac{3}{4} \implies \exists \gamma > 0 \text{ s.t. } |\Pr_s[B(G(s)) = 1] - \Pr_{\bar{y}}[B(\bar{y}) = 1]| \geq \gamma
 $$
 Finally, it suffices to take $N = \max(N_1, N_2)$.
+
+\medskip
+\noindent
+\textbf{Extending the proof to the case where the inference algorithm $A$ is stochastic.}
+This extension is fairly straightforward; we simply need to track several additional terms in the analysis, to control the probability that algorithm $B$ fails to indicate whether $y \in \text{range}(G)$ for a value $y \in \Ygood$.
+Since we can upper-bound this probability arbitrarily tightly by boosting the probabilistic version of algorithm $B$ through replication, the ultimate conclusion is the same as before.
+
+Say that the inference algorithm $A(I, x, y)$ is probabilistic.
+Write $A(I, x, y, r)$ to denote a run of algorithm $A$ that uses internal random bits $r$.
+By saying $A$ is a probabilistic typical-case additive-error PMF approximation algorithm, we mean that for $y \in \Ygood$, we have
+$$
+\Pr_r [|A(I, x, y, r) - P(X = x | Y = y)| \geq \epsilon] < 1/3
+$$
+In the procedure described above, the only place where $A$ is used is to check if $P(X = x | Y = y)$ is greater than or less than $1/2$.
+This is done by algorithm $B$.
+I will write $B(y, r)$ for a call to $B$ that uses random bits $r$ when calling $A$.
+Our preceding analysis shows that for $y \in \Ygood$,
+$$
+|A(I, 1, y, r) - P(X = 1 | Y = y)| < \epsilon \implies  B(y, r) = 1_{y \in \text{range}(G)}
+$$
+Thus for $y \in \Ygood$,
+$$
+\Pr_r [B(y, 1) \neq 1_{y \in \text{range}(G)}] < 1/3
+$$
+By calling $B$ many times with different random $r$, and taking the majority, we can obtain an algorithm $B^*$, comsuming randomness $r^*$, with error bound
+$$
+\Pr_{r^*} [B^*(y, r^*) \neq 1_{y \in \text{range}(G)}] < 1/2^k
+$$
+in $O(k)$ iterates.
+% For convenience I will henceforth relabel $B$ and $r$ to refer to the boosted variants of the algorithm: $B := B^*$, $r := r^*$.
+
+Except for the final section dedicated to proving statement $(***)$, the preceding proof remains essentially unchanged,.
+We must, however, redo part of the analysis in the final section, replacing the old deterministic algorithm $B$ with our new stochastic algorithm $B^*$.
+Much of the analysis remains unchanged, except that
+the expressions $\Pr_s$ and $\Pr_\by$ should be understood to also close over the randomness $r^*$.
+The first place where the analysis diverges is in equation~\ref{eq:terms_ygood}.
+For $y \in \Ygood$, let $\Rgood^y$ be the set of random strings $r^*$ such that $B^*(y, r^*) = 1_{y \in \text{range}(G)}$,
+and for $y \notin \Ygood$ let $\Rgood^y$ be the set of all bitstrings $r^*$.
+
+In place of Equation~\ref{eq:terms_ygood}, we now have
+
+\begin{multline} \label{eq:terms_ygood_stochastic}
+    p_{s, 1} - p_{\by, 1} =
+    \Pr_{s, r^*}[B(G(s)) = 1 \wedge G(s) \in \Ygood] - \Pr_{\by, r^*}[B(\by) = 1 \wedge \by \in \Ygood]
+     \\
+    \geq
+    \Pr_{s, r^*}[G(s) \in \text{range}(G) \wedge G(s) \in \Ygood \wedge r^* \in \Rgood^{G(s)}] \\
+    - (\Pr_{\by, r^*}[\by \in \text{range}(G) \wedge \by \in \Ygood \wedge r^* \in \Rgood^\by] + \Pr_{\by, r^*}[B(\by) = 1 \wedge \by \in \Ygood \wedge r^* \notin \Rgood^\by]) \\
+    \geq (1 - \frac{1}{2^k}) \Pr_{s, r^*}[G(s) \in \text{range}(G) \wedge G(s) \in \Ygood] - \Pr_{\bar{y}, r^*}[\by \in \text{range}(G)] - \Pr_{\by, r^*}[r^* \notin \Rgood^\by] \\
+    \geq (1 - \frac{1}{2^k}) \Pr_{s}[G(s) \in \Ygood] - 2^n/2^{l(n)} - 1/2^k
+    % + \Pr_{s, r^*}[r^* \notin \Rgood^{G(s)} \wedge G(s) \in \Ygood]
+    % \Pr_\by[\by \in \text{range}(G) \wedge \by \in \Ygood]
+    % \\
+    % = \Pr_s[G(s) \in \Ygood] - \Pr_\by[\by \in \text{range}(G) \wedge \by \in \Ygood] \\
+    % \geq \Pr_s[G(s) \in \Ygood] - \Pr_\by[\by \in \text{range}(G)] 
+    % = \Pr_s[G(s) \in \Ygood] - 2^n/2^{l(n)}
+\end{multline}
+
+We then rewrite inequality~\ref{eq:term1s_err_bound}, using this new bound:
+\begin{equation}
+|p_{s, 1} - p_{\by, 1}| \geq (1 - \frac{1}{2^k})(2P(\Ygood) - 1) - 2^{n - l(n)} - 1/2^k 
+\end{equation}
+Equation~\ref{eq:final_ps_py_bound} becomes
+\begin{multline}
+|p_s - p_\by| \geq (1 - \frac{1}{2^k})(2P(\Ygood) - 1) - 2^{n - l(n)} - 1/2^k - (2 - 2P(\Ygood)) \\
+= 4P(\Ygood) - 3 - 2^{n - l(n)} - \frac{2P(\Ygood) + 1}{2^k}
+\geq 4P(\Ygood) - 3 - 2^{n - l(n)} - \frac{3}{2^k}
+\end{multline}
+where the last inequality follow from the fact that $P(\Ygood) \leq 1$.
+Therefore
+\begin{equation} \label{eq:pygood_implication_stochastic}
+P(\Ygood) \geq \frac{3}{4} + \frac{1}{4}(\frac{1}{2^{l(n) - n}} + \frac{3}{2^k}) + \frac{1}{4} \gamma \implies |p_s - p_\by| \geq \gamma
+\end{equation}
+Since we in fact have $P(\Ygood) > \frac{3}{4}$ with strict inequality, let $\eta > 0$ be such that $P(\Ygood) \geq \frac{3}{4} + \eta$.
+Choose $N_2, k$ large enough so that $n \geq N_2 \implies \frac{1}{2^{l(n) - n}} + \frac{3}{2^k} < \eta/2$, and set $\gamma = 2\eta$.
+Observe that because $\rho$ is a property of algorithm $A$, this choice of $k$ is independent of the length of the string $y$ input to algorithm $B$, so $k$ is a constant for the purposes of characterizing the complexity of algorithm $B$.
+Thus setting $k$ to have this value does not affect the assessment that $B$ is a polynomial-time algorithm.
+Then (\ref{eq:pygood_implication_stochastic}) holds, so for all $n > N := \max(N_1, N_2)$,
+$$
+\exists \gamma > 0 \text{ s.t. } |\Pr_{s, r^*}[B(G(s)) = 1] - \Pr_{\by, r^*}[B(\by) = 1]| \geq \gamma
+$$
 
 \end{proof}
 

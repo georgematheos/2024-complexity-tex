@@ -91,8 +91,91 @@
     George Matheos, \today
 \end{center}
 
+\section{Posterior inference and computation}
 
-\section{Background}
+\subsection{Posterior inference}
+
+A central computational problem in science and artificial intelligence is posterior inference in probabilistic models.
+Consider a probability distribution $P$ on a space $X \times Y \times Z$.
+For the purposes of this paper, we will take $X, Y, Z \subseteq \{0, 1\}^*$.
+The problem of posterior inference is to characterize the posterior distribution
+$$
+P(X = \cdot | Y = y)
+$$
+for a value $y \in Y$ s.t. $P(Y = y) > 0$.
+
+To define this formally, we must first define the marginal distributions
+$$
+P(X = x, Y = y) := \sum_{z \in Z} P(x, y, z); \quad P(Y = y) := \sum_{(x, z) \in X \times Z} P(x, y, z)
+$$
+With these definitions in hand, the posterior $P(X = \cdot | Y = y)$ is the probability distribution such that for all $x \in X$,
+$$
+P(X = x | Y = y) := \frac{P(X = x, Y = y)}{P(Y = y)}
+$$
+
+Stated informally, the problem of posterior inference is:
+\textit{given a probabilistic model $P$ and a value $y$ with $P(Y = y) > 0$, characerize $P(X = x | Y = y)$}.
+
+\subsection{Computational formulations of exact inference}
+% The posterior $P(X = \cdot | Y = y)$ is a probability distribution on the space $X$.
+% While it is desirable to have algorithms which can characterize these posteriors, there is no one canonical representation of a probability distribution for an algorithm to output.
+% Hence, there are several distinct formulations of what it means for an algorithm
+To formalize the problem of posterior inference as a specification a computer algorithm could satisfy, we must specify what it would mean for an algorithm to ``characterize'' a probability distribution on the space $X$, as this is the type of mathematical object that $P(X = x | Y = y)$ is.
+There are several distinct algorithmic formulations:
+\begin{enumerate}
+    \item \textbf{Probability mass function (PMF) computation.} Given a value $x \in X, y \in Y$, compute the number $P(X = x | Y = y)$.
+    \item \textbf{Cumulative distribution function (CDF) computation.} Given a value $x \in X, y \in Y$, and letting strings in $x \in X \subseteq \{0, 1\}^*$ have lexographic ordering, compute the number $P(X \leq x | Y = y)$.
+    \item \textbf{Sampling.} Given a value $y \in Y$, sample a random value in $X$ according to the distribution $P(X = x | Y = y)$.  This requires the use of a probabilistic Turing machine.  Under standard formulations, this means we want a Turing machine $A$ which, given $y \in Y$ and an uniformly random bit sequence $r \in \{0, 1\}^*$, computes a value $A(y, r) \in X$ such that for all $x \in X$, $P(X = x | Y = y) = \Pr_r[x = A(y, r)]$.
+    % \item \textbf{Expected value computation.} Given a value $y \in Y$ and a function $f : X \to \mathbb{R}$, compute the expected value $\mathbb{E}_{x \sim P(X = \cdot | Y = y)}[f(x)]$.  To make this formulation precise, we need a manner in which the function $f$ is represented using a bit string which can be input to an algorithm, and we need to specify how the outputs of $f$ are represented as bit strings.  Due to this complexity, the complexity theory literature appears to 
+\end{enumerate}
+
+% There are a number of reductions among these:
+% \begin{enumerate}
+%     \item If algorithm $A$ performs CDF computation, then it is possible to perform PMF computation by computing $P(X = x | Y = y) = \textsf{CDF}(x, y) - \textsf{CDF}(x - 1, y)$.
+%     \item If algorithm $A$ performs sampling, 
+% \end{enumerate}
+
+\subsection{Computational formulations of approximate inference}
+It usually suffices for algorithms to perform approximate probabilistic inference.
+There are several standard formulations of approximate probabilistic inference as computational problems:
+\begin{enumerate}
+    \item \textbf{PMF evalution up to additive error.} Fix $\epsilon > 0$.  Algorithm $A$ does PMF evaluation in $P$ up to additive error $\epsilon$ if for any $x \in X, y \in Y$, it computes a number $A(x, y)$ where $|A(x, y) - P(X = x | Y = y)| < \epsilon$.
+    \item \textbf{PMF evaluation up to relative error.} Fix $\epsilon > 0$.  Algorithm $A$ does PMF evaluation in $P$ up to relative error $\epsilon$ if for any $x \in X, y \in Y$, it computes a number $A(x, y) \in (\frac{1}{1 + \epsilon}P(X = x | Y = y), (1 + \epsilon)P(X = x | Y = y))$
+    \item \textbf{CDF evaluation up to additive error.} Fix $\epsilon > 0$.  Algorithm $A$ does CDF evaluation in $P$ up to additive error $\epsilon$ if for any $x \in X, y \in Y$, it computes a number $A(x, y)$ where $|A(x, y) - P(X \leq x | Y = y)| < \epsilon$.
+    \item \textbf{CDF evaluation up to relative error.} Fix $\epsilon > 0$.  Algorithm $A$ does CDF evaluation in $P$ up to relative error $\epsilon$ if for any $x \in X, y \in Y$, it computes a number $A(x, y) \in (\frac{1}{1 + \epsilon}P(X \leq x | Y = y), (1 + \epsilon)P(X \leq x | Y = y))$.
+    \item \textbf{Approximate sampling with pointwise probability bounds.} There are several formulations of approximate sampling. One formulation is to say that probabilistic algorithm $A(y, r)$ (for random bitstring $r$) approximately samples from $P(X = x | Y = y)$ up to pointwise error $\delta$ if for all $x \in X$, $|\Pr_r[A(y, r) = x] - P(X = x | Y = y)| < \delta$.
+\end{enumerate}
+For any of the PMF or CDF computation problems, a probabilistic version can be defined in which a probabilistic algorithm $A$ is said to do PMF or CDF computation iff it satisfies the above specification with probability $\geq 2/3$ on any input.
+
+\subsection{Some hardness relationships among these formulations}
+
+A number of relationships are known between the hardness of inference according to these different formulations.
+Below, I will articulate a subset of these which indicate that if it is computationally hard to do 
+probabilistic PMF computation up to additive error, then it is computationally difficult to solve any of the aformentinoed inference problems.
+
+\begin{enumerate}
+    \item \textbf{Relative approximation for is harder than additive approximation for equal $\epsilon$.}
+    Consider a true PMF or CDF value $p$. If $\epsilon \geq 1$ then additive PMF or CDF approximation is trivial, so consider an $\epsilon < 1$.
+    Since $p \in [0, 1]$, if $\hat{p}$ satisfies $\hat{p} \in (p/(1+\epsilon), (1+\epsilon)p)$, then $$|\hat{p} - p| \leq \max(|(1 + \epsilon)p - p|, |p/(1+\epsilon) - p|) \leq \max(|1 + \epsilon - 1|, |1/(1+\epsilon) - 1|) = \epsilon$$
+    Thus if it is possible to compute a relative $\epsilon$ approximation to either CDF or PMF, it is also possible to compute an additive $\epsilon$ approximation to the same quantity.
+
+    \item \textbf{CDF computation is harder than PMF computation.} 
+        \begin{enumerate}
+            \item \textit{Exact computation.} Say $\mathsf{CDF}(x, y) := P(X \leq x | Y = y)$ can be computed exactly.  Then we can compute $\mathsf{PMF}(x, y) := P(X = x | Y = y) = \mathsf{CDF}(x, y) - \mathsf{CDF}(x - 1, y)$.
+            \item \textit{Additive approximation.} Say we can compute an additive $\epsilon$ approximation $\mathsf{CDF}_\epsilon(x, y)$ to $P(X \leq x | Y = y)$. Then $\mathsf{PMF}_{2\epsilon}(x, y) := \mathsf{CDF}_\epsilon(x, y) - \mathsf{CDF}_\epsilon(x-1, y)$ is a $2\epsilon$ additive approximation to $P(X = x | Y = y)$.
+            % \item \textit{Relative appoximation. }Say we can compute a relative $\epsilon$ approximation $\mathsf{CDF}'_\epsilon(x, y)$ to $P(X \leq x | Y = y)$. Then $\mathsf{PMF}_{2\epsilon}(x, y) := \mathsf{CDF}_\epsilon(x, y) - \mathsf{CDF}_\epsilon(x-1, y)$ is a $2\epsilon$ additive approximation to $P(X = x | Y = y)$.
+        \end{enumerate}
+    \item \textbf{Sampling is harder than probabilistic PMF computation up to additive error.} Say that it is possible to sample with pointwise error $\epsilon / 2$ from $P(X = \cdot | Y = y)$. Let $Q$ be the exact distribution which can be sampled from, which has pointwise error $\leq \epsilon / 2$ from the posterior.  Consider an algorithm which generates $N$ independent samples $x_i \sim ~$ and computes $\hat{p} := \frac{1}{N} \sum_{i=1}^N 1_{x_i = x}$.
+    By the Hoeffding theorem, since $\mathbb{E}[\hat{p}] = Q(x)$, $\Pr[|\hat{p} - Q(x)| \geq \epsilon / 2] \leq 2e^{-\epsilon^2/(2N)}$. Thus if $N = 100/\epsilon^2$, $\Pr[|\hat{p} - Q(x)| \geq \epsilon / 2] << 1/3$.
+    Because $|Q(x) = P(X = x | Y = y)| < \epsilon/2$, this means that
+    $\Pr[|\hat{p} - P(X = x | Y = y)| > \epsilon] << 1/3$.
+    Thus it is possible to compute an $\epsilon$ approximation to PMF at a cost $O(1/\epsilon^2)$ times the cost of performing approximate pointwise sampling.
+    Therefore a polynomial time approximate sampling algorithm implies the existance of a polynomial time additive PMF approximation algorithm.
+\end{enumerate}
+
+\section{Posterior inference on typical-case observations}
+
+\section{Background for the main results}
 
 \subsection{Probabilistic graphical models and inference problems}
 \begin{defn}

@@ -640,31 +640,68 @@ $$
 
 \end{proof}
 
-% Finally, here is a proof of the minor lemma used at the beginning of the proof of Theorem~\ref{thm:main}.
-% \begin{lem} \label{lem:bijective_stretch}
-% If there exists a secure PRG $G$ with stretch $l(n)$ such that $\lim_{n \to \infty} [l(n) - n] = \infty$,
-% then
-% there exists a PRG $G'$ with superlinear stretch $l'$ such that $l'$ is a bijection and such that  $(l')^{-1}$ can be computed in polynomial time.
-% \end{lem}
-% \begin{proof}
-% For any $k \in \mathbb{N}$, let $N_k$ be the smallest element of $\mathbb{N}$ such that $n \geq N_k \implies l(n) - n > k$.
-% For any $n \in \mathbb{N}$, let $k_n$ be the smallest $k$ such that $n \geq N_k$.
-% Let $l'(n) = n + k_n$.
-% Observe that $l'$ is strictly increasing and hence a bijection.
-% Its inverse can be computed as follows.
-% Consider output $m$ of $l'$.
-% For each value $n = 1, 2, \dots$, compute $l'(n)$ and check if it equals $m$.
-% Output $n$ once this is the case.
-% Since $m > n$, and this process terminates in at most $n$ steps,
-% this process can be done in polynomial time in $m$.
+\section{Tractability results}
+\begin{thm} \label{thm:bounded_mutual_info}
+For any $B \in \mathbb{R}$ and any $\epsilon, \rho \in (0, 1)$,
+there exists a probabilistic polynomial time typical-case inference algorithm $A$
+with tolerances $\epsilon, \rho$, which can do inference under any inference schema such that the observation and query variables have mutual information bounded by $B$.
 
-% Finally, take $G'(x) := G(x)_{1:l'(n)}$, where $y_{1:t}$ denotes the first $t$ bits of $y$.
-% If an algorithm could distinguish the outputs of $G'$ from uniform, then it could certainly distinguish the outputs of $G$ from uniform by only considering the first $l'(n)$ bits.
-% Thus $G'$ is also a secure pseudorandom generator.
-% % Since $l(n)/n \to \infty$, there exists $N$ such that $l(n) > 2n$ for all $n \geq N$.
-% % Let $l'$
-% \end{proof}
+\smallskip
+\noindent That is, for any
+inference schema $(P, V, E, X, Y)$ such that the mutual information $I(X; Y) < B$, and any $x \in \{0, 1\}^{|X|}$, there exists a set $\Ygood \subseteq \{0, 1\}^{|Y|}$ with $P(\Ygood) > 1 - \rho$ such that
+$$
+\Pr[|A(I, x, y) - P(X = x | Y = y)| < \epsilon] > 1 - \epsilon
+$$
+where the probability is taken over the randomness of $A$.
+\end{thm}
+\begin{cor} \label{cor:small_obs_set}
+For any fixed $C$ and any $\epsilon, \rho \in (0, 1)$,
+there exists a probabilistic polynomial time typical-case inference algorithm $A$
+which can do inference in any inference schema in which the number of observation variables $|Y| < C$.
+\end{cor}
+\begin{proof}{(Corollary~\ref{cor:small_obs_set}.)}
+Say $|Y| < C$.  Then $|\{{0, 1}\}^{|Y|}| < 2^C$.
+Thus, regarding $Y$ as a random variable, the entropy $H(Y) < C$.
+Thus the mutual information $I(X ; Y) = H(Y) - H(Y | X) < C$.
+Thus a bound on the number of observed variables yieldds a bound on the mutual information between the observed and query variables, so Theorem~\ref{thm:bounded_mutual_info} can be applied.
+\end{proof}
 
-% \printbibliography
+\begin{proof}{(Theorem~\ref{thm:bounded_mutual_info}.)}
+Say $I(X, Y) < B$.Then
+$\mathbb{E}_{x, y \sim P}[\log \frac{P(x, y)}{P(x)P(y)}] < B$.
+By lemma~\ref{lem:pqbound},
+this implies
+$$
+\Pr[\frac{P(x, y)}{P(x)P(y)} > a] \leq \frac{1}{\log a}(B + 1)
+$$
+for any $a$. Thus
+$$
+\Pr[\frac{P(x, y)}{P(x)P(y)} > 2^{T(B + 1)}] \leq \frac{1}{T(B + 1)}(B + 1) = 1/T
+$$
+Chaterjee and Diaconis's result then implies that if 
+likelihood weighting is run using $T \times 2^{T(B + 1)}$ samples,
+prodcing estimate $\hat{p}$ of $P(X = x, Y = y)$,
+then
+$$
+\mathbb{E}|\hat{p} - P(X = x, Y = y)| \leq (\frac{1}{\sqrt{T}} + 2 \sqrt{\Pr_{(x, y) \sim P}[\frac{P(x, y)}{P(x)P(y)} > 2^{T(B + 1)}]}) \leq \frac{1}{\sqrt{T}} + 2/\sqrt{T} = 3/\sqrt{T}
+$$
+Thus by Markov's inequality,
+$$
+\Pr [|\hat{p} - P(X = x, Y = y)| \geq \epsilon] \leq \frac{3}{\epsilon \sqrt{T}}
+$$
+For any $\epsilon$ and any constant $C$, we can choose $T$ large enough that this probability is less than $\rho$.
+
+While the constants involved here are very large, they are still constants depending only on the fixed parameters $B, \epsilon, \rho$.
+
+\end{proof}
+
+\begin{lem} \label{lem:pqbound}
+Let $P$ and $Q$ be discrete probability distributions on the same space.
+Say $\mathbb{E}_{P}[\log \frac{P}{Q}] < B$.
+Then for any $a > 1$,
+$$
+\Pr_{x \sim P}[P(x)/Q(x) > a] \leq \frac{1}{\log a}(B + 1)
+$$
+\end{lem}
 
 \end{document}

@@ -2348,11 +2348,13 @@
     <bcf:citekey order="3">cooper1990</bcf:citekey>
     <bcf:citekey order="4">dagum1993</bcf:citekey>
     <bcf:citekey order="5">dagum1993</bcf:citekey>
-    <bcf:citekey order="6">dagum1993</bcf:citekey>
-    <bcf:citekey order="8">dagum1997optimal</bcf:citekey>
-    <bcf:citekey order="9">dagum1993</bcf:citekey>
-    <bcf:citekey order="10">cooper1990</bcf:citekey>
-    <bcf:citekey order="11">dagum1997optimal</bcf:citekey>
+    <bcf:citekey order="6">cooper1990</bcf:citekey>
+    <bcf:citekey order="7">dagum1993</bcf:citekey>
+    <bcf:citekey order="8">dagum1993</bcf:citekey>
+    <bcf:citekey order="10">dagum1997optimal</bcf:citekey>
+    <bcf:citekey order="11">dagum1993</bcf:citekey>
+    <bcf:citekey order="12">cooper1990</bcf:citekey>
+    <bcf:citekey order="13">dagum1997optimal</bcf:citekey>
   </bcf:section>
   <!-- SORTING TEMPLATES -->
   <bcf:sortingtemplate name="none">

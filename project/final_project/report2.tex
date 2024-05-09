@@ -85,6 +85,7 @@
 \begin{center}
     \Large
     Are there Bayesian networks in which posterior inference is often difficult?
+    % On the complexity of posterior inference under typical-case observations in worst-case Bayesian networks
 
     \vspace{3pt}
     \normalsize
@@ -324,15 +325,22 @@ As far as I am aware, it may be that given my weaker definition of a secure PRG,
 If there exists a polynomial-time typical-case additive PMF approximation algorithm $A$ with tolerances $\epsilon < \frac{1}{2}$, $\rho < \frac{1}{4}$,
 then there does not exist a secure pseudorandom generator with an invertible stretch function $l$ such that $\lim_{n \to \infty}[l(n) - n] = \infty$.
 This holds whether $A$ is deterministic or probabilistic.
+
+\smallskip \noindent This holds even if we only require $A$ to be capable of typical-case inference in Bayesian networks with in-degree $\leq 2$ and with probability values in the set $\{0, 1/2, 1\}$.
 \end{thm}
 
 \begin{cor}
-If there exists a polynomial-time, deterministic, typical-case additive PMF approximation algorithm with tolerances $\epsilon < \frac{1}{2}$, $\rho < \frac{1}{4}$,
+If there exists a polynomial-time typical-case additive PMF approximation algorithm with tolerances $\epsilon < \frac{1}{2}$, $\rho < \frac{1}{4}$,
 then one-way functions do not exist.
 \end{cor}
 \noindent The corollary follows because if one-way functions exist, by Proposition~\ref{prop:oneway_to_prg}, there exists a secure PRG with stretch $l(n) = n^2$.
 
-\begin{proof}{(Theorem~\ref{thm:main})}
+% Note that these results hold even if we only require $A$ to do inference in Bayesian networks with in-degree 2 and with probability values in the set $\{0, 1/2, 1\}$.
+
+\smallskip
+\noindent These results suggest that it is unlikely that there exists a universal typical-case inference algorithm which succeeds on a $3/4$ typical set of observations in all Bayesian networks.
+
+\begin{proof}{(Theorem~\ref{thm:main}.)}
 For contradiction, suppose $A$ is a deterministic polynomial-time typical-case additive PMF approximation algorithm with tolerances $\epsilon < \frac{1}{2}$ and $\rho < \frac{1}{4}$.
 (The case where $A$ is probabilistic will be covered at the end of the proof.)
 Let $\delta > 0$ be s.t. $\epsilon < \frac{1}{2} - \delta$.

@@ -173,7 +173,7 @@ probabilistic PMF computation up to additive error, then it is computationally d
     Therefore a polynomial time approximate sampling algorithm implies the existance of a polynomial time additive PMF approximation algorithm.
 \end{enumerate}
 
-\section{Posterior inference on typical-case observations}
+% \section{Posterior inference on typical-case observations}
 
 \section{Background for the main results}
 
@@ -208,13 +208,18 @@ An \textbf{inference problem schema} is the tuple $I = (V, E, P, X, Y)$ as in an
 \subsection{Worst and typical case inference algorithms}
 
 \begin{defn}
-A \textbf{deterministic, worst-case additive PDF approximation algorithm with tolerance $\epsilon$} is a Turing machine $A$ which on input
+A \textbf{deterministic, worst-case additive PMF approximation algorithm with tolerance $\epsilon$} is a Turing machine $A$ which on input
 $(I, y, x)$, where $I$ is any inference problem schema, $y$ is any assignment to the observed variables, and $x$ is an assignment to the query variables, outputs a rational number $A(I, y, x)$ such that
-$$
+\begin{equation} \label{eq:worst_case}
 |A(I, y, x) - P(X = x | Y = y)| < \epsilon
-$$
+\end{equation}
 \end{defn}
-In 1993, Dagum and Luby \cite{dagum1993} showed that if there exists a worst-case additive PDF approximation algorithm with tolerance $< 1/2$, and it has polynomial runtime, then $\P = \NP$.
+\begin{defn}
+A \textbf{probabilistic, worst-case additive PMF approximation algorithm with tolerance $\epsilon$} is a probabilistic Turing machine $A$ which for every $I, y, x$, satisfies condition~\ref{eq:worst_case} with probability $\geq 2/3$.
+\end{defn}
+
+In 1993, Dagum and Luby \cite{dagum1993} showed that if there exists a deterministic worst-case additive PMF approximation algorithm with tolerance $< 1/2$, and it has polynomial runtime, then $\P = \NP$.
+Further, if a probabilistic polynomial-time worst-case additive PMF approximation algorithm exists with tolerance $< 1/2$, then $\NP \subseteq \RP$.
 
 Probabilistic graphical models are typically used to model aspects of the world.
 That is, each variable in $V$ represents some aspect of the world; $Y$ represents a set of values which we have observed; and $X$ represents a set of values which we wish to infer.
@@ -224,12 +229,12 @@ Since we have a probability distribution $P$ on hand which ought to roughly corr
 Say there is a small set of observation assignments $\mathcal{Y}_\text{hard} \subseteq \{0, 1\}^{|Y|}$ such that $P(\mathcal{Y}_\text{hard}) < \rho$ for very small $\rho$ (e.g. $\rho = 0.00001$), such that for all $y \notin \mathcal{Y}_\text{hard}$, we can compute the posterior distribution $P(X = \cdot | Y = y)$ efficiently.
 Then we can say that inference is easy in the typical case, and for many purposes this is sufficient.
 
-In fact, Dagum and Luby's construction of a worst-case inference problem $I$ involves selecting an observed assignment $y$ to a set $Y$ of one variable ($|Y| = 1$) which has extremely low marginal probability: $P(Y = y) << 1$.
-Theorem~\ref{} later in this report shows that for every inference problem schema $(P, V, E, X, Y)$ with $|Y| = 1$, efficient inference is possible on typical case observations.
-This indicates that Dagum and Luby's strategy for proving the hardness of inference in the worst case does not directly carry through to showing the hardness of inference with typical-case observations.
+% In fact, Dagum and Luby's construction of a worst-case inference problem $I$ involves selecting an observed assignment $y$ to a set $Y$ of one variable ($|Y| = 1$) which has extremely low marginal probability: $P(Y = y) << 1$.
+% Theorem~\ref{} later in this report shows that for every inference problem schema $(P, V, E, X, Y)$ with $|Y| = 1$, efficient inference is possible on typical case observations.
+% This indicates that Dagum and Luby's strategy for proving the hardness of inference in the worst case does not directly carry through to showing the hardness of inference with typical-case observations.
 
 % \begin{defn}
-% A \textbf{deterministic, typical-case relative PDF approximation algorithm with tolerances $(\epsilon, \rho)$} is a Turing machine $A$ which accepts inputs of the form
+% A \textbf{deterministic, typical-case relative PMF approximation algorithm with tolerances $(\epsilon, \rho)$} is a Turing machine $A$ which accepts inputs of the form
 % $(I, y, x)$, where $I$ is any inference problem schema, $y$ is any assignment to the observed variables, and $x$ is an assignment to the query variables, and outputs a rational number $A(I, y, x)$ with the following property.
 % For any graphical model $(V, E, P)$ and any subset $Y \subseteq V$,
 % there exists a ``typical set'' $\mathcal{Y}_\text{easy} \subseteq Y$ such
@@ -239,36 +244,34 @@ This indicates that Dagum and Luby's strategy for proving the hardness of infere
 % $$
 % A(I, y, x) / P(X = x | Y = y) \in (\frac{1}{1 + \epsilon}, 1 + \epsilon)
 % $$
-% That is, on all but a small fraction $\rho$ of $y$ values, the algorithm can outputs an $\epsilon$ relative approximation to the posterior PDF value $P(X = x | Y = y)$,
+% That is, on all but a small fraction $\rho$ of $y$ values, the algorithm can outputs an $\epsilon$ relative approximation to the posterior PMF value $P(X = x | Y = y)$,
 % for any query variables $X$ and any query assignment $x$.
 % \end{defn}
 
 \begin{defn} \label{def:typical_case_add_alg}
-A \textbf{deterministic, typical-case additive PDF approximation algorithm with tolerances $(\epsilon, \rho)$} is a Turing machine $A$ which accepts inputs of the form
+A \textbf{deterministic, typical-case additive PMF approximation algorithm with tolerances $(\epsilon, \rho)$} is a Turing machine $A$ which accepts inputs of the form
 $(I, y, x)$, where $I$ is any inference problem schema, $y$ is any assignment to the observed variables, and $x$ is an assignment to the query variables, and outputs a rational number $A(I, y, x)$ with the following property.
 For any inference schema $I$ and any value $x$,
 $$
 \Pr_{y \sim P(Y = \cdot)}[|A(I, x, y) - P(X = x | Y = y)| \geq \epsilon] < \rho
 $$
-% For any inference schema $I = (P, V, E, X, Y)$ there
-% there exists a ``typical set'' $\mathcal{Y}_\text{easy} \subseteq Y$ such
-% that $$P(Y \in \mathcal{Y}_\text{easy}) > 1 - \rho$$
-% and for all any $x \in X$ and any $y \in \mathcal{Y}_\text{easy}$,
-% % any extension $Y' \subseteq V$ to $Y$, so $Y \subseteq Y'$,
-% % and any $y' \in \{0, 1\}^{|Y|}$ such that $y'_Y \in \mathcal{Y}_\text{easy}$,
-% $$
-% |A(I, y, x) - P(X = x | Y = y)| < \epsilon
-% $$
-% That is, on all but a small fraction $\rho$ of $y$ values, the algorithm can output an $\epsilon$-approximation to the posterior PDF value $P(X = x | Y = y)$.
-% for any query variables $X$, any query assignment $x$,
-% and any observation constraint $Y' = y'$ which contains within it that $Y = y$.
-
 Given such an algorithm $A$, a given inference schema $I$, and a value $x$, I will write $\Ygood$ to denote the set
 $$
 \Ygood := \{y : |A(I, x, y) - P(X = x | Y = y)| < \epsilon\}
 $$
 Note that $P(\Ygood) > 1 - \rho$.
 \end{defn}
+\begin{defn}
+A \textbf{probabilistic, typical-case additive PMF approximation algorithm with tolerances $(\epsilon, \rho)$} is a probabilistic Turing machine $A$ which accepts inputs $(I, y, x)$ as above, such that for any inference schema $I$ and any value $x$, there exists a set $\Ygood \subseteq \{0, 1\}^{|Y|}$ where $P(\Ygood) > 1 - \rho$ and
+$$
+y \in \Ygood \implies \Pr[|A(I, x, y) - P(X = x | Y = y)| < \epsilon] > 2/3
+$$
+where the probability is taken over the randomness of the algorithm.
+\end{defn}
+
+In this report, I prove a new result showing that if either a deterministic or probabilistic typical-case additive PMF approximation algorithm exists with tolerances $\epsilon < 1/2$, $\rho < 1/4$, then one-way functions do not exist (Theorem~\ref{thm:main}).
+This hardness result suggests that typical-case inference is computationally difficult, and it is not merely the worst-case nature of the observations considered in Dagum and Luby's reduction which made inference difficult in their setting.
+Due to the typical-case formulation studied here, a different proof strategy is needed to show this hardness result.
 
 \subsection{One-way functions and pseudorandom generators}
 Proving the hardness of a computational problem $C$ is often done by reducing from an $\NP$-hard problem like $\mathsf{3SAT}$ to problem $C$, thereby showing that if $C$ could be solved in polynomial time, $\P = \NP$.
@@ -280,52 +283,61 @@ The first conjecture is the existance of \textit{one-way functions}, functions w
 It is widely believed that such functions exist \cite{}, as there are a number of functions like multiplication of prime numbers, for which no inversion algorithms are known which are efficient in the typical case.
 Such functions are widely used in public-key cryptography.
 
-\begin{defn}{(Arora and Barak Def. 9.4)}
-A \textbf{one-way function} $f$ is a function $f : \{0, 1\}^* \to \{0, 1\}^*$ such that $f$ can be computed in polynomial time, and for every probabilistic polynomial time algorithm $A$,
-$$
-\Pr_{x \sim \text{Uniform}(\{0, 1\}^n)}[A(f(x), 1^n) \in f^{-1}(f(x))] \underset{n \to \infty}{\to} 0
-$$
+\begin{defn}{(Arora and Barak Def. 9.4)} \label{def:oneway}
+A \textbf{one-way function} $f$ is a function $f : \{0, 1\}^* \to \{0, 1\}^*$ such that $f$ can be computed in polynomial time, and for every probabilistic polynomial time algorithm $A$, for every $c \in \mathbb{R}$,
+\begin{equation} \label{eq:oneway}
+n^c \cdot \Pr_{x \sim \text{Uniform}(\{0, 1\}^n)}[A(f(x), 1^n) \in f^{-1}(f(x))] \underset{n \to \infty}{\to} 0
+\end{equation}
 where $f^{-1}(f(x))$ is the set $\{x' \in \{0, 1\}^* : f(x') = f(x)\}$.
 \end{defn}
 
 The second conjecture is the existance of \textit{secure pseudorandom generators}, which are functions which take a short random seed and expand it into a long string which is indistinguishable from a truly random string.
+This is known to follow from the existence of one-way functions, and this weaker conjecture is all the is needed for the main result of this report.
 Specifically, I consider PRGs which are secure against all polynomial-time adversaries, once the strings being generated are sufficiently long.
 
-\begin{defn}{(Arora and Barak Def. 9.8)}
+\begin{defn}{(Weakened variant of Arora and Barak Def. 9.8)}
 A \textit{secure pseudorandom generator} (PRG) is a polynomial time computable function $\{0, 1\}^* \to \{0, 1\}^*$ such that $|G(x)| = |l(|x|)|$ for some function $l : \mathbb{N} \to \mathbb{N}$, such that for every probabilistic polynomial time algorithm $A$,
-$$
+\begin{equation} \label{eq:prg}
 |\Pr_{s \sim \text{Uniform}(\{0, 1\}^n)}[A(G(s)) = 1] - \Pr_{y \sim \text{Uniform}(\{0, 1\}^{l(n)})}[A(y) = 1]| \underset{n \to \infty}{\to} 0
-$$
-
+\end{equation}
 The function $l$ is called the stretch of the PRG.
+% I say the stretch is \textit{superlinear} if $l(n) / n \to \infty$ as $n \to \infty$.
 \end{defn}
+This definition is weaker than the definition given in Arora and Barak, as it only requires the expression in eq.~\ref{eq:prg} to tend to zero, rather than to zero at a superpolynomial rate, as in eq.~\ref{eq:oneway}, and as in Arora and Barak's definition of a secure PRG.
+The reduction in this report shows that the existence of a secure PRG, as defined here, with superlinear stretch implies the non-existence of typical-case inference algorithms with certain tolerances.
+The existance of secure PRGs as defined in Arora and Barak is a strictly stronger statement than the existance of secure PRGs as defined here, and their PRGs are instances of secure PRGs as defined here.
 
 It is known that the existence of one-way functions implies the existence of secure pseudorandom generators.
 Thus, to the extent that it is believed that one-way functions exist, it is also believed that secure pseudorandom generators exist.
-\begin{prop}{(Arora and Barak Thm. 9.9)}
+\begin{prop}{(Arora and Barak Thm. 9.9)} \label{prop:oneway_to_prg}
 If there exists a one-way function, then there exists a secure pseudorandom generator with stretch $l(n) = n^c$.
 \end{prop}
+The reason I include the superpolynomial convergence rate in Def.~\ref{def:oneway} is to ensure that this theorem goes through.
+As far as I am aware, it may be that given my weaker definition of a secure PRG, a weaker definition of one-way function would also suffice to imply the existance of such PRGs, but I have not verified this.
 
 \section{Main result}
+% \begin{defn}
+% I call a function $l(n) : \mathbb{N} \to \mathbb{N}$ a well-behaved stretch function iff $\lim_{n \to \infty}[l(n) - n] = \infty$ and $l$ is invertible.
+% \end{defn}
+
 \begin{thm} \label{thm:main}
-If there exists a polnomial-time, deterministic, typical-case additive PMF approximation algorithm with tolerances $\epsilon < \frac{1}{2}$, $\rho < \frac{1}{4}$,
-then there does not exist a secure pseudorandom generator with stretch $l$ s.t. $l(n) - n \underset{n \to \infty}{\to} \infty$.
+If there exists a polynomial-time typical-case additive PMF approximation algorithm $A$ with tolerances $\epsilon < \frac{1}{2}$, $\rho < \frac{1}{4}$,
+then there does not exist a secure pseudorandom generator with an invertible stretch function $l$ such that $\lim_{n \to \infty}[l(n) - n] = \infty$.
+This holds whether $A$ is deterministic or probabilistic.
 \end{thm}
 
 \begin{cor}
-If there exists a polnomial-time, deterministic, typical-case additive PMF approximation algorithm with tolerances $\epsilon < \frac{1}{2}$, $\rho < \frac{1}{4}$,
+If there exists a polynomial-time, deterministic, typical-case additive PMF approximation algorithm with tolerances $\epsilon < \frac{1}{2}$, $\rho < \frac{1}{4}$,
 then one-way functions do not exist.
 \end{cor}
-\noindent The corollary follows because if one-way functions exist, there exists a secure PRG with stretch $l(n) = n^2$.
+\noindent The corollary follows because if one-way functions exist, by Proposition~\ref{prop:oneway_to_prg}, there exists a secure PRG with stretch $l(n) = n^2$.
 
-\begin{proof}{(Proof of Theorem~\ref{thm:main}.)}
-
-\medskip
-\noindent \textbf{Proof setup.}
-For contradiction, suppose $A$ is a polynomial-time typical-case additive PMF approximation algorithm with tolerances $\epsilon < \frac{1}{2}$ and $\rho < \frac{1}{4}$.
+\begin{proof}{(Theorem~\ref{thm:main})}
+For contradiction, suppose $A$ is a deterministic polynomial-time typical-case additive PMF approximation algorithm with tolerances $\epsilon < \frac{1}{2}$ and $\rho < \frac{1}{4}$.
+(The case where $A$ is probabilistic will be covered at the end of the proof.)
 Let $\delta > 0$ be s.t. $\epsilon < \frac{1}{2} - \delta$.
-Suppose $G$ is a secure PRG with stretch $l(n)$ s.t. $\lim_{n \to \infty} [l(n) - n] = \infty$.
-By lemma~\ref{lem:bijective_stretch}, I will assume without loss of generality that $l$ is a bijection and that the $l^{-1}$ can be computed in polynomial time.
+Suppose $G$ is a secure PRG with invertible stretch function $l(n)$ s.t. $\lim_{n \to \infty} [l(n) - n] = \infty$.
+Note that $l^{-1}$ is computable in $\text{poly}(n)$ time, because given $m$, one can iterate through the values $n = 1, 2, \dots, m$ to find when $l(n) = m$.
 
 \medskip
 \noindent \textbf{Proof outline.}
@@ -539,7 +551,7 @@ Finally, it suffices to take $N = \max(N_1, N_2)$.
 
 \medskip
 \noindent
-\textbf{Extending the proof to the case where the inference algorithm $A$ is stochastic.}
+\textbf{Extending the proof to the case where the inference algorithm $A$ is probabilistic.}
 This extension is fairly straightforward; we simply need to track several additional terms in the analysis, to control the probability that algorithm $B$ fails to indicate whether $y \in \text{range}(G)$ for a value $y \in \Ygood$.
 Since we can upper-bound this probability arbitrarily tightly by boosting the probabilistic version of algorithm $B$ through replication, the ultimate conclusion is the same as before.
 
@@ -620,19 +632,30 @@ $$
 
 \end{proof}
 
-Finally, here is a proof of the minor lemma used at the beginning of the proof of Theorem~\ref{thm:main}.
-\begin{lem} \label{lem:bijective_stretch}
-If there exists a secure PRG $G$ with stretch $l(n)$ 
-s.t. $\lim_{n\to\infty}[l(n) - n] = \infty$, then
-% s.t. $n > N \implies l(n) \geq n + \log(1/\delta)$,
-there exists a PRG $G'$ with stretch $l'$ satisfying the same property, and such that $l'$ is a bijection
-such that $(l')^{-1}$ can be computed in polynomial time.
-\end{lem}
-\begin{proof}
-\textbf{TODO.}
-% It suffices to take $G'$ to compute the identity on seeds of length $\leq N$, and let $G'$ output the first $n + \log(1/\delta)$ bits of $G(s)$ on seeds $s$ with $|s| > N$.
-% (This means $G'$ does not appear random n short seeds, but our definition of secure PRG only requires that $G'$ appears random in the limit of long seeds.)
-\end{proof}
+% Finally, here is a proof of the minor lemma used at the beginning of the proof of Theorem~\ref{thm:main}.
+% \begin{lem} \label{lem:bijective_stretch}
+% If there exists a secure PRG $G$ with stretch $l(n)$ such that $\lim_{n \to \infty} [l(n) - n] = \infty$,
+% then
+% there exists a PRG $G'$ with superlinear stretch $l'$ such that $l'$ is a bijection and such that  $(l')^{-1}$ can be computed in polynomial time.
+% \end{lem}
+% \begin{proof}
+% For any $k \in \mathbb{N}$, let $N_k$ be the smallest element of $\mathbb{N}$ such that $n \geq N_k \implies l(n) - n > k$.
+% For any $n \in \mathbb{N}$, let $k_n$ be the smallest $k$ such that $n \geq N_k$.
+% Let $l'(n) = n + k_n$.
+% Observe that $l'$ is strictly increasing and hence a bijection.
+% Its inverse can be computed as follows.
+% Consider output $m$ of $l'$.
+% For each value $n = 1, 2, \dots$, compute $l'(n)$ and check if it equals $m$.
+% Output $n$ once this is the case.
+% Since $m > n$, and this process terminates in at most $n$ steps,
+% this process can be done in polynomial time in $m$.
+
+% Finally, take $G'(x) := G(x)_{1:l'(n)}$, where $y_{1:t}$ denotes the first $t$ bits of $y$.
+% If an algorithm could distinguish the outputs of $G'$ from uniform, then it could certainly distinguish the outputs of $G$ from uniform by only considering the first $l'(n)$ bits.
+% Thus $G'$ is also a secure pseudorandom generator.
+% % Since $l(n)/n \to \infty$, there exists $N$ such that $l(n) > 2n$ for all $n \geq N$.
+% % Let $l'$
+% \end{proof}
 
 % \printbibliography
 

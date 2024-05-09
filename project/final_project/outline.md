@@ -1,6 +1,7 @@
 Paper outline
 
 Title: Is posterior inference usually easy, in all graphical models?
+or: The complexity of inference on typical-case observations in worst-case Bayesian networks.
 
 - Background / technical introduction
     - The task of posterior inference is, given P, X, Y, y, to characterize P(X | Y = y)

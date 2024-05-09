@@ -41,6 +41,7 @@
       \strng{authorbibnamehash}{7d061a1afd632bfc2f7084d59f02dec6}
       \strng{authornamehash}{7d061a1afd632bfc2f7084d59f02dec6}
       \strng{authorfullhash}{7d061a1afd632bfc2f7084d59f02dec6}
+      \field{extraname}{1}
       \field{sortinit}{1}
       \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
       \field{labelnamesource}{author}
@@ -52,6 +53,70 @@
       \field{year}{1993}
       \field{pages}{141\bibrangedash 153}
       \range{pages}{13}
+    \endentry
+    \entry{cooper1990}{article}{}
+      \name{author}{1}{}{%
+        {{hash=ae44280700db382c780fe95952f4cb4c}{%
+           family={Cooper},
+           familyi={C\bibinitperiod},
+           given={Gregory\bibnamedelima F},
+           giveni={G\bibinitperiod\bibinitdelim F\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {Elsevier}%
+      }
+      \strng{namehash}{ae44280700db382c780fe95952f4cb4c}
+      \strng{fullhash}{ae44280700db382c780fe95952f4cb4c}
+      \strng{bibnamehash}{ae44280700db382c780fe95952f4cb4c}
+      \strng{authorbibnamehash}{ae44280700db382c780fe95952f4cb4c}
+      \strng{authornamehash}{ae44280700db382c780fe95952f4cb4c}
+      \strng{authorfullhash}{ae44280700db382c780fe95952f4cb4c}
+      \field{sortinit}{3}
+      \field{sortinithash}{ad6fe7482ffbd7b9f99c9e8b5dccd3d7}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Artificial intelligence}
+      \field{number}{2-3}
+      \field{title}{The computational complexity of probabilistic inference using Bayesian belief networks}
+      \field{volume}{42}
+      \field{year}{1990}
+      \field{pages}{393\bibrangedash 405}
+      \range{pages}{13}
+    \endentry
+    \entry{dagum1997optimal}{article}{}
+      \name{author}{2}{}{%
+        {{hash=933c667398ff22146f95f8a2e7b0bb7a}{%
+           family={Dagum},
+           familyi={D\bibinitperiod},
+           given={Paul},
+           giveni={P\bibinitperiod}}}%
+        {{hash=e6551d9c62955309f7597c6fc741020a}{%
+           family={Luby},
+           familyi={L\bibinitperiod},
+           given={Michael},
+           giveni={M\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {Elsevier}%
+      }
+      \strng{namehash}{7d061a1afd632bfc2f7084d59f02dec6}
+      \strng{fullhash}{7d061a1afd632bfc2f7084d59f02dec6}
+      \strng{bibnamehash}{7d061a1afd632bfc2f7084d59f02dec6}
+      \strng{authorbibnamehash}{7d061a1afd632bfc2f7084d59f02dec6}
+      \strng{authornamehash}{7d061a1afd632bfc2f7084d59f02dec6}
+      \strng{authorfullhash}{7d061a1afd632bfc2f7084d59f02dec6}
+      \field{extraname}{2}
+      \field{sortinit}{8}
+      \field{sortinithash}{a231b008ebf0ecbe0b4d96dcc159445f}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Artificial Intelligence}
+      \field{number}{1-2}
+      \field{title}{An optimal approximation algorithm for Bayesian inference}
+      \field{volume}{93}
+      \field{year}{1997}
+      \field{pages}{1\bibrangedash 27}
+      \range{pages}{27}
     \endentry
   \enddatalist
 \endrefsection

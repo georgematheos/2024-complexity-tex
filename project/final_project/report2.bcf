@@ -2345,7 +2345,14 @@
   </bcf:bibdata>
   <bcf:section number="0">
     <bcf:citekey order="1">dagum1993</bcf:citekey>
-    <bcf:citekey order="3">dagum1993</bcf:citekey>
+    <bcf:citekey order="3">cooper1990</bcf:citekey>
+    <bcf:citekey order="4">dagum1993</bcf:citekey>
+    <bcf:citekey order="5">dagum1993</bcf:citekey>
+    <bcf:citekey order="6">dagum1993</bcf:citekey>
+    <bcf:citekey order="8">dagum1997optimal</bcf:citekey>
+    <bcf:citekey order="9">dagum1993</bcf:citekey>
+    <bcf:citekey order="10">cooper1990</bcf:citekey>
+    <bcf:citekey order="11">dagum1997optimal</bcf:citekey>
   </bcf:section>
   <!-- SORTING TEMPLATES -->
   <bcf:sortingtemplate name="none">
@@ -2354,4 +2361,13 @@
     </bcf:sort>
   </bcf:sortingtemplate>
   <!-- DATALISTS -->
+  <bcf:datalist section="0"
+                name="none/global//global/global"
+                type="entry"
+                sortingtemplatename="none"
+                sortingnamekeytemplatename="global"
+                labelprefix=""
+                uniquenametemplatename="global"
+                labelalphanametemplatename="global">
+  </bcf:datalist>
 </bcf:controlfile>

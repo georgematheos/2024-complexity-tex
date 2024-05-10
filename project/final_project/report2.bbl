@@ -54,6 +54,33 @@
       \field{pages}{141\bibrangedash 153}
       \range{pages}{13}
     \endentry
+    \entry{mansinghka2009natively}{thesis}{}
+      \true{moreauthor}
+      \true{morelabelname}
+      \name{author}{1}{}{%
+        {{hash=bfeeb6f521741924e1cd429da759fda2}{%
+           family={Mansinghka},
+           familyi={M\bibinitperiod},
+           given={Vikash\bibnamedelima Kumar},
+           giveni={V\bibinitperiod\bibinitdelim K\bibinitperiod}}}%
+      }
+      \list{institution}{1}{%
+        {Citeseer}%
+      }
+      \strng{namehash}{5e9e97ae63ba29e09e015d0923e9969f}
+      \strng{fullhash}{5e9e97ae63ba29e09e015d0923e9969f}
+      \strng{bibnamehash}{5e9e97ae63ba29e09e015d0923e9969f}
+      \strng{authorbibnamehash}{5e9e97ae63ba29e09e015d0923e9969f}
+      \strng{authornamehash}{5e9e97ae63ba29e09e015d0923e9969f}
+      \strng{authorfullhash}{5e9e97ae63ba29e09e015d0923e9969f}
+      \field{sortinit}{2}
+      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Natively probabilistic computation}
+      \field{type}{phdthesis}
+      \field{year}{2009}
+    \endentry
     \entry{cooper1990}{article}{}
       \name{author}{1}{}{%
         {{hash=ae44280700db382c780fe95952f4cb4c}{%
@@ -82,6 +109,181 @@
       \field{year}{1990}
       \field{pages}{393\bibrangedash 405}
       \range{pages}{13}
+    \endentry
+    \entry{yamakami1999polynomial}{article}{}
+      \name{author}{1}{}{%
+        {{hash=b071d80b91f779be440bf83cd33773ef}{%
+           family={Yamakami},
+           familyi={Y\bibinitperiod},
+           given={Tomoyuki},
+           giveni={T\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {Elsevier}%
+      }
+      \strng{namehash}{b071d80b91f779be440bf83cd33773ef}
+      \strng{fullhash}{b071d80b91f779be440bf83cd33773ef}
+      \strng{bibnamehash}{b071d80b91f779be440bf83cd33773ef}
+      \strng{authorbibnamehash}{b071d80b91f779be440bf83cd33773ef}
+      \strng{authornamehash}{b071d80b91f779be440bf83cd33773ef}
+      \strng{authorfullhash}{b071d80b91f779be440bf83cd33773ef}
+      \field{sortinit}{8}
+      \field{sortinithash}{a231b008ebf0ecbe0b4d96dcc159445f}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{journal of complexity}
+      \field{number}{4}
+      \field{title}{Polynomial time samplable distributions}
+      \field{volume}{15}
+      \field{year}{1999}
+      \field{pages}{557\bibrangedash 574}
+      \range{pages}{18}
+    \endentry
+    \entry{edmonds2017concepts}{thesis}{}
+      \name{author}{1}{}{%
+        {{hash=0691bcdacaf1ac1f78ce3106f37f1274}{%
+           family={Edmonds},
+           familyi={E\bibinitperiod},
+           given={Alex},
+           giveni={A\bibinitperiod}}}%
+      }
+      \list{institution}{1}{%
+        {University of Toronto}%
+      }
+      \strng{namehash}{0691bcdacaf1ac1f78ce3106f37f1274}
+      \strng{fullhash}{0691bcdacaf1ac1f78ce3106f37f1274}
+      \strng{bibnamehash}{0691bcdacaf1ac1f78ce3106f37f1274}
+      \strng{authorbibnamehash}{0691bcdacaf1ac1f78ce3106f37f1274}
+      \strng{authornamehash}{0691bcdacaf1ac1f78ce3106f37f1274}
+      \strng{authorfullhash}{0691bcdacaf1ac1f78ce3106f37f1274}
+      \field{sortinit}{9}
+      \field{sortinithash}{0a5ebc79d83c96b6579069544c73c7d4}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Concepts of Computationally Efficient Samplability}
+      \field{type}{phdthesis}
+      \field{year}{2017}
+    \endentry
+    \entry{arora2009computational}{book}{}
+      \name{author}{2}{}{%
+        {{hash=8e08b59145b9531815169c7ed0a0b055}{%
+           family={Arora},
+           familyi={A\bibinitperiod},
+           given={Sanjeev},
+           giveni={S\bibinitperiod}}}%
+        {{hash=ef4505bdcbc58ae15e11f8bc6c51af7e}{%
+           family={Barak},
+           familyi={B\bibinitperiod},
+           given={Boaz},
+           giveni={B\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {Cambridge University Press}%
+      }
+      \strng{namehash}{af2b04a0bcd76cc1a4cd54f6e4b95158}
+      \strng{fullhash}{af2b04a0bcd76cc1a4cd54f6e4b95158}
+      \strng{bibnamehash}{af2b04a0bcd76cc1a4cd54f6e4b95158}
+      \strng{authorbibnamehash}{af2b04a0bcd76cc1a4cd54f6e4b95158}
+      \strng{authornamehash}{af2b04a0bcd76cc1a4cd54f6e4b95158}
+      \strng{authorfullhash}{af2b04a0bcd76cc1a4cd54f6e4b95158}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Computational complexity: a modern approach}
+      \field{year}{2009}
+    \endentry
+    \entry{jerrum1986}{article}{}
+      \name{author}{3}{}{%
+        {{hash=da8b5cc662b638101ad76b3586ccf505}{%
+           family={Jerrum},
+           familyi={J\bibinitperiod},
+           given={Mark\bibnamedelima R},
+           giveni={M\bibinitperiod\bibinitdelim R\bibinitperiod}}}%
+        {{hash=5f6de757ace433a38a527a005db316f1}{%
+           family={Valiant},
+           familyi={V\bibinitperiod},
+           given={Leslie\bibnamedelima G},
+           giveni={L\bibinitperiod\bibinitdelim G\bibinitperiod}}}%
+        {{hash=4391dea254c3bbcaff1fefed241caed0}{%
+           family={Vazirani},
+           familyi={V\bibinitperiod},
+           given={Vijay\bibnamedelima V},
+           giveni={V\bibinitperiod\bibinitdelim V\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {Elsevier}%
+      }
+      \strng{namehash}{95718bb595874bb243fa984de233286c}
+      \strng{fullhash}{95718bb595874bb243fa984de233286c}
+      \strng{bibnamehash}{95718bb595874bb243fa984de233286c}
+      \strng{authorbibnamehash}{95718bb595874bb243fa984de233286c}
+      \strng{authornamehash}{95718bb595874bb243fa984de233286c}
+      \strng{authorfullhash}{95718bb595874bb243fa984de233286c}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Theoretical computer science}
+      \field{title}{Random generation of combinatorial structures from a uniform distribution}
+      \field{volume}{43}
+      \field{year}{1986}
+      \field{pages}{169\bibrangedash 188}
+      \range{pages}{20}
+    \endentry
+    \entry{akmal2022majority}{inproceedings}{}
+      \name{author}{2}{}{%
+        {{hash=50443cb7d49d4c5690be451dc09579a8}{%
+           family={Akmal},
+           familyi={A\bibinitperiod},
+           given={Shyan},
+           giveni={S\bibinitperiod}}}%
+        {{hash=fae3fd8ed553265acb8288519a5a1f55}{%
+           family={Williams},
+           familyi={W\bibinitperiod},
+           given={Ryan},
+           giveni={R\bibinitperiod}}}%
+      }
+      \list{organization}{1}{%
+        {IEEE}%
+      }
+      \strng{namehash}{f2d23e4d15a6a2bc10ba128d59921db8}
+      \strng{fullhash}{f2d23e4d15a6a2bc10ba128d59921db8}
+      \strng{bibnamehash}{f2d23e4d15a6a2bc10ba128d59921db8}
+      \strng{authorbibnamehash}{f2d23e4d15a6a2bc10ba128d59921db8}
+      \strng{authornamehash}{f2d23e4d15a6a2bc10ba128d59921db8}
+      \strng{authorfullhash}{f2d23e4d15a6a2bc10ba128d59921db8}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{booktitle}{2021 IEEE 62nd Annual Symposium on Foundations of Computer Science (FOCS)}
+      \field{title}{majority-3sat (and related problems) in polynomial time}
+      \field{year}{2022}
+      \field{pages}{1033\bibrangedash 1043}
+      \range{pages}{11}
+    \endentry
+    \entry{tantau2022satisfaction}{article}{}
+      \name{author}{1}{}{%
+        {{hash=129e88d9b4e0ba07ca911d6e9aebfaca}{%
+           family={Tantau},
+           familyi={T\bibinitperiod},
+           given={Till},
+           giveni={T\bibinitperiod}}}%
+      }
+      \strng{namehash}{129e88d9b4e0ba07ca911d6e9aebfaca}
+      \strng{fullhash}{129e88d9b4e0ba07ca911d6e9aebfaca}
+      \strng{bibnamehash}{129e88d9b4e0ba07ca911d6e9aebfaca}
+      \strng{authorbibnamehash}{129e88d9b4e0ba07ca911d6e9aebfaca}
+      \strng{authornamehash}{129e88d9b4e0ba07ca911d6e9aebfaca}
+      \strng{authorfullhash}{129e88d9b4e0ba07ca911d6e9aebfaca}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{arXiv preprint arXiv:2201.08895}
+      \field{title}{On the Satisfaction Probability of $ k $-CNF Formulas}
+      \field{year}{2022}
     \endentry
     \entry{dagum1997optimal}{article}{}
       \name{author}{2}{}{%
@@ -117,6 +319,158 @@
       \field{year}{1997}
       \field{pages}{1\bibrangedash 27}
       \range{pages}{27}
+    \endentry
+    \entry{kwisthout2018approximate}{article}{}
+      \name{author}{1}{}{%
+        {{hash=7c0d21248daa1368123f9d053f2501bf}{%
+           family={Kwisthout},
+           familyi={K\bibinitperiod},
+           given={Johan},
+           giveni={J\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {Elsevier}%
+      }
+      \strng{namehash}{7c0d21248daa1368123f9d053f2501bf}
+      \strng{fullhash}{7c0d21248daa1368123f9d053f2501bf}
+      \strng{bibnamehash}{7c0d21248daa1368123f9d053f2501bf}
+      \strng{authorbibnamehash}{7c0d21248daa1368123f9d053f2501bf}
+      \strng{authornamehash}{7c0d21248daa1368123f9d053f2501bf}
+      \strng{authorfullhash}{7c0d21248daa1368123f9d053f2501bf}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{International Journal of Approximate Reasoning}
+      \field{title}{Approximate inference in Bayesian networks: Parameterized complexity results}
+      \field{volume}{93}
+      \field{year}{2018}
+      \field{pages}{119\bibrangedash 131}
+      \range{pages}{13}
+    \endentry
+    \entry{freer2010probabilistic}{inproceedings}{}
+      \name{author}{3}{}{%
+        {{hash=d564c5d552ef1154dd3c96611630f40d}{%
+           family={Freer},
+           familyi={F\bibinitperiod},
+           given={Cameron\bibnamedelima E},
+           giveni={C\bibinitperiod\bibinitdelim E\bibinitperiod}}}%
+        {{hash=b4a161cc1ca940e73d86b630facd85f5}{%
+           family={Mansinghka},
+           familyi={M\bibinitperiod},
+           given={Vikash\bibnamedelima K},
+           giveni={V\bibinitperiod\bibinitdelim K\bibinitperiod}}}%
+        {{hash=8c119ee3a501e8daf8a47ae46559c666}{%
+           family={Roy},
+           familyi={R\bibinitperiod},
+           given={Daniel\bibnamedelima M},
+           giveni={D\bibinitperiod\bibinitdelim M\bibinitperiod}}}%
+      }
+      \strng{namehash}{a7cdb755459882b693671e105db27dd2}
+      \strng{fullhash}{a7cdb755459882b693671e105db27dd2}
+      \strng{bibnamehash}{a7cdb755459882b693671e105db27dd2}
+      \strng{authorbibnamehash}{a7cdb755459882b693671e105db27dd2}
+      \strng{authornamehash}{a7cdb755459882b693671e105db27dd2}
+      \strng{authorfullhash}{a7cdb755459882b693671e105db27dd2}
+      \field{sortinit}{2}
+      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{booktitle}{NIPS Workshop on Monte Carlo Methods for Modern Applications}
+      \field{title}{When are probabilistic programs probably computationally tractable}
+      \field{year}{2010}
+    \endentry
+    \entry{moitra2019approximate}{article}{}
+      \name{author}{1}{}{%
+        {{hash=d3a533fb3a2bb9d053af2a25892a7315}{%
+           family={Moitra},
+           familyi={M\bibinitperiod},
+           given={Ankur},
+           giveni={A\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {ACM New York, NY, USA}%
+      }
+      \strng{namehash}{d3a533fb3a2bb9d053af2a25892a7315}
+      \strng{fullhash}{d3a533fb3a2bb9d053af2a25892a7315}
+      \strng{bibnamehash}{d3a533fb3a2bb9d053af2a25892a7315}
+      \strng{authorbibnamehash}{d3a533fb3a2bb9d053af2a25892a7315}
+      \strng{authornamehash}{d3a533fb3a2bb9d053af2a25892a7315}
+      \strng{authorfullhash}{d3a533fb3a2bb9d053af2a25892a7315}
+      \field{sortinit}{2}
+      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Journal of the ACM (JACM)}
+      \field{number}{2}
+      \field{title}{Approximate counting, the Lovász local lemma, and inference in graphical models}
+      \field{volume}{66}
+      \field{year}{2019}
+      \field{pages}{1\bibrangedash 25}
+      \range{pages}{25}
+    \endentry
+    \entry{ackerman2019computability}{article}{}
+      \name{author}{3}{}{%
+        {{hash=a647d7b5a59ffec74ff01b8cdcf72306}{%
+           family={Ackerman},
+           familyi={A\bibinitperiod},
+           given={Nathanael\bibnamedelima L},
+           giveni={N\bibinitperiod\bibinitdelim L\bibinitperiod}}}%
+        {{hash=d564c5d552ef1154dd3c96611630f40d}{%
+           family={Freer},
+           familyi={F\bibinitperiod},
+           given={Cameron\bibnamedelima E},
+           giveni={C\bibinitperiod\bibinitdelim E\bibinitperiod}}}%
+        {{hash=8c119ee3a501e8daf8a47ae46559c666}{%
+           family={Roy},
+           familyi={R\bibinitperiod},
+           given={Daniel\bibnamedelima M},
+           giveni={D\bibinitperiod\bibinitdelim M\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {ACM New York, NY, USA}%
+      }
+      \strng{namehash}{1be81ce689772439bc7c6067465a547b}
+      \strng{fullhash}{1be81ce689772439bc7c6067465a547b}
+      \strng{bibnamehash}{1be81ce689772439bc7c6067465a547b}
+      \strng{authorbibnamehash}{1be81ce689772439bc7c6067465a547b}
+      \strng{authornamehash}{1be81ce689772439bc7c6067465a547b}
+      \strng{authorfullhash}{1be81ce689772439bc7c6067465a547b}
+      \field{sortinit}{2}
+      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Journal of the ACM (JACM)}
+      \field{number}{3}
+      \field{title}{On the computability of conditional probability}
+      \field{volume}{66}
+      \field{year}{2019}
+      \field{pages}{1\bibrangedash 40}
+      \range{pages}{40}
+    \endentry
+    \entry{weihrauch2012computable}{book}{}
+      \name{author}{1}{}{%
+        {{hash=fcc98f9d2cc0c8b77df48c5ba64f944c}{%
+           family={Weihrauch},
+           familyi={W\bibinitperiod},
+           given={Klaus},
+           giveni={K\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {Springer Science \& Business Media}%
+      }
+      \strng{namehash}{fcc98f9d2cc0c8b77df48c5ba64f944c}
+      \strng{fullhash}{fcc98f9d2cc0c8b77df48c5ba64f944c}
+      \strng{bibnamehash}{fcc98f9d2cc0c8b77df48c5ba64f944c}
+      \strng{authorbibnamehash}{fcc98f9d2cc0c8b77df48c5ba64f944c}
+      \strng{authornamehash}{fcc98f9d2cc0c8b77df48c5ba64f944c}
+      \strng{authorfullhash}{fcc98f9d2cc0c8b77df48c5ba64f944c}
+      \field{sortinit}{2}
+      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Computable analysis: an introduction}
+      \field{year}{2012}
     \endentry
   \enddatalist
 \endrefsection

@@ -87,18 +87,18 @@
     \Large
     % Are there Bayesian networks in which posterior inference is difficult on typical observations?
     % On the complexity of posterior inference under typical-case observations in worst-case Bayesian networks
-    Is there an efficient algorithm for approximate posterior inference in Bayesian networks on typical-case observations?
+    Is there an efficient algorithm for approximate posterior inference in all Bayesian networks on typical-case observations?
 
     \vspace{3pt}
     \normalsize
-    George Matheos \quad \vline \quad Final project report for MIT course 6.541
+    George Matheos \quad \vline \quad Final project report for MIT course 6.541 \quad \vline \quad \today
 
-    \vspace{3pt}
-    Draft as of \today
+    % \vspace{3pt}
+    % Draft as of \today
 \end{center}
 
 \begin{abstract}
-In this paper, I extend Dagum and Luby's 1993 result \cite{dagum1993}, strengthening the sense in which it is known that under standard complexity-theoretic conjectures, there are no efficient general-purpose algorithms for approximate posterior inference in Bayesian networks.
+\noindent In this paper, I extend Dagum and Luby's 1993 result \cite{dagum1993}, strengthening the sense in which it is known that under standard complexity-theoretic conjectures, there are no efficient general-purpose algorithms for approximate posterior inference in Bayesian networks.
 Dagum and Luby showed that if $\P \neq \NP$, then there is no algorithm which can do approximate posterior inference in any Bayesian network, conditioning on worst-case observed values.
 I extend this to show that if pseudorandom generators or one-way functions exist,
 then there is no algorithm which can do approximate posterior inference in every Bayesian network, on random observations distributed according to the Bayesian network, with probability greater than 3/4.
@@ -107,7 +107,7 @@ Under the aformentioned assumptions, this implies that there is no general-purpo
 
 \section{Introduction}
 A central computational problem in science, artificial intelligence, and statistics, is posterior inference in probabilistic models.
-This problem's input is the description of a probability distribuiton $P$ on random values $X$ and $Y$, and an assignment $y$ to $Y$.
+This problem's input is the description of a probability distribution $P$ on random values $X$ and $Y$, and an assignment $y$ to $Y$.
 Its output is a description of the posterior distribution $P(X | Y = y)$.
 A natural question for complexity theorists, therefore, is how hard variants of this problem are.
 One family of probabilistic models in which to study the complexity of inference is the family of Bayesian networks.
@@ -145,12 +145,11 @@ Dagum and Luby's hardness results therefore leave open the possibility that ther
 If it were possible to develop an inference algorithm which almost always worked in any well-specified Bayesian network model, that would be extremely valuable.
 This possibility has not been ruled out by existing results on the complexity of probabilistic inference.
 
-In this paper, I extend Dagum and Luby's 1993 result \cite{dagum1993} to show that not only is approximate inference hard on worst-case observations, but in fact, if standard complexity theoretic conjectures hold, then there exist Bayesian networks in which inference under a randomly-generated observation is hard with probability to 1/4.
-\textcolor{orange}{TODO: check that I'm getting this right.}
+In this paper, I extend Dagum and Luby's 1993 result \cite{dagum1993} to show that not only is approximate inference hard on worst-case observations, but in fact, if standard complexity theoretic conjectures hold, then there exist Bayesian networks in which inference under a randomly-generated observation is hard with probability 1/4.
 That is, if these standard conjectures hold, then for any inference algorithm $A$, there exists a Bayesian network $P$ and a set of observations $\mathcal{Y}_\text{hard}$ such that $P(\mathcal{Y}_\text{hard}) \geq 1/4$, and the inference algorithm fails approximately compute $P(X | Y = y)$ on any $y \in \mathcal{Y}_\text{hard}$.
-Theorem~\ref{thm:main} shows that one sufficient condition for this result is the existance of a pseudorandom generator.
+Theorem~\ref{thm:main} shows that one sufficient condition for this result is the existence of a pseudorandom generator.
 % Specifically, Theorem~\ref{thm:main} shows that if pseudo-random generators exist, there is no algorithm which can do inference on at least 1/4 of observations in any Bayesian networks.
-From this follows Corollary~\ref{cor:oneway}, stating that the existance of one-way functions also imply the nonexistance of universal inference algorithms which succeed on a $3/4$-typical set of observations.
+From this follows Corollary~\ref{cor:oneway}, stating that the existence of one-way functions also imply the nonexistence of universal inference algorithms which succeed on a $3/4$-typical set of observations.
 Roughly, this means that if general-purpose typical-case approximate inference is possible, then public key cryptography is impossible.
 
 This result provides new evidence that there are no general-purpose inference algorithms which succeed in every probabilistic model.
@@ -159,7 +158,7 @@ The possibility remains that there are meaningful senses in which for typical pr
 
 \subsection{Summary of the proof of the main result}
 The key idea in the proof of Theorem~\ref{thm:main} is of a fairly different character from the reductions used in proofs of the hardness of inference from Cooper \cite{cooper1990} and Dagum and Luby \cite{dagum1993}.
-The starting point for this proof is not the assumption that $\P \neq \NP$, but instead the assumption of the existance of a pseudorandom generator.
+The starting point for this proof is not the assumption that $\P \neq \NP$, but instead the assumption of the existence of a pseudorandom generator.
 This is a function $G: \{0, 1\}^* \to \{0, 1\}^*$ such that for any polynomial-time algorithm $A$, the distribution of $A$'s outputs on uniformly random inputs is very close to the distribution of $A$'s outputs on the outputs of $G$.
 % Speaking coarsely, one implication of this is that no polynomial-time algorithm can distinguish the outputs of $G$ from uniformly random strings with nontrivial probability.
 
@@ -186,7 +185,7 @@ These relationships indicate that if it is computationally hard to perform a par
 Section~\ref{sec:background} provides background on Bayesian networks and inference problems.
 In this section I define the problem of typical-case PMF approximation up to additive error.
 It follows from subsection~\ref{sec:hardness_relationships} that if it is this is a computationally hard problem, inference on typical-case observations is hard under any of the other formulations outlined herein.
-Section~\ref{sec:background} also states Dagum and Luby's 1993 hardness result, and the conjectures of the existance of one-way functions and secure pseudorandom generators.
+Section~\ref{sec:background} also states Dagum and Luby's 1993 hardness result, and the conjectures of the existence of one-way functions and secure pseudorandom generators.
 Section~\ref{sec:main} states the main result of this paper, Theorem~\ref{thm:main}, which shows that if secure pseudorandom generators exist, then there is no algorithm nor probabilistic algorithm which, for any Bayesian network, can perform additive PMF approximation, up to error $\epsilon$ for any $\epsilon < 1/2$, on a $(1 - \rho)$-typical set of observations, for any $\rho < 1/4$.
 
 \section{Posterior inference and computation} \label{sec:posterior_inference}
@@ -213,6 +212,10 @@ $$
 Stated informally, the problem of posterior inference is:
 \textit{given a probabilistic model $P$ and a value $y$ with $P(Y = y) > 0$, characerize $P(X = x | Y = y)$}.
 
+Representing a probability distribution involves representing real-valued quantities, raising the question of how these values are stored in a computer.
+In this paper, I assume all real values are represented in computers as rational numbers stored exactly using a finite number of bits.
+The results in this paper are independent from the exact encoding, so I will not specify the representation of real values further.
+
 \subsection{Computational formulations of exact inference}
 % The posterior $P(X = \cdot | Y = y)$ is a probability distribution on the space $X$.
 % While it is desirable to have algorithms which can characterize these posteriors, there is no one canonical representation of a probability distribution for an algorithm to output.
@@ -222,7 +225,10 @@ There are several distinct algorithmic formulations:
 \begin{enumerate}
     \item \textbf{Probability mass function (PMF) computation.} Given a value $x \in X, y \in Y$, compute the number $P(X = x | Y = y)$.
     \item \textbf{Cumulative distribution function (CDF) computation.} Given a value $x \in X, y \in Y$, and letting strings in $x \in X \subseteq \{0, 1\}^*$ have lexographic ordering, compute the number $P(X \leq x | Y = y)$.
-    \item \textbf{Sampling.} Given a value $y \in Y$, sample a random value in $X$ according to the distribution $P(X = x | Y = y)$.  This requires the use of a probabilistic Turing machine.  Under standard formulations, this means we want a Turing machine $A$ which, given $y \in Y$ and an uniformly random bit sequence $r \in \{0, 1\}^*$, computes a value $A(y, r) \in X$ such that for all $x \in X$, $P(X = x | Y = y) = \Pr_r[x = A(y, r)]$.
+    \item \textbf{Sampling.} Given a value $y \in Y$, sample a random value in $X$ according to the distribution $P(X = x | Y = y)$.  This requires the use of a probabilistic Turing machine.  Under standard formulations, this means we want a Turing machine $A$ which, given $y \in Y$ and an uniformly random bit sequence $r \in \{0, 1\}^*$, computes a value $A(y, r) \in X$ such that for all $x \in X$, $P(X = x | Y = y) = \Pr_r[x = A(y, r)]$.\footnote{
+        The definition of exact sampling is more complicated when there are probabilities which do not have the form $m/2^k$ for some $m, k \in \mathbb{N}$.
+        For the purposes of this paper on approximate inference, this can be ignored.
+    }
     % \item \textbf{Expected value computation.} Given a value $y \in Y$ and a function $f : X \to \mathbb{R}$, compute the expected value $\mathbb{E}_{x \sim P(X = \cdot | Y = y)}[f(x)]$.  To make this formulation precise, we need a manner in which the function $f$ is represented using a bit string which can be input to an algorithm, and we need to specify how the outputs of $f$ are represented as bit strings.  Due to this complexity, the complexity theory literature appears to 
 \end{enumerate}
 
@@ -240,7 +246,7 @@ There are several standard formulations of approximate probabilistic inference a
     \item \textbf{PMF evaluation up to relative error.} Fix $\epsilon > 0$.  Algorithm $A$ does PMF evaluation in $P$ up to relative error $\epsilon$ if for any $x \in X, y \in Y$, it computes a number $A(x, y) \in (\frac{1}{1 + \epsilon}P(X = x | Y = y), (1 + \epsilon)P(X = x | Y = y))$
     \item \textbf{CDF evaluation up to additive error.} Fix $\epsilon > 0$.  Algorithm $A$ does CDF evaluation in $P$ up to additive error $\epsilon$ if for any $x \in X, y \in Y$, it computes a number $A(x, y)$ where $|A(x, y) - P(X \leq x | Y = y)| < \epsilon$.
     \item \textbf{CDF evaluation up to relative error.} Fix $\epsilon > 0$.  Algorithm $A$ does CDF evaluation in $P$ up to relative error $\epsilon$ if for any $x \in X, y \in Y$, it computes a number $A(x, y) \in (\frac{1}{1 + \epsilon}P(X \leq x | Y = y), (1 + \epsilon)P(X \leq x | Y = y))$.
-    \item \textbf{Approximate sampling with pointwise probability bounds.} There are several formulations of approximate sampling. One formulation is to say that probabilistic algorithm $A(y, r)$ (for random bitstring $r$) approximately samples from $P(X = x | Y = y)$ up to pointwise error $\delta$ if for all $x \in X$, $|\Pr_r[A(y, r) = x] - P(X = x | Y = y)| < \delta$.
+    \item \textbf{Approximate sampling with pointwise probability bounds.} There are several formulations of approximate sampling. One formulation is to say that probabilistic algorithm $A(y, r)$ (where the probabilistic nature of the algorithm is derived from its consumption of a uniformly random bitstring $r$) approximately samples from $P(X = x | Y = y)$ up to pointwise error $\delta$ if for all $x \in X$, $|\Pr_r[A(y, r) = x] - P(X = x | Y = y)| < \delta$.
 \end{enumerate}
 For any of the PMF or CDF computation problems, a probabilistic version can be defined in which a probabilistic algorithm $A$ is said to do PMF or CDF computation iff it satisfies the above specification with probability $\geq 2/3$ on any input.
 
@@ -252,23 +258,23 @@ probabilistic PMF computation up to additive error, then it is computationally d
 Note that the following reductions can be applied for any given observation $y$, so the results in this paper indicating that additive PMF approximation is hard on typical sets of observations imply that all of these inference problems are hard to solve on typical sets of observations.
 
 \begin{enumerate}
-    \item \textbf{Relative approximation for is harder than additive approximation for equal $\epsilon$.}
+    \item \textbf{Relative approximation for is at least as hard as additive approximation for equal $\epsilon$.}
     Consider a true PMF or CDF value $p$. If $\epsilon \geq 1$ then additive PMF or CDF approximation is trivial, so consider an $\epsilon < 1$.
     Since $p \in [0, 1]$, if $\hat{p}$ satisfies $\hat{p} \in (p/(1+\epsilon), (1+\epsilon)p)$, then $$|\hat{p} - p| \leq \max(|(1 + \epsilon)p - p|, |p/(1+\epsilon) - p|) \leq \max(|1 + \epsilon - 1|, |1/(1+\epsilon) - 1|) = \epsilon$$
     Thus if it is possible to compute a relative $\epsilon$ approximation to either CDF or PMF, it is also possible to compute an additive $\epsilon$ approximation to the same quantity.
 
-    \item \textbf{CDF computation is harder than PMF computation.} 
+    \item \textbf{CDF computation is at least as hard as PMF computation.} 
         \begin{enumerate}
             \item \textit{Exact computation.} Say $\mathsf{CDF}(x, y) := P(X \leq x | Y = y)$ can be computed exactly.  Then we can compute $\mathsf{PMF}(x, y) := P(X = x | Y = y) = \mathsf{CDF}(x, y) - \mathsf{CDF}(x - 1, y)$.
             \item \textit{Additive approximation.} Say we can compute an additive $\epsilon$ approximation $\mathsf{CDF}_\epsilon(x, y)$ to $P(X \leq x | Y = y)$. Then $\mathsf{PMF}_{2\epsilon}(x, y) := \mathsf{CDF}_\epsilon(x, y) - \mathsf{CDF}_\epsilon(x-1, y)$ is a $2\epsilon$ additive approximation to $P(X = x | Y = y)$.
             % \item \textit{Relative appoximation. }Say we can compute a relative $\epsilon$ approximation $\mathsf{CDF}'_\epsilon(x, y)$ to $P(X \leq x | Y = y)$. Then $\mathsf{PMF}_{2\epsilon}(x, y) := \mathsf{CDF}_\epsilon(x, y) - \mathsf{CDF}_\epsilon(x-1, y)$ is a $2\epsilon$ additive approximation to $P(X = x | Y = y)$.
         \end{enumerate}
-    \item \textbf{Sampling is harder than probabilistic PMF computation up to additive error.} Say that it is possible to sample with pointwise error $\epsilon / 2$ from $P(X = \cdot | Y = y)$. Let $Q$ be the exact distribution which can be sampled from, which has pointwise error $\leq \epsilon / 2$ from the posterior.  Consider an algorithm which generates $N$ independent samples $x_i \sim ~$ and computes $\hat{p} := \frac{1}{N} \sum_{i=1}^N 1_{x_i = x}$.
+    \item \textbf{Sampling is at least as hard as than probabilistic PMF computation up to additive error.} Say that it is possible to sample with pointwise error $\epsilon / 2$ from $P(X = \cdot | Y = y)$. Let $Q$ be the exact distribution which can be sampled from, which has pointwise error $\leq \epsilon / 2$ from the posterior.  Consider an algorithm which generates $N$ independent samples $x_i \sim ~$ and computes $\hat{p} := \frac{1}{N} \sum_{i=1}^N 1_{x_i = x}$.
     By the Hoeffding theorem, since $\mathbb{E}[\hat{p}] = Q(x)$, $\Pr[|\hat{p} - Q(x)| \geq \epsilon / 2] \leq 2e^{-\epsilon^2/(2N)}$. Thus if $N = 100/\epsilon^2$, $\Pr[|\hat{p} - Q(x)| \geq \epsilon / 2] << 1/3$.
     Because $|Q(x) = P(X = x | Y = y)| < \epsilon/2$, this means that
     $\Pr[|\hat{p} - P(X = x | Y = y)| > \epsilon] << 1/3$.
     Thus it is possible to compute an $\epsilon$ approximation to PMF at a cost $O(1/\epsilon^2)$ times the cost of performing approximate pointwise sampling.
-    Therefore a polynomial time approximate sampling algorithm implies the existance of a polynomial time additive PMF approximation algorithm.
+    Therefore a polynomial time approximate sampling algorithm implies the existence of a polynomial time additive PMF approximation algorithm.
 \end{enumerate}
 
 \noindent See \cite{yamakami1999polynomial} or \cite{edmonds2017concepts} for a more detailed discussion of some of these relationships, and for more information about complexity theoretic formulations of computing aspects of probability distributions.
@@ -294,10 +300,18 @@ $$
 where $a_{\Pa(v_i)}$ is the assignment to the parent variables of $v_i$ in $a$.
 I will often write $P$ to refer to the whole Bayesian network, the joint distribution on all its variables, and also marginal and conditional distributions on subsets of its variables.
 
+A Bayesian network can be regarded as defining a probabilistic process which generates assignments to the variables in $V$.
+A probabilistic computer with the ability to sample from all of the conditional distributions in the Bayesian network\footnote{
+This is always possible if, for instance, the conditional distributions have probability values which are dyadic rationals, that is rationals of the form $m/2^k$ for $m, k \in \mathbb{N}$.
+} can generate samples from the joint distribution $P$ by traversing the graph in topological order, and sampling a value for each variable $v$ from $P(v = \cdot | a_{\Pa(v)})$ when $v$ is encountered in the traversal.
+A Bayesian network can be regarded as the probabilistic analog of a circuit on no inputs, where deterministic logic gates are replaced by conditional probability distributions.
+
 \begin{defn}
 An \textbf{inference problem} consists of a Bayesian network $(V, E, P)$, a set of \textit{observed variables} $Y \subseteq V$, a set of \textit{query variables} $X \subseteq V$, and an assignment $y \in \{0, 1\}^{|Y|}$ to the observed variables such that $P(Y = y) > 0$.
 \end{defn}
 The goal of an inference problem is to compute some piece of information about the posterior distribution $P(X = \cdot | Y = y)$, which is a probability distribution on $\{0, 1\}^{|X|}$.
+For convenience, I will use the notation $P(X = x | Y = y)$, $P(X = x, Y = y)$, and $P(Y = y)$ to refer to conditional, joint, and marginal probability values on the assignments to the variables in variable sets $X$ and $Y$,
+even though this is slightly nonstandard notation as $X$ and $Y$ here are subsets of $V$ here, and are not formally defined as random variables.
 
 \begin{defn}
 An \textbf{inference problem schema} is the tuple $I = (V, E, P, X, Y)$ as in an inference problem, but not fixing an assignment $y$ to the observed variables.
@@ -367,7 +381,7 @@ $$
 where the probability is taken over the randomness of the algorithm.
 \end{defn}
 
-In this report, I prove a new result showing that if either a deterministic or probabilistic typical-case additive PMF approximation algorithm exists with tolerances $\epsilon < 1/2$, $\rho < 1/4$, then one-way functions do not exist (Theorem~\ref{thm:main}).
+In this report, I prove a new result showing that if either a deterministic or probabilistic typical-case additive PMF approximation algorithm exists with tolerances $\epsilon < 1/2$, $\rho < 1/4$, then one-way functions do not exist.
 This hardness result suggests that typical-case inference is computationally difficult, and it is not merely the worst-case nature of the observations considered in Dagum and Luby's reduction which made inference difficult in their setting.
 Due to the typical-case formulation studied here, a different proof strategy is needed to show this hardness result.
 
@@ -377,7 +391,7 @@ However, problems like $\mathsf{3SAT}$ are stated in terms of behavior on all, a
 Therefore, to prove the hardness of a computational problem on typical-case inputs, it is preferable to reduce to a hardness conjecture stated directly in terms of typical-case behavior.
 
 In this report I will reference two such conjectures, which are known to be related.
-The first conjecture is the existance of \textit{one-way functions}, functions which can be efficiently computed, but not efficiently inverted for the majority of inputs.
+The first conjecture is the existence of \textit{one-way functions}, functions which can be efficiently computed, but not efficiently inverted for the majority of inputs.
 It is widely thought likely that such functions exist \cite{arora2009computational}, as there are a number of functions like multiplication of prime numbers, for which no inversion algorithms are known which are efficient in the typical case.
 Such functions are widely used in public-key cryptography.
 
@@ -389,7 +403,7 @@ n^c \cdot \Pr_{x \sim \text{Uniform}(\{0, 1\}^n)}[A(f(x), 1^n) \in f^{-1}(f(x))]
 where $f^{-1}(f(x))$ is the set $\{x' \in \{0, 1\}^* : f(x') = f(x)\}$.
 \end{defn}
 
-The second conjecture is the existance of \textit{secure pseudorandom generators}, which are functions which take a short random seed and expand it into a long string which is indistinguishable from a truly random string.
+The second conjecture is the existence of \textit{secure pseudorandom generators}, which are functions which take a short random seed and expand it into a long string which is indistinguishable from a truly random string.
 This is known to follow from the existence of one-way functions, and this weaker conjecture is all the is needed for the main result of this report.
 Specifically, I consider PRGs which are secure against all polynomial-time adversaries, once the strings being generated are sufficiently long.
 
@@ -403,7 +417,7 @@ The function $l$ is called the stretch of the PRG.
 \end{defn}
 This definition is weaker than the definition given in Arora and Barak \cite{arora2009computational}, as it only requires the expression in eq.~\ref{eq:prg} to tend to zero, rather than to zero at a superpolynomial rate, as in eq.~\ref{eq:oneway}, and as in Arora and Barak's definition of a secure PRG.
 The reduction in this report shows that the existence of a secure PRG, as defined here, with superlinear stretch implies the non-existence of typical-case inference algorithms with certain tolerances.
-The existance of secure PRGs as defined in Arora and Barak is a strictly stronger statement than the existance of secure PRGs as defined here, and their PRGs are instances of secure PRGs as defined here.
+The existence of secure PRGs as defined in Arora and Barak is a strictly stronger statement than the existence of secure PRGs as defined here, and their PRGs are instances of secure PRGs as defined here.
 
 It is known that the existence of one-way functions implies the existence of secure pseudorandom generators.
 Thus, to the extent that it is believed that one-way functions exist, it is also believed that secure pseudorandom generators exist.
@@ -411,7 +425,7 @@ Thus, to the extent that it is believed that one-way functions exist, it is also
 If there exists a one-way function, then there exists a secure pseudorandom generator with stretch $l(n) = n^c$.
 \end{prop}
 The reason I include the superpolynomial convergence rate in Def.~\ref{def:oneway} is to ensure that this theorem goes through.
-As far as I am aware, it may be that given my weaker definition of a secure PRG, a weaker definition of one-way function would also suffice to imply the existance of such PRGs, but I have not verified this.
+As far as I am aware, it may be that given my weaker definition of a secure PRG, a weaker definition of one-way function would also suffice to imply the existence of such PRGs, but I have not verified this.
 
 \section{Main result} \label{sec:main}
 % \begin{defn}
@@ -473,7 +487,7 @@ this implies that there exists a $\gamma > 0$ such that
 $$
 |\Pr_{s \sim \text{Uniform}(\{0, 1\}^n)}[B(G(s)) = 1] - \Pr_{\by \sim \text{Uniform}(\{0, 1\}^{l(n)})}[B(\by) = 1]| \geq \gamma \quad (***)
 $$
-for all sufficiently large $n$, contradicting that $G$ is a secure pseudorandom generator.
+for all $n > N$, contradicting that $G$ is a secure pseudorandom generator.
 % This part of the proof will involve a case analysis regarding how the values in $\mathcal{Y}_\text{easy}$ are distributed among range of $G$, and its complement.
 
 I now proceed to complete the proof by (1) proving that $B$ can construct an inference schema with properties $(*)$ and $(**)$, and (2) proving that $(***)$ holds.
@@ -481,11 +495,14 @@ I now proceed to complete the proof by (1) proving that $B$ can construct an inf
 \medskip
 \noindent \textbf{Construction of the inference schema.}
 Let $(P, V, E)$ be the Bayesian network which implements the following process.
-$P$ samples $s = s_1 s_2 \dots s_n$ uniformly at random from $\{0, 1\}^n$.
-$P$ samples $\bar{y} = \bar{y}_1 \bar{y}_2 \dots \bar{y}_{l(n)}$ uniformly at random from $\{0, 1\}^{l(n)}$.
-$P$ samples $x$ uniformly at random from $\{0, 1\}$.
-If $x = 0$, $P$ computes $y = \bar{y}$.
-Otherwise, $P$ computes $y = G(s)$.
+\begin{enumerate}
+    \item $P$ samples $s = s_1 s_2 \dots s_n$ uniformly at random from $\{0, 1\}^n$.
+    \item $P$ samples $\bar{y} = \bar{y}_1 \bar{y}_2 \dots \bar{y}_{l(n)}$ uniformly at random from $\{0, 1\}^{l(n)}$.
+    \item $P$ samples $x$ uniformly at random from $\{0, 1\}$.
+    \item If $x = 0$, $P$ computes $y = \bar{y}$. Otherwise, $P$ computes $y = G(s)$.
+\end{enumerate}
+The set $X$ is defined to contain only $x$, and $Y$ is defined to contain the $l(n)$ bits of $y$.  This yields schema $(P, V, E, X, Y)$.
+
 Clearly, writing a Bayesian network which does the sampling and multiplexing steps can be done in polynomial time.
 (This just requires adding a bunch of binary variables to the vertex set $V$, and adding a probability table for each to $P$ specifying that each of these variables is uniformly distributed.)
 Writing out the part of the Bayesian network which computes $G(s)$ can be done in polynomial time in $n$ using the Cook-Levin reduction for writing a circuit which implements the same behavior as the Turing machine for $G$, on inputs of length $n$.
@@ -657,17 +674,17 @@ $$
 P(\Ygood) \geq \frac{3}{4} + \frac{1}{4 \cdot 2^{l(n) - n}} + \frac{1}{4}\gamma
 \implies |p_s - p_\by| \geq \gamma
 $$
-Since $l(n) - n \to \infty$, the term $\frac{1}{4 \cdot 2^{l(n) - n}} \to 0$,
-so there exists $N_2$ such that for all $n > N_2$,
+Since $l(n) - n \to \infty$, the term $\frac{1}{4 \cdot 2^{l(n) - n}} \to 0$.
+Thus since $P(\Ygood) > \frac{3}{4}$, there exists a value $\gamma > 0$ and an $N_2$ such that for all $n > N_2$,
 $$
-P(\Ygood) > \frac{3}{4} \implies \exists \gamma > 0 \text{ s.t. } |\Pr_s[B(G(s)) = 1] - \Pr_{\bar{y}}[B(\bar{y}) = 1]| \geq \gamma
+|\Pr_s[B(G(s)) = 1] - \Pr_{\bar{y}}[B(\bar{y}) = 1]| \geq \gamma
 $$
 Finally, it suffices to take $N = \max(N_1, N_2)$.
 
 \medskip
 \noindent
 \textbf{Extending the proof to the case where the inference algorithm $A$ is probabilistic.}
-This extension is fairly straightforward; we simply need to track several additional terms in the analysis, to control the probability that algorithm $B$ fails to indicate whether $y \in \text{range}(G)$ for a value $y \in \Ygood$.
+This extension is conceptually straightforward; we simply need to track several additional terms in the analysis, to control the probability that algorithm $B$ fails to indicate whether $y \in \text{range}(G)$ for a value $y \in \Ygood$.
 Since we can upper-bound this probability arbitrarily tightly by boosting the probabilistic version of algorithm $B$ through replication, the ultimate conclusion is the same as before.
 
 Say that the inference algorithm $A(I, x, y)$ is probabilistic.
@@ -757,18 +774,18 @@ $$
 In this paper, I focused on the problem of posterior inference, that of computing values relating to a posterior distribution $P(X | Y = y)$.
 A related problem is that of computing the marginal probability $P(Y = y)$.
 This problem is widely studied in complexity theory, as for a certain class of probabilistic models, it is essentially isomorphic to counting the number of witnesses $y$ such that a polynomial-time Turing machine $M$ outputs $M(x, y) = 1$ on a given $x$.
-This counting problem defines the complexity class $\#\P$, the class of functions on from $x$ to $|y : M(x, y) = 1|$ for polynomial time Turing Machines $M$. This class is a widely studied object in complexity theory.
+This counting problem defines the complexity class $\#\P$, the class of functions on from $x$ to $|\{y : M(x, y) = 1\}|$ for polynomial time Turing Machines $M$. This class is a widely studied object in complexity theory.
 The isomorphism in question involves considering a probability distribution on $|y| + 1$ binary values.
 The first $|y|$ bits are a witness $y$ for the Turing machine, which are posited to each have an independent $\text{Bernoulli}(1/2)$ distribution.
 The final bit $z$ is a flag bit, which is set to 1 if $M(x, y) = 1$ and 0 otherwise (for a given $x$).
 The marginal probability $P(z = 1)$ is exactly $1/2^{|y|}$ times the number of witnesses $y$ such that $M(x, y) = 1$.
-Note that this assumes every witness $y$ to $x$ has an equal length; this assumption requires no loss of generality as shorter witnesses can always be padded with zeros.
+Note that while this assumes every witness $y$ to $x$ has an equal length, this assumption requires no loss of generality for time-bounded Turing machines.
 For an overview of counting complexity, see Chapter 17 of Arora and Barak's textbook \cite{arora2009computational}.
 
 \textbf{PMF computation in and sampling from marginal probability distributions.}
 As $P(X = x | Y = y) := P(X = x, Y = y) / P(Y = y)$, the ability to exactly compute the marginal probability values $P(X = x, Y = y)$ and $P(Y = y)$ implies the ability to compute posterior PMF value $P(X = x | Y = y)$.
 Likewise, the ability to compute each of these values up to a multiplicitive approximation error implies the ability to compute posterior PMF values up to the same error.
-It is less obvious whether marginal probability computation enables sampling from posterior distributiuons.
+A related question is whether marginal probability computation enables sampling from posterior distributions.
 In partial answer to this, Jerrum, Valiant, and Vazirani showed in 1986 that in important families of probabilistic models, the ability to sample approximately from a distribution is equally hard up to a polynomial factor as stochastically computing marginal probability values \cite{jerrum1986}.
 In general, the ability to compute marginal probabilities is $\PP$-complete.
 However, there are special cases where it has been shown that this problem is tractable.
@@ -784,9 +801,10 @@ Another setting in which some practicioners believe posterior inference is likel
 It is indeed known that approximate marginal probability computation, and approximate sampling, are tractable in such settings where conditions as in the Lovasz local lemma hold \cite{moitra2019approximate}.
 
 \textbf{Complexity of probabilistic inference in continuous models.}
-Bayesian networks are a natural broad family of probabilistic models in which to study probabilistic inference.
-The main restriction of such models is that all the random variables are assumed to be discrete with finite domains, and there is assumed to be a sparse connectivity structure.
-Discreteness and sparse connectivity are core features of computational models like Turing machines and circuits, and in this sense Bayesian networks are a natural probabilitic analog to these models.
+Bayesian networks are broad family of probabilistic models in which to study probabilistic inference.
+The main restriction of such models is that all the random variables are discrete with finite domains.
+% , and there is assumed to be a sparse connectivity structure.
+Discreteness is a core features of computational models like Turing machines and circuits, and in this sense Bayesian networks are a natural probabilitic analog to these models.
 Many statisticians also consider probabilistic inference in classes of probabilistic models on continuous random variables.
 Computations in these models can be represented in Turing machines, using algorithms which compute numerical approximations to quantities like posterior probability density function or cumulative distribution function values, and receive as input parameters controlling the requested precision for the computation.
 Ackerman, Freer, and Roy have shown that under standard fomrulations of precision-controlled real-valued comptuation in Turing machines,

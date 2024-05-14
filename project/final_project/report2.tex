@@ -456,11 +456,12 @@ For contradiction, suppose $A$ is a deterministic polynomial-time typical-case a
 (The case where $A$ is probabilistic will be covered at the end of the proof.)
 Let $\delta > 0$ be s.t. $\epsilon < \frac{1}{2} - \delta$.
 Suppose $G$ is a secure PRG with invertible stretch function $l(n)$ s.t. $\lim_{n \to \infty} [l(n) - n] = \infty$.
-Note that $l^{-1}$ is computable in $\text{poly}(n)$ time, because given $m$, one can iterate through the values $n = 1, 2, \dots, m$ to find when $l(n) = m$.
+Note that we can assume $l$ is upper-bounded by a polynomial in $n$, because if $l$ grows superpolynomially we can obtain a new PRG $G'$ which outputs the first $n^2$ bits of the output of $G$.
+Under the assumption that $l$ is upper-bounded by a polynomial, note that $l^{-1}$ is computable in $\text{poly}(n)$ time, because given $m$, one can iterate through the values $n = 1, 2, \dots, m$ to find when $l(n) = m$.
 
 \medskip
 \noindent \textbf{Proof outline.}
-I will construct a Turing machine $B$ which can distinguish the distributions $\text{Uniform}(\{0, 1\}^n) \circ G^{-1}$ and $\text{Uniform}(\{0, 1\}^{l(n)})$ for all $n > N$, where $N$ is a constant.  This contradicts that $G$ is a secure PRG.
+I will construct a polynomial time Turing machine $B$ which can distinguish the distributions $\text{Uniform}(\{0, 1\}^n) \circ G^{-1}$ and $\text{Uniform}(\{0, 1\}^{l(n)})$ for all $n > N$, where $N$ is a constant.  This contradicts that $G$ is a secure PRG.
 
 Given input $y \in \{0, 1\}^{l(n)}$,
 Turing machine $B$ will guess whether it was sampled from the pseudo-random generator, or from the uniform on $\{0, 1\}^{|y|}$.
@@ -576,7 +577,7 @@ Thus if $y \notin \text{range}(G)$, by $(**)$, $|A(I, x, y) - 0| < \frac{1}{2} -
 And if $y \in \text{range}(G)$ but $A(I, x, y) < 1/2$, by $(*)$ we would have $|P(X = 1 | Y = y) - A(I, x, y)| \geq |(1 - \delta) - 1/2| \geq 1/2 - \delta > \epsilon$, so it must be the case that $A(I, x, y) > 1/2$.
 That is,
 $$
-y \in \Ygood \implies [y \notin \text{range}(G) \implies A(I, x, y) < 1/2 \wedge y \in \text{range}(G) \implies A(I, x, y) > 1/2]
+y \in \Ygood \implies [(y \notin \text{range}(G) \implies A(I, x, y) < 1/2) \wedge (y \in \text{range}(G) \implies A(I, x, y) > 1/2)]
 $$
 Thus for $y \in \Ygood$, algorithm $B$ exactly decides whether $y \in \text{range}(G)$: $y \in \Ygood \implies B(y) = 1_{y \in \text{range}(G)}$.
 
@@ -614,8 +615,8 @@ Plugging in $p_s = p_{s, 1} + p_{s, 2}$ and $p_\by = p_{\by, 1} + p_{\by, 2}$, a
 We have
 \begin{multline} \label{eq:terms_ybad}
 |p_{s, 2} - p_{\by, 2}| = 
-|\Pr_{s}[G(s) \notin \Ygood] \Pr_s[B(G(s)) = 1 | G(s) \notin \Ygood]
- - \Pr_\by[\by \notin \Ygood] \Pr_\by[B(\by) = 1 | \by \notin \Ygood]|
+\Bigl | \Pr_{s}[G(s) \notin \Ygood] \Pr_s[B(G(s)) = 1 | G(s) \notin \Ygood]
+ - \Pr_\by[\by \notin \Ygood] \Pr_\by[B(\by) = 1 | \by \notin \Ygood] \Bigr |
 \\
 \leq \max(\Pr_s[G(s) \notin \Ygood], \Pr_\by[\by \notin \Ygood])
 \end{multline}
@@ -693,17 +694,17 @@ By saying $A$ is a probabilistic typical-case additive-error PMF approximation a
 $$
 \Pr_r [|A(I, x, y, r) - P(X = x | Y = y)| \geq \epsilon] < 1/3
 $$
-In the procedure described above, the only place where algorithm $B$ uses algorithm $A$ is to check if $P(X = 1 | Y = y)$ is greater than $1/2$.
-I will write $B(y, r)$ for a call to $B$ that uses random bits $r$ when calling $A$.
+In the procedure described above, the only place where algorithm $B$ uses algorithm $A$ is to check whether $P(X = 1 | Y = y)$ is greater than $1/2$.
+I will write $B(y, r)$ for a call to $B$ that uses random bitstring $r$ when calling $A$.
 Our preceding analysis shows that for $y \in \Ygood$,
 $$
 |A(I, 1, y, r) - P(X = 1 | Y = y)| < \epsilon \implies  B(y, r) = 1_{y \in \text{range}(G)}
 $$
 Thus for $y \in \Ygood$,
 $$
-\Pr_r [B(y, 1) \neq 1_{y \in \text{range}(G)}] < 1/3
+\Pr_r [B(y, r) \neq 1_{y \in \text{range}(G)}] < 1/3
 $$
-By calling $B$ $O(k)$ times with different random $r$, and taking the most frequent output, we can obtain an algorithm $B^*$, comsuming randomness $r^*$, where for $y \in \Ygood$,
+By calling $B$ $O(k)$ times with different random bitstrings $r$, and taking the most frequent output, we can obtain an algorithm $B^*$, consuming a longer random bitstring $r^*$, where for $y \in \Ygood$,
 $$
 \Pr_{r^*} [B^*(y, r^*) \neq 1_{y \in \text{range}(G)}] < 1/2^k
 $$
@@ -711,24 +712,26 @@ $$
 
 Except for the final section dedicated to proving statement $(***)$, the preceding proof remains essentially unchanged.
 We must, however, redo part of the analysis in the final section, replacing the old deterministic algorithm $B$ with our new stochastic algorithm $B^*$.
-Much of the analysis remains unchanged, except that
-the expressions $\Pr_s$ and $\Pr_\by$ should be understood to also close over the randomness $r^*$.
+Much of the analysis remains unchanged, except that the equations should be rewritten
+so that probability expressions of the form $\Pr_s[...]$ and $\Pr_\by[...]$ which include a $B(...)$ term inside the brackets, are replaced by expressions of the form $\Pr_{s, r^*}[...]$ and $\Pr_{\by, r^*}[...]$, with the $B(...)$ terms replaced by $B^*(..., r^*)$.
+% of the form $\Pr_s[B(...)]$ and $\Pr_\by[(...)]$ are replaced by expressions $\Pr_{s, r^*}[B(..., r^*)]$ and $\Pr_{\by, r^*}[B(..., r^*)]$.
+% the expressions $\Pr_s$ and $\Pr_\by$ appearing in the equations should be rewritten to also close over the random bitstring $r^*$, and 
 The first place where the analysis diverges nontrivially is in equation~\ref{eq:terms_ygood}.
 
-To do the new version of the analysis, I will introduce the following notation. For $y \in \Ygood$, let $\Rgood^y$ be the set of random strings $r^*$ such that $B^*(y, r^*) = 1_{y \in \text{range}(G)}$,
+To do the new version of the analysis, I will introduce the following notation. For $y \in \Ygood$, let $\Rgood^y$ be the set of bitstrings $r^*$ such that $B^*(y, r^*) = 1_{y \in \text{range}(G)}$,
 and for $y \notin \Ygood$ let $\Rgood^y$ be the set of all bitstrings $r^*$.
 
 Using this, in place of Equation~\ref{eq:terms_ygood}, we now have
 
 \begin{multline} \label{eq:terms_ygood_stochastic}
     p_{s, 1} - p_{\by, 1} =
-    \Pr_{s, r^*}[B(G(s)) = 1 \wedge G(s) \in \Ygood] - \Pr_{\by, r^*}[B(\by) = 1 \wedge \by \in \Ygood]
+    \Pr_{s, r^*}[B^*(G(s), r^*) = 1 \wedge G(s) \in \Ygood] - \Pr_{\by, r^*}[B^*(\by, r^*) = 1 \wedge \by \in \Ygood]
      \\
     =
-    \Pr_{s, r^*}[G(s) \in \text{range}(G) \wedge G(s) \in \Ygood \wedge r^* \in \Rgood^{G(s)}] + \Pr_{s, r^*}[B(G(s)) = 1 \wedge G(s) \in \Ygood \wedge r^* \notin \Rgood^{G(s)}] \\
-    - (\Pr_{\by, r^*}[\by \in \text{range}(G) \wedge \by \in \Ygood \wedge r^* \in \Rgood^\by] + \Pr_{\by, r^*}[B(\by) = 1 \wedge \by \in \Ygood \wedge r^* \notin \Rgood^\by]) \\
+    \Pr_{s, r^*}[G(s) \in \text{range}(G) \wedge G(s) \in \Ygood \wedge r^* \in \Rgood^{G(s)}] + \Pr_{s, r^*}[B^*(G(s), r^*) = 1 \wedge G(s) \in \Ygood \wedge r^* \notin \Rgood^{G(s)}] \\
+    - (\Pr_{\by, r^*}[\by \in \text{range}(G) \wedge \by \in \Ygood \wedge r^* \in \Rgood^\by] + \Pr_{\by, r^*}[B^*(\by, r^*) = 1 \wedge \by \in \Ygood \wedge r^* \notin \Rgood^\by]) \\
     \geq \Pr_{s, r^*}[G(s) \in \text{range}(G) \wedge G(s) \in \Ygood \wedge r^* \in \Rgood^{G(s)}] \\
-    - (\Pr_{\by, r^*}[\by \in \text{range}(G) \wedge \by \in \Ygood \wedge r^* \in \Rgood^\by] + \Pr_{\by, r^*}[B(\by) = 1 \wedge \by \in \Ygood \wedge r^* \notin \Rgood^\by]) \\
+    - (\Pr_{\by, r^*}[\by \in \text{range}(G) \wedge \by \in \Ygood \wedge r^* \in \Rgood^\by] + \Pr_{\by, r^*}[B^*(\by, r^*) = 1 \wedge \by \in \Ygood \wedge r^* \notin \Rgood^\by]) \\
     \geq (1 - \frac{1}{2^k}) \Pr_{s, r^*}[G(s) \in \text{range}(G) \wedge G(s) \in \Ygood] - \Pr_{\bar{y}, r^*}[\by \in \text{range}(G)] - \Pr_{\by, r^*}[r^* \notin \Rgood^\by] \\
     \geq (1 - \frac{1}{2^k}) \Pr_{s}[G(s) \in \Ygood] - 2^n/2^{l(n)} - 1/2^k
     % + \Pr_{s, r^*}[r^* \notin \Rgood^{G(s)} \wedge G(s) \in \Ygood]
@@ -753,13 +756,14 @@ Therefore
 \begin{equation} \label{eq:pygood_implication_stochastic}
 P(\Ygood) \geq \frac{3}{4} + \frac{1}{4}(\frac{1}{2^{l(n) - n}} + \frac{2}{2^k}) + \frac{1}{4} \gamma \implies |p_s - p_\by| \geq \gamma
 \end{equation}
-Since we in fact have $P(\Ygood) > \frac{3}{4}$ with strict inequality, let $\eta > 0$ be such that $P(\Ygood) \geq \frac{3}{4} + \eta$.
+Since we in fact have $P(\Ygood) > \frac{3}{4}$ with strict inequality,
+letting $\eta := P(\Ygood) - \frac{3}{4}$, we have $\eta > 0$.
 Choose $N_2, k$ large enough so that $n \geq N_2 \implies \frac{1}{2^{l(n) - n}} + \frac{2}{2^k} < \eta/2$, and set $\gamma = 2\eta$.
-Because $\rho$ is a property of algorithm $A$, this choice of $k$ is independent of the length of the string $y$ input to algorithm $B$, so $k$ is a constant for the purposes of characterizing the complexity of algorithm $B$.
-Thus setting $k$ to have this value does not affect the assessment that $B$ is a polynomial-time algorithm.
-Then (\ref{eq:pygood_implication_stochastic}) holds, so for all $n > N := \max(N_1, N_2)$,
+Because $\rho$ is a property of algorithm $A$, this choice of $k$ is independent of the length of the string $y$ input to algorithm $B^*$, so $k$ is a constant for the purposes of characterizing the complexity of algorithm $B^*$.
+Thus setting $k$ to have this value does not affect the assessment that $B^*$ is a polynomial-time algorithm.
+Then (\ref{eq:pygood_implication_stochastic}) holds for this $\gamma$, so there exists $\gamma > 0$ such that for all $n > N := \max(N_1, N_2)$,
 $$
-\exists \gamma > 0 \text{ s.t. } |\Pr_{s, r^*}[B(G(s)) = 1] - \Pr_{\by, r^*}[B(\by) = 1]| \geq \gamma
+|\Pr_{s, r^*}[B^*(G(s), r^*) = 1] - \Pr_{\by, r^*}[B^*(\by, r^*) = 1]| \geq \gamma
 $$
 
 \end{proof}
@@ -782,7 +786,7 @@ The marginal probability $P(z = 1)$ is exactly $1/2^{|y|}$ times the number of w
 Note that while this assumes every witness $y$ to $x$ has an equal length, this assumption requires no loss of generality for time-bounded Turing machines.
 For an overview of counting complexity, see Chapter 17 of Arora and Barak's textbook \cite{arora2009computational}.
 
-\textbf{PMF computation in and sampling from marginal probability distributions.}
+\textbf{PMF computation of and sampling from marginal probability distributions.}
 As $P(X = x | Y = y) := P(X = x, Y = y) / P(Y = y)$, the ability to exactly compute the marginal probability values $P(X = x, Y = y)$ and $P(Y = y)$ implies the ability to compute posterior PMF value $P(X = x | Y = y)$.
 Likewise, the ability to compute each of these values up to a multiplicitive approximation error implies the ability to compute posterior PMF values up to the same error.
 A related question is whether marginal probability computation enables sampling from posterior distributions.
@@ -807,7 +811,7 @@ The main restriction of such models is that all the random variables are discret
 Discreteness is a core features of computational models like Turing machines and circuits, and in this sense Bayesian networks are a natural probabilitic analog to these models.
 Many statisticians also consider probabilistic inference in classes of probabilistic models on continuous random variables.
 Computations in these models can be represented in Turing machines, using algorithms which compute numerical approximations to quantities like posterior probability density function or cumulative distribution function values, and receive as input parameters controlling the requested precision for the computation.
-Ackerman, Freer, and Roy have shown that under standard fomrulations of precision-controlled real-valued comptuation in Turing machines,
+Ackerman, Freer, and Roy have shown that under standard formulations of precision-controlled real-valued comptuation in Turing machines,
 there are probabilistic models in which posterior cumulative distribution function and probability mass function computation is noncomputable \cite{ackerman2019computability}.
 They also show that under many restrictions on the model family, often obeyed by statistical models on continuous random variables, inference is computable.
 For a survey of models of real-valued computation using Turing machines in general, see \cite{weihrauch2012computable}.

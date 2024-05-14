@@ -11,7 +11,7 @@
 @article{cooper1990,
   title={The computational complexity of probabilistic inference using Bayesian belief networks},
   author={Cooper, Gregory F},
-  journal={Artificial intelligence},
+  journal={Artificial Intelligence},
   volume={42},
   number={2-3},
   pages={393--405},
@@ -22,7 +22,7 @@
 @article{dagum1993,
   title={Approximating probabilistic inference in Bayesian belief networks is NP-hard},
   author={Dagum, Paul and Luby, Michael},
-  journal={Artificial intelligence},
+  journal={Artificial Intelligence},
   volume={60},
   number={1},
   pages={141--153},
@@ -71,11 +71,22 @@
   organization={IEEE}
 }
 
-@article{tantau2022satisfaction,
-  title={On the Satisfaction Probability of $ k $-CNF Formulas},
-  author={Tantau, Till},
-  journal={arXiv preprint arXiv:2201.08895},
-  year={2022}
+@inproceedings{tantau2022satisfaction,
+author = {Tantau, Till},
+title = {On the satisfaction probability of k-CNF formulas},
+year = {2022},
+isbn = {9783959772419},
+publisher = {Schloss Dagstuhl--Leibniz-Zentrum fuer Informatik},
+address = {Dagstuhl, DEU},
+url = {https://doi.org/10.4230/LIPIcs.CCC.2022.2},
+doi = {10.4230/LIPIcs.CCC.2022.2},
+abstract = {The satisfaction probability σ(ϕ) := Prβ:vars(ϕ)→{0,1}[β|= ϕ] of a propositional formula ϕ is the likelihood that a random assignment β makes the formula true. We study the complexity of the problem kSAT-PROB>δ = {ϕ is a kCNF formula | σ(ϕ) > δ} for fixed k and δ. While 3SAT-PROB>0 = 3SAT is NP-complete and SAT-PROB>1/2 is PP-complete, Akmal and Williams recently showed 3SAT-PROB>1/2 ∈ P and 4SAT-PROB>1/2 ∈ NP-complete; but the methods used to prove these striking results stay silent about, say, 4SAT-PROB>3/4, leaving the computational complexity of kSAT-PROB>δ open for most k and δ. In the present paper we give a complete characterization in the form of a trichotomy: kSAT-PROB>δ lies in AC0, is NL-complete, or is NP-complete; and given k and δ we can decide which of the three applies. The proof of the trichotomy hinges on a new order-theoretic insight: Every set of kCNF formulas contains a formula of maximal satisfaction probability. This deceptively simple result allows us to (1) kernelize kSAT-PROB≥δ, (2) show that the variables of the kernel form a strong backdoor set when the trichotomy states membership in AC0 or NL, and (3) prove a locality property by which for every kCNF formula ϕ we have σ(ϕ) ≥ δ iff σ(Ψ) ≥ δ for every fixed-size subset Ψ of ϕ's clauses. The locality property will allow us to prove a conjecture of Akmal and Williams: The majority-of-majority satisfaction problem for kCNFS lies in P for all k.},
+booktitle = {Proceedings of the 37th Computational Complexity Conference},
+articleno = {2},
+numpages = {27},
+keywords = {kernelization, locality, majority {k}-sat, satisfaction probability, well orderings},
+location = {Philadelphia, Pennsylvania},
+series = {CCC '22}
 }
 
 @article{moitra2019approximate,
@@ -103,7 +114,7 @@
 @article{yamakami1999polynomial,
   title={Polynomial time samplable distributions},
   author={Yamakami, Tomoyuki},
-  journal={journal of complexity},
+  journal={Journal of Complexity},
   volume={15},
   number={4},
   pages={557--574},
@@ -137,23 +148,23 @@
 
 
 @inproceedings{freer2010probabilistic,
-  title={When are probabilistic programs probably computationally tractable},
+  title={When are probabilistic programs probably computationally tractable?},
   author={Freer, Cameron E and Mansinghka, Vikash K and Roy, Daniel M},
   booktitle={NIPS Workshop on Monte Carlo Methods for Modern Applications},
   year={2010}
 }
 
-@phdthesis{edmonds2017concepts,
+@misc{edmonds2017concepts,
   title={Concepts of Computationally Efficient Samplability},
   author={Edmonds, Alex},
   year={2017},
-  school={University of Toronto}
+  note={Master's degree thesis, University of Toronto},
 }
 
 @book{weihrauch2012computable,
   title={Computable analysis: an introduction},
   author={Weihrauch, Klaus},
-  year={2012},
+  year={2000},
   publisher={Springer Science \& Business Media}
 }
 

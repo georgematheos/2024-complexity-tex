@@ -46,7 +46,7 @@
       \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
-      \field{journaltitle}{Artificial intelligence}
+      \field{journaltitle}{Artificial Intelligence}
       \field{number}{1}
       \field{title}{Approximating probabilistic inference in Bayesian belief networks is NP-hard}
       \field{volume}{60}
@@ -102,7 +102,7 @@
       \field{sortinithash}{ad6fe7482ffbd7b9f99c9e8b5dccd3d7}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
-      \field{journaltitle}{Artificial intelligence}
+      \field{journaltitle}{Artificial Intelligence}
       \field{number}{2-3}
       \field{title}{The computational complexity of probabilistic inference using Bayesian belief networks}
       \field{volume}{42}
@@ -131,7 +131,7 @@
       \field{sortinithash}{a231b008ebf0ecbe0b4d96dcc159445f}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
-      \field{journaltitle}{journal of complexity}
+      \field{journaltitle}{Journal of Complexity}
       \field{number}{4}
       \field{title}{Polynomial time samplable distributions}
       \field{volume}{15}
@@ -139,16 +139,13 @@
       \field{pages}{557\bibrangedash 574}
       \range{pages}{18}
     \endentry
-    \entry{edmonds2017concepts}{thesis}{}
+    \entry{edmonds2017concepts}{misc}{}
       \name{author}{1}{}{%
         {{hash=0691bcdacaf1ac1f78ce3106f37f1274}{%
            family={Edmonds},
            familyi={E\bibinitperiod},
            given={Alex},
            giveni={A\bibinitperiod}}}%
-      }
-      \list{institution}{1}{%
-        {University of Toronto}%
       }
       \strng{namehash}{0691bcdacaf1ac1f78ce3106f37f1274}
       \strng{fullhash}{0691bcdacaf1ac1f78ce3106f37f1274}
@@ -160,8 +157,8 @@
       \field{sortinithash}{0a5ebc79d83c96b6579069544c73c7d4}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
+      \field{note}{Master's degree thesis, University of Toronto}
       \field{title}{Concepts of Computationally Efficient Samplability}
-      \field{type}{phdthesis}
       \field{year}{2017}
     \endentry
     \entry{arora2009computational}{book}{}
@@ -263,13 +260,19 @@
       \field{pages}{1033\bibrangedash 1043}
       \range{pages}{11}
     \endentry
-    \entry{tantau2022satisfaction}{article}{}
+    \entry{tantau2022satisfaction}{inproceedings}{}
       \name{author}{1}{}{%
         {{hash=129e88d9b4e0ba07ca911d6e9aebfaca}{%
            family={Tantau},
            familyi={T\bibinitperiod},
            given={Till},
            giveni={T\bibinitperiod}}}%
+      }
+      \list{location}{1}{%
+        {Philadelphia, Pennsylvania}%
+      }
+      \list{publisher}{1}{%
+        {Schloss Dagstuhl--Leibniz-Zentrum fuer Informatik}%
       }
       \strng{namehash}{129e88d9b4e0ba07ca911d6e9aebfaca}
       \strng{fullhash}{129e88d9b4e0ba07ca911d6e9aebfaca}
@@ -281,9 +284,22 @@
       \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
-      \field{journaltitle}{arXiv preprint arXiv:2201.08895}
-      \field{title}{On the Satisfaction Probability of $ k $-CNF Formulas}
+      \field{abstract}{The satisfaction probability σ(ϕ) := Prβ:vars(ϕ)→{0,1}[β|= ϕ] of a propositional formula ϕ is the likelihood that a random assignment β makes the formula true. We study the complexity of the problem kSAT-PROB>δ = {ϕ is a kCNF formula | σ(ϕ) > δ} for fixed k and δ. While 3SAT-PROB>0 = 3SAT is NP-complete and SAT-PROB>1/2 is PP-complete, Akmal and Williams recently showed 3SAT-PROB>1/2 ∈ P and 4SAT-PROB>1/2 ∈ NP-complete; but the methods used to prove these striking results stay silent about, say, 4SAT-PROB>3/4, leaving the computational complexity of kSAT-PROB>δ open for most k and δ. In the present paper we give a complete characterization in the form of a trichotomy: kSAT-PROB>δ lies in AC0, is NL-complete, or is NP-complete; and given k and δ we can decide which of the three applies. The proof of the trichotomy hinges on a new order-theoretic insight: Every set of kCNF formulas contains a formula of maximal satisfaction probability. This deceptively simple result allows us to (1) kernelize kSAT-PROB≥δ, (2) show that the variables of the kernel form a strong backdoor set when the trichotomy states membership in AC0 or NL, and (3) prove a locality property by which for every kCNF formula ϕ we have σ(ϕ) ≥ δ iff σ(Ψ) ≥ δ for every fixed-size subset Ψ of ϕ's clauses. The locality property will allow us to prove a conjecture of Akmal and Williams: The majority-of-majority satisfaction problem for kCNFS lies in P for all k.}
+      \field{booktitle}{Proceedings of the 37th Computational Complexity Conference}
+      \field{isbn}{9783959772419}
+      \field{series}{CCC '22}
+      \field{title}{On the satisfaction probability of k-CNF formulas}
       \field{year}{2022}
+      \verb{doi}
+      \verb 10.4230/LIPIcs.CCC.2022.2
+      \endverb
+      \verb{urlraw}
+      \verb https://doi.org/10.4230/LIPIcs.CCC.2022.2
+      \endverb
+      \verb{url}
+      \verb https://doi.org/10.4230/LIPIcs.CCC.2022.2
+      \endverb
+      \keyw{kernelization,locality,majority {k}-sat,satisfaction probability,well orderings}
     \endentry
     \entry{dagum1997optimal}{article}{}
       \name{author}{2}{}{%
@@ -377,7 +393,7 @@
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{booktitle}{NIPS Workshop on Monte Carlo Methods for Modern Applications}
-      \field{title}{When are probabilistic programs probably computationally tractable}
+      \field{title}{When are probabilistic programs probably computationally tractable?}
       \field{year}{2010}
     \endentry
     \entry{moitra2019approximate}{article}{}
@@ -470,7 +486,7 @@
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{title}{Computable analysis: an introduction}
-      \field{year}{2012}
+      \field{year}{2000}
     \endentry
   \enddatalist
 \endrefsection
